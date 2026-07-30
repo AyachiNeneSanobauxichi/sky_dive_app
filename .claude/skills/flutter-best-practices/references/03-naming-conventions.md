@@ -42,7 +42,7 @@
 | 场景 | 约定 | 示例 |
 | --- | --- | --- |
 | 全局复用 UI 组件 | 类名加 `Happy` 前缀；文件 `happy_*.dart`；放 `lib/shared/widgets/<组件类别>/` 子目录 | `HappyButton`（`widgets/button/happy_button.dart`）、`HappyCheckbox`、`HappyCheckboxFormField` |
-| 全局主题令牌类 | `HappyApp<角色>` | `HappyColors`、`HappyTheme`、`HappyTextStyles`、`HappySpacing`、`HappyRadius` |
+| 全局主题令牌类 | `Happy<角色>`（不带 App） | `HappyColors`、`HappyTheme`、`HappyTextStyles`、`HappySpacing`、`HappyRadius` |
 | feature 私有组件 | **不加** `Happy`；语义 `UpperCamelCase`；文件 `snake_case.dart`；放该 feature 的 `widgets/` | `AuthInput`（`features/auth/widgets/auth_input.dart`）、`SocialIconButton` |
 | 布尔入参 | `is` 前缀 | `isLoading`、`isFullWidth`、`isError` |
 | 事件回调入参 | `on` 前缀 | `onPressed`、`onChanged`、`onTap` |
