@@ -1,0 +1,74 @@
+# 10 · 存储、配置与安全
+
+> 敏感数据走安全存储（`core/storage/secure_storage.dart`）；环境配置走 `.env` + `core/config/env.dart`；日志走 `core/utils/logger.dart`。
+
+## 环境配置（flutter_dotenv）
+
+### ✅ 应该
+- 用 `.env` 存放 baseUrl、开关等**非机密**环境变量；`main` 里 `await dotenv.load()`。
+- 通过 `Env` 封装读取，**集中一处**，带默认值与类型转换。
+- `.env` / `.env.*` 加入 `.gitignore`；提供 `.env.example` 模板入库。
+
+### ❌ 避免
+- ❌ 把真正的密钥/证书塞进 `.env` 或代码（客户端无法保密，应走后端）。
+- ❌ 直接在业务里 `dotenv.env["X"]` 裸读。
+
+```dart
+// lib/core/config/env.dart
+abstract final class Env {
+  static String get apiBaseUrl => dotenv.env["API_BASE_URL"] ?? "https://api.example.com";
+  static bool get enableLogging => (dotenv.env["ENABLE_LOGGING"] ?? "true") == "true";
+}
+```
+
+## 安全存储（token 等敏感数据）
+
+> 项目 `secure_storage.dart` 已预留。安全存储需接入 `flutter_secure_storage`（Keychain/Keystore）。
+
+### ✅ 应该
+- **token / 刷新令牌 / 凭证** 存安全存储（加密 Keychain/Keystore）。
+- 封装 `SecureStorage`，对外提供 `read/write/delete` 语义方法（`readToken()` 等）。
+- 登出时**清空**所有敏感项。
+
+### ❌ 避免
+- ❌ 用 `SharedPreferences` 存 token 等敏感信息（明文）。
+- ❌ 把敏感数据写进日志。
+
+```dart
+// lib/core/storage/secure_storage.dart
+class SecureStorage {
+  const SecureStorage(this._storage);
+  final FlutterSecureStorage _storage;
+
+  static const _kToken = "access_token";
+
+  Future<String?> readToken() => _storage.read(key: _kToken);
+  Future<void> writeToken(String v) => _storage.write(key: _kToken, value: v);
+  Future<void> clear() => _storage.deleteAll();
+}
+```
+
+> 本地缓存（非敏感、结构化）可用 `SharedPreferences`/`Hive`/`Isar` 等，按需在 `core/storage/` 扩展。
+
+## 日志（logger）
+
+### ✅ 应该
+- 统一 `AppLogger` 封装，级别分明（`d/i/w/e`）。
+- **仅 debug** 输出详细日志；生产用最小级别或对接远端上报。
+- 记录**上下文**而非仅 `e.toString()`。
+
+### ❌ 避免
+- ❌ 使用 `print()`。
+- ❌ 记录 token、密码、身份证等 PII/敏感字段。
+
+```dart
+// lib/core/utils/logger.dart
+abstract final class AppLogger {
+  static final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
+
+  static void d(Object? msg) => _logger.d(msg);
+  static void i(Object? msg) => _logger.i(msg);
+  static void w(Object? msg) => _logger.w(msg);
+  static void e(Object? msg, [Object? error, StackTrace? st]) => _logger.e(msg, error: error, stackTrace: st);
+}
+```

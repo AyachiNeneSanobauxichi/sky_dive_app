@@ -1,0 +1,53 @@
+{
+  "@@locale": "zh",
+
+  "appTitle": "HappyOS",
+
+  "commonOr": "或",
+  "authEmailLabel": "邮箱",
+  "authPasswordLabel": "密码",
+  "authShowPassword": "显示密码",
+  "authHidePassword": "隐藏密码",
+  "authIdentifierLabel": "邮箱或用户名",
+  "authPasswordWeak": "密码需包含至少一个大写字母、一个小写字母、一个数字和一个特殊字符",
+
+  "loginTitle": "欢迎回来",
+  "loginSubtitle": "登录以继续管理你的任务",
+  "loginForgotPassword": "忘记密码？",
+  "loginSubmit": "登录",
+  "loginNoAccount": "还没有账号？",
+  "loginGoRegister": "去注册",
+
+  "registerTitle": "创建账号",
+  "registerSubtitle": "开始管理你的任务",
+  "registerUsernameLabel": "用户名",
+  "registerConfirmPasswordLabel": "确认密码",
+  "registerPasswordMismatch": "两次密码不一致",
+  "registerAgreementPrefix": "我已阅读并同意",
+  "registerUserAgreement": "《用户协议》",
+  "registerAgreementAnd": "和",
+  "registerPrivacyPolicy": "《隐私政策》",
+  "registerAgreementRequired": "请先阅读并同意用户协议",
+  "registerSubmit": "注册",
+  "registerHaveAccount": "已有账号？",
+  "registerGoLogin": "去登录",
+
+  "authErrorGeneric": "出错了，请稍后再试",
+  "registerSuccess": "注册成功，请登录",
+
+  "homeTitle": "首页（占位）",
+  "homeBackToLogin": "返回登录",
+  "commonCancel": "取消",
+  "commonSave": "保存",
+  "commonRetry": "重试",
+
+  "commonApply": "应用",
+  "commonReset": "重置",
+
+  "homeTitle": "HappyOS",
+  "homePlaceholder": "你的故事会出现在这里，目前还没有内容。",
+  "homeLogout": "退出登录",
+  "homeLogoutFailed": "退出登录失败，请重试。",
+
+  "routeNotFound": "页面不存在"
+}

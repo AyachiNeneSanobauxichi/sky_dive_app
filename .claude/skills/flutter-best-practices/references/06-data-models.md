@@ -1,0 +1,100 @@
+# 06 · 数据模型（Freezed 3 + json_serializable）
+
+> 所有数据结构用 **Freezed 3.x** 生成不可变类；JSON 用 `json_serializable`。Freezed 3 要求类标注 `abstract`（单构造）或 `sealed`（union）。
+
+## ✅ 应该
+
+- **实体/DTO/状态类** 全部用 Freezed，享受 `copyWith`、`==`、`hashCode`、`toString`。
+- **单一数据类** 用 `@freezed abstract class`；**多态/状态机** 用 `@freezed sealed class`。
+- **需要 JSON** 时加 `fromJson`/`toJson` 工厂并 `part '*.g.dart'`。
+- **DTO 与 Entity 分离**：DTO 贴合接口字段，提供 `toEntity()` 映射到 domain Entity。
+- **字段命名不一致** 用 `@JsonKey(name: "created_at")`。
+- **枚举** 用 `@JsonValue` 映射后端取值，并提供 `unknown` 兜底。
+
+## ❌ 避免
+
+- ❌ 手写 `copyWith`/`==`/`hashCode`。
+- ❌ 用可变字段（`var`、非 `final`）的普通类当模型。
+- ❌ 把 nullable 字段全靠 `!` 强解，应给默认值或显式处理。
+- ❌ 手改 `*.freezed.dart` / `*.g.dart`。
+
+## 📌 领域实体（无 JSON）
+
+```dart
+// lib/features/todo/domain/todo.dart
+import "package:freezed_annotation/freezed_annotation.dart";
+
+part "todo.freezed.dart";
+
+@freezed
+abstract class Todo with _$Todo {
+  const factory Todo({
+    required String id,
+    required String title,
+    @Default(false) bool completed,
+    DateTime? dueDate,
+  }) = _Todo;
+}
+```
+
+## 📌 DTO（带 JSON）+ 映射
+
+```dart
+// lib/features/todo/data/todo_dto.dart
+import "package:freezed_annotation/freezed_annotation.dart";
+import "package:happy_os/features/todo/domain/index.dart";
+
+part "todo_dto.freezed.dart";
+part "todo_dto.g.dart";
+
+@freezed
+abstract class TodoDto with _$TodoDto {
+  const TodoDto._();
+
+  const factory TodoDto({
+    required String id,
+    required String title,
+    @JsonKey(name: "is_completed") @Default(false) bool completed,
+    @JsonKey(name: "due_date") DateTime? dueDate,
+  }) = _TodoDto;
+
+  factory TodoDto.fromJson(Map<String, dynamic> json) => _$TodoDtoFromJson(json);
+
+  Todo toEntity() => Todo(
+        id: id,
+        title: title,
+        completed: completed,
+        dueDate: dueDate,
+      );
+}
+```
+
+## 📌 Sealed union（状态机 / 多态）
+
+```dart
+@freezed
+sealed class AuthState with _$AuthState {
+  const factory AuthState.unknown() = AuthUnknown;
+  const factory AuthState.authenticated(User user) = Authenticated;
+  const factory AuthState.unauthenticated() = Unauthenticated;
+}
+
+// 消费时用 switch 表达式，编译期穷尽检查
+String label(AuthState s) => switch (s) {
+      AuthUnknown() => "加载中",
+      Authenticated(:final user) => "你好 ${user.name}",
+      Unauthenticated() => "请登录",
+    };
+```
+
+## 📌 枚举映射
+
+```dart
+enum TodoPriority {
+  @JsonValue("low") low,
+  @JsonValue("high") high,
+  @JsonValue(null) unknown,
+}
+```
+
+> 改完模型后运行 `dart run build_runner build --delete-conflicting-outputs`（见 `12-code-generation.md`）。

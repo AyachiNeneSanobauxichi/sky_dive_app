@@ -1,0 +1,63 @@
+---
+description: 性能优化（减少重建、懒加载、缓存、资源释放）
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# 14 · 性能
+
+> 目标：稳定 60/120fps、低内存、快启动。核心手段是**减少重建范围**、**懒加载**、**缓存**。
+
+## ✅ 应该
+
+- **const 化**：不变子树用 `const`，减少重建与 GC。
+- **精准订阅**：Riverpod 用 `select` 只监听所需字段，避免整对象变更触发重建。
+  ```dart
+  final count = ref.watch(todoListControllerProvider.select((s) => s.valueOrNull?.length ?? 0));
+  ```
+- **懒加载列表**：`ListView.builder` / `Sliver`，给稳定 `key`；超长列表考虑分页。
+- **图片**：`CachedNetworkImage` + 合理 `memCacheWidth/Height`，避免加载超大原图。
+- **拆分 Widget**：把频繁重建的局部隔离成小 `ConsumerWidget`，缩小重建边界。
+- **异步不阻塞 UI**：重计算放 `compute`/isolate。
+- **释放资源**：`AnimationController`/`TextEditingController`/`StreamSubscription` 在 `dispose` 释放；provider 用 `ref.onDispose`。
+- **构建分析**：用 DevTools 的 Performance / Rebuild stats、`flutter run --profile` 定位卡顿。
+
+## ❌ 避免
+
+- ❌ 在 `build` 里做重计算、排序、网络、创建大对象。
+- ❌ 用超大 `Column`/`ListView(children: [...])` 一次性构建海量子项。
+- ❌ 无谓 `setState`/整页 `watch` 导致大范围重建。
+- ❌ 在滚动帧里同步做重活。
+- ❌ 忘记释放 controller/订阅导致内存泄漏。
+- ❌ 滥用 `Opacity`/`ClipRRect`/大量阴影（触发离屏渲染）。
+
+## 📌 select 缩小重建
+
+```dart
+// ❌ 整个 AsyncValue 变化都会重建
+final todos = ref.watch(todoListControllerProvider);
+
+// ✅ 只在数量变化时重建这一块
+final count = ref.watch(
+  todoListControllerProvider.select((s) => s.valueOrNull?.length ?? 0),
+);
+```
+
+## 📌 资源释放
+
+```dart
+class _EditState extends ConsumerState<EditScreen> {
+  late final _controller = TextEditingController();
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
+```
+
+## 📌 启动优化
+
+- `main` 中只做**必要**的同步初始化（`dotenv.load`），其余延迟/异步。
+- 首屏避免一次性拉全量数据，先渲染骨架再补数据。
+

@@ -1,0 +1,176 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "HappyOS",
+  "@appTitle": {
+    "description": "Application name shown as the app title"
+  },
+
+  "commonOr": "or",
+  "@commonOr": {
+    "description": "Divider label between primary action and social login"
+  },
+  "authEmailLabel": "Email",
+  "@authEmailLabel": {
+    "description": "Label for the email input field"
+  },
+  "authPasswordLabel": "Password",
+  "@authPasswordLabel": {
+    "description": "Label for the password input field"
+  },
+  "authShowPassword": "Show password",
+  "@authShowPassword": {
+    "description": "Tooltip for the button that reveals the password"
+  },
+  "authHidePassword": "Hide password",
+  "@authHidePassword": {
+    "description": "Tooltip for the button that hides the password"
+  },
+  "authIdentifierLabel": "Email or username",
+  "@authIdentifierLabel": {
+    "description": "Label for the login identifier field that accepts an email or a username"
+  },
+  "authPasswordWeak": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+  "@authPasswordWeak": {
+    "description": "Validation error when the password does not meet the complexity requirements"
+  },
+
+  "loginTitle": "Welcome back",
+  "@loginTitle": {
+    "description": "Login screen headline"
+  },
+  "loginSubtitle": "Log in to continue managing your tasks",
+  "@loginSubtitle": {
+    "description": "Login screen supporting text under the headline"
+  },
+  "loginForgotPassword": "Forgot password?",
+  "@loginForgotPassword": {
+    "description": "Forgot-password link on the login screen"
+  },
+  "loginSubmit": "Log in",
+  "@loginSubmit": {
+    "description": "Login submit button label"
+  },
+  "loginNoAccount": "Don't have an account? ",
+  "@loginNoAccount": {
+    "description": "Prompt before the sign-up link on the login screen"
+  },
+  "loginGoRegister": "Sign up",
+  "@loginGoRegister": {
+    "description": "Link that navigates to the register screen"
+  },
+
+  "registerTitle": "Create account",
+  "@registerTitle": {
+    "description": "Register screen headline"
+  },
+  "registerSubtitle": "Start managing your tasks",
+  "@registerSubtitle": {
+    "description": "Register screen supporting text under the headline"
+  },
+  "registerUsernameLabel": "Username",
+  "@registerUsernameLabel": {
+    "description": "Label for the username input field"
+  },
+  "registerConfirmPasswordLabel": "Confirm password",
+  "@registerConfirmPasswordLabel": {
+    "description": "Label for the confirm-password input field"
+  },
+  "registerPasswordMismatch": "Passwords do not match",
+  "@registerPasswordMismatch": {
+    "description": "Validation error when the two passwords differ"
+  },
+  "registerAgreementPrefix": "I have read and agree to the ",
+  "@registerAgreementPrefix": {
+    "description": "Text before the agreement links in the consent checkbox"
+  },
+  "registerUserAgreement": "User Agreement",
+  "@registerUserAgreement": {
+    "description": "User agreement link text"
+  },
+  "registerAgreementAnd": " and ",
+  "@registerAgreementAnd": {
+    "description": "Conjunction between the two agreement links"
+  },
+  "registerPrivacyPolicy": "Privacy Policy",
+  "@registerPrivacyPolicy": {
+    "description": "Privacy policy link text"
+  },
+  "registerAgreementRequired": "Please read and agree to the User Agreement first",
+  "@registerAgreementRequired": {
+    "description": "Validation error when the consent checkbox is not checked"
+  },
+  "registerSubmit": "Sign up",
+  "@registerSubmit": {
+    "description": "Register submit button label"
+  },
+  "registerHaveAccount": "Already have an account? ",
+  "@registerHaveAccount": {
+    "description": "Prompt before the log-in link on the register screen"
+  },
+  "registerGoLogin": "Log in",
+  "@registerGoLogin": {
+    "description": "Link that navigates to the login screen"
+  },
+
+  "authErrorGeneric": "Something went wrong. Please try again.",
+  "@authErrorGeneric": {
+    "description": "Generic fallback error message shown when an auth request fails"
+  },
+  "registerSuccess": "Account created. Please log in.",
+  "@registerSuccess": {
+    "description": "Snackbar shown after a successful registration, prompting the user to log in"
+  },
+
+  "homeTitle": "Home (placeholder)",
+  "@homeTitle": {
+    "description": "Placeholder text shown on the home screen in v1 routing"
+  },
+  "homeBackToLogin": "Back to login",
+  "@homeBackToLogin": {
+    "description": "Test button on the home screen that returns to the login screen"
+  },
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Generic cancel button label"
+  },
+  "commonSave": "Save",
+  "@commonSave": {
+    "description": "Generic save button label"
+  },
+  "commonRetry": "Retry",
+  "@commonRetry": {
+    "description": "Generic retry button label"
+  },
+
+  "commonApply": "Apply",
+  "@commonApply": {
+    "description": "Generic apply button label"
+  },
+  "commonReset": "Reset",
+  "@commonReset": {
+    "description": "Generic reset button label"
+  },
+
+  "homeTitle": "HappyOS",
+  "@homeTitle": {
+    "description": "Home screen app bar title"
+  },
+  "homePlaceholder": "Your stories will show up here. Nothing has been built yet.",
+  "@homePlaceholder": {
+    "description": "Placeholder body text on the empty home screen"
+  },
+  "homeLogout": "Log out",
+  "@homeLogout": {
+    "description": "Tooltip for the log out action in the home app bar"
+  },
+  "homeLogoutFailed": "Log out failed. Please try again.",
+  "@homeLogoutFailed": {
+    "description": "Toast message shown when logging out fails"
+  },
+
+  "routeNotFound": "Page not found",
+  "@routeNotFound": {
+    "description": "Message shown by the router error page for an unknown route"
+  }
+}

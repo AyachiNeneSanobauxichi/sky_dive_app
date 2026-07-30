@@ -1,0 +1,125 @@
+# 05 · 网络层（Dio）
+
+> 统一通过 `core/network/DioClient` 访问网络；拦截器处理鉴权、日志、错误；`connectivity_plus` 做断网检测。
+
+## ✅ 应该
+
+- **单一 `Dio` 实例** 由 `dioClientProvider` 提供，全局复用（连接池、拦截器一致）。
+- **BaseUrl / 超时 / Header** 从 `core/config/env.dart`（`.env`）读取，不硬编码。
+- **拦截器分工**：
+  - `AuthInterceptor`：注入 token、401 刷新/登出。
+  - `ErrorInterceptor`：把 `DioException` 转成项目 `AppException`（见 `08-error-handling.md`）。
+  - `PrettyDioLogger`：仅在 debug 环境启用。
+- **返回值** 由 Repository 负责把响应解析成 Entity；DataSource 只做原始请求。
+- **超时/取消**：长请求提供 `CancelToken`，页面销毁时取消。
+- **断网**：请求前或拦截器里检查 `connectivity_plus`，无网直接抛 `NetworkException`。
+
+## ❌ 避免
+
+- ❌ 在 UI 或 controller 里 `new Dio()`。
+- ❌ 直接把 `Response.data` 透传到 UI。
+- ❌ 在网络层 `catch` 后吞异常返回 null。
+- ❌ 把 token 拼进 URL 或写死在代码里。
+- ❌ 生产环境打印完整请求/响应体。
+
+## 📌 DioClient 骨架
+
+```dart
+// lib/core/network/dio_client.dart
+class DioClient {
+  DioClient(this._dio);
+  final Dio _dio;
+
+  Future<T> get<T>(String path, {Map<String, dynamic>? query, CancelToken? cancelToken}) async {
+    final res = await _dio.get<T>(path, queryParameters: query, cancelToken: cancelToken);
+    return res.data as T;
+  }
+
+  Future<T> post<T>(String path, {Object? data, CancelToken? cancelToken}) async {
+    final res = await _dio.post<T>(path, data: data, cancelToken: cancelToken);
+    return res.data as T;
+  }
+  // put / patch / delete 同理
+}
+```
+
+## 📌 Dio 装配（provider）
+
+```dart
+// lib/core/providers/core_providers.dart（手写 provider，非 @riverpod）
+final dioProvider = Provider<Dio>((ref) {
+  final dio = Dio(BaseOptions(
+    baseUrl: Env.apiBaseUrl,
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 15),
+    headers: const {"Content-Type": "application/json"},
+  ));
+  dio.interceptors.addAll([
+    AuthInterceptor(ref.watch(secureStorageProvider)),
+    ResponseInterceptor(),
+    ErrorInterceptor(),
+    if (kDebugMode) PrettyDioLogger(requestBody: true, responseBody: true),
+  ]);
+  ref.onDispose(dio.close);
+  return dio;
+});
+
+final dioClientProvider =
+    Provider<DioClient>((ref) => DioClient(ref.watch(dioProvider)));
+```
+
+## 📌 ErrorInterceptor（转换为领域异常）
+
+```dart
+// lib/core/network/interceptors/error_interceptor.dart
+class ErrorInterceptor extends Interceptor {
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    final mapped = switch (err.type) {
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.receiveTimeout ||
+      DioExceptionType.sendTimeout => const TimeoutException(),
+      DioExceptionType.connectionError => const NetworkException(),
+      DioExceptionType.badResponse => ServerException(
+          statusCode: err.response?.statusCode,
+          message: err.response?.data?["message"] as String?,
+        ),
+      _ => const UnknownException(),
+    };
+    handler.reject(err.copyWith(error: mapped));
+  }
+}
+```
+
+## 📌 Mock 数据（无真实接口时）
+
+后端未就绪时，在**该 feature 的 `data/mock/`** 目录放 mock 数据与假 DataSource，让 UI/逻辑先跑通；**接入真实接口后立即删除** `mock/` 文件夹（详见 `16-agent-workflow.md`）。
+
+```
+lib/features/<feature>/data/
+  ├─ mock/                              # 临时占位，接完即删
+  │   └─ <feature>_mock.dart
+  └─ <feature>_remote_data_source.dart
+```
+
+- mock 是**临时资产**，不得长期留存；切真数据的 PR 必须一并清掉。
+- 拿不准的假设（返回结构、字段名）用 `// TODO(<scope>): ...` 标注，便于接口定稿后检索替换。
+
+## 📌 ApiResult（可选统一包装）
+
+若需要在不抛异常的场景返回结果，用 `sealed` 的 `ApiResult<T>`：
+
+```dart
+// lib/core/network/api_result.dart
+sealed class ApiResult<T> {
+  const ApiResult();
+}
+final class Success<T> extends ApiResult<T> {
+  const Success(this.data);
+  final T data;
+}
+final class ApiFailure<T> extends ApiResult<T> {
+  const ApiFailure(this.failure);
+  final Failure failure;
+}
+```

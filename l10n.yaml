@@ -1,0 +1,16 @@
+# gen-l10n 配置：固化生成参数，`flutter gen-l10n` 直接跑即可。
+#
+# 为什么必须有这个文件：不配置时 gen-l10n 会用默认值——输出到
+# .dart_tool 而非 lib/l10n，且 `AppLocalizations.of()` 返回可空类型，
+# 与现有调用点（直接 `.of(context).xxx`）不兼容，会直接编译报错。
+arb-dir: lib/l10n
+output-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+
+# 调用点一律 `AppLocalizations.of(context).xxx`，不做空判断。
+nullable-getter: false
+
+# 某个 locale 缺 key 时报错而不是静默回落，避免漏翻译上线。
+untranslated-messages-file: l10n_untranslated.txt

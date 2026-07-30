@@ -1,0 +1,107 @@
+---
+description: Agent 文档驱动工作流（业务/infra 边界、mock 生命周期、TODO 标记、_page/_api 拆分）
+globs: agent/**/*.md,lib/features/**/*.dart
+alwaysApply: false
+---
+
+# 16 · Agent 文档驱动工作流
+
+> 本仓库用 `agent/` 目录下的 Markdown 文档驱动代码生成。本规则规定：文档如何组织、生成代码时的**业务 / infra 边界**、无接口时的 **mock 生命周期**、以及不确定处的 **TODO 标记**。这些是 agent 生成代码时的硬约束。
+
+## 📁 文档组织：`_page` 与 `_api` 分离
+
+业务模块（`agent/<feature>/...`）的文档**必须按职责拆分**：
+
+- **`<feature>_page.md`** —— 只写**页面 UI 与交互逻辑**（布局、组件、状态流转、表单校验、导航意图）。不写接口契约。
+- **`<feature>_api.md`** —— 只写**接口与数据契约**（端点、请求/响应字段、DTO、错误码、缓存策略）。不写 UI。
+
+infra 文档（`agent/infra/...`，如 `route.md`）**只写 infra**，不掺业务页面细节。
+
+> 一个文档一个职责：page 找 UI、api 找数据、infra 找基建。混写会让后续 agent 越界改动。
+
+### 业务文档书写模式（必须遵守）
+
+业务文档统一按下面的模式书写，agent 依此解析生成：
+
+- **目录**：每个业务模块一个目录 `agent/<feature>/`，内含 `<feature>_page.md` 与 `<feature>_api.md` 两份文档。
+- **版本化章节**：用 `## v1`、`## v2` … 递增章节记录每一期需求；**新增需求追加新版本章节，不改写历史版本**。每个版本下用无序列表逐条描述该期的需求 / 变更点。
+- **`<feature>_page.md`**：标题 `# <feature> page`；每个版本列出页面 UI 与交互需求（布局、组件、状态流转、表单校验、导航意图），**不写接口字段**。
+- **`<feature>_api.md`**：标题 `# <feature> api`；每个接口一节，注明 method、path、鉴权要求，并用 TS 代码块给出 `request` / `response` 字段契约。
+
+> infra 文档放 `agent/infra/`、学习笔记放 `agent/study/`，均不套用本业务模式。
+
+## 🚧 生成边界：业务归业务，infra 不许碰
+
+按**业务模块文档**（`*_page.md` / `*_api.md`）生成的代码，**只允许写业务层**——即 feature 内部：
+
+```
+lib/features/<feature>/{data,domain,controllers,screens,widgets}/
+```
+
+**禁止改动 infra**，包括但不限于：
+
+- `lib/core/**`（network / DioClient / storage / error / config / providers …）
+- `lib/app/**`（`router/`、路由表、`app.dart` 入口装配）
+- `lib/core/theme/**`、全局 `lib/shared/widgets/**` 共享组件的既有 API
+- `pubspec.yaml`、`l10n.yaml`、`analysis_options.yaml` 等工程配置
+
+如果实现业务**确实**需要动 infra（例如缺一条路由、缺一个 provider、缺 i18n 基建），**不要擅自改**——**停下来重点询问用户，由人工操作**，并说明：需要动什么、为什么、影响面。
+
+对应地，`agent/infra/*` 文档驱动的生成**只写 infra**，不写业务页面。
+
+### `_api.md` 与 `_page.md` 各自的生成范围
+
+同为业务层，但**两类文档生成的代码严格分工**：
+
+| 文档 | 只允许生成 | 不得生成 |
+| --- | --- | --- |
+| `<feature>_api.md` | **接口定义相关**：`data/dto/`（DTO + JSON 序列化）、`data/<feature>_remote_data_source.dart`（端点）、`data/<feature>_repository.dart`（DTO↔Entity 映射、异常收敛），以及契约直接对应的 `domain/` 实体 | UI（`screens/`·`widgets/`）、`controllers/`、导航 |
+| `<feature>_page.md` | **UI 与业务**：`screens/`、`widgets/`、`controllers/`（状态编排、交互、导航），复用 `_api.md` 已生成的 data/domain | 接口契约（DTO / 端点）——要改接口回 `_api.md` |
+
+> 一句话：**api 文档 → 怎么拿数据；page 文档 → 怎么展示与交互**。缺了对应文档就停下询问，不要跨文档补写。
+
+## 🧪 Mock 生命周期：无真实接口时
+
+调用接口时若**尚无真实后端**：
+
+1. 在**该 feature 的 data 同目录**下新建 `mock/` 文件夹，放 mock 数据与假数据源（如 `mock/<feature>_mock.dart`）。
+2. 业务代码通过 mock 数据跑通 UI/逻辑；mock 只是临时占位。
+3. **接入真实接口后，立即删除**不再需要的 `mock/` 文件夹与数据，切回真实 DataSource。
+
+```
+lib/features/<feature>/data/
+  ├─ mock/                 # 无真实接口时临时存在，接完即删
+  │   └─ <feature>_mock.dart
+  ├─ <feature>_remote_data_source.dart
+  └─ <feature>_repository.dart
+```
+
+> mock 文件夹是**临时资产**，不得长期留存。接真数据的 PR 里必须一并清掉。
+
+## 📝 TODO 标记：不确定就留痕
+
+任何**拿不准 / 待确认 / 临时方案**的地方，必须加带描述的 `TODO`，方便后续检索：
+
+```dart
+// TODO(auth): 后端未定登录返回结构，先按 {token, user} 假设，接口定了要改
+// TODO(i18n): 文案待抽到 ARB，等 l10n 基建就绪
+```
+
+- 写清**为什么不确定 / 待办什么**，不要只写空 `// TODO`。
+- 建议带模块前缀 `TODO(<scope>):`，便于全局搜索归类。
+
+## 🌐 页面文案禁止硬编码（i18n）
+
+页面（`screens/` `widgets/`）里**用户可见文案一律走国际化**，禁止出现中/英文字面量（见 `i18n.mdc`）。
+
+> ⚠️ i18n 属于 infra：若 gen-l10n 基建（`l10n.yaml` + `lib/l10n/*.arb` + `AppLocalizations`）尚未就绪，业务 agent **不得自行搭建**，按上面「生成边界」停下询问，由人工先建基建。
+
+## ✅ 自检清单（生成后）
+
+- [ ] 只改了 feature 业务层，没碰 `core/` `app/` `theme/` 与工程配置。
+- [ ] 依 `_api.md` 只生成了 data/domain 契约层，依 `_page.md` 只生成了 screens/widgets/controllers，无跨文档越界。
+- [ ] 业务文档遵循 `_page`/`_api` 拆分 + `## vN` 版本化书写模式。
+- [ ] 页面无硬编码文案（或已用 TODO 标出待抽取，且 i18n 基建缺失已上报）。
+- [ ] 无真实接口的部分放在 `data/mock/`，并已说明「接完即删」。
+- [ ] 所有不确定处都有带描述的 `TODO(<scope>):`。
+- [ ] 需要动 infra 的点已单独列出、显式询问，而非擅自修改。

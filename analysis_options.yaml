@@ -1,0 +1,30 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # Freezed 3 的 sealed class 构造参数上打 @JsonKey 是官方推荐写法，
+    # 但分析器把构造参数当非法注解目标误报。全项目忽略这条。
+    invalid_annotation_target: ignore
+  exclude:
+    - "**/*.freezed.dart"
+    - "**/*.g.dart"
+    - "lib/l10n/app_localizations*.dart"
+
+linter:
+  rules:
+    # 红线 1：字符串统一双引号。flutter_lints 默认开的是 prefer_single_quotes，
+    # 两者互斥，必须显式关掉前者。
+    prefer_single_quotes: false
+    prefer_double_quotes: true
+
+    # 红线 6：禁止 print，日志一律走 shared/utils/logger.dart。
+    avoid_print: true
+
+    # 常量化与不可变优先，减少无谓 rebuild。
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+
+    # 公开 API 显式标注返回类型，便于跨层阅读。
+    always_declare_return_types: true

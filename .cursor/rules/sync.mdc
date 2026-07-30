@@ -1,0 +1,43 @@
+---
+description: 规范同步约定 —— Cursor rules 与 Claude skill 表达同一套规范，需同步
+alwaysApply: true
+---
+
+# 规范同步约定（rules ↔ skill）
+
+本仓库的 Flutter 工程规范以**两种原生格式**维护，内容等价：
+
+- **Cursor**：`.cursor/rules/*.mdc` —— 每条规则**自包含**（正文即完整规范，按 `globs` 自动生效，无外部引用）。
+- **Claude**：`.claude/skills/flutter-best-practices/` —— skill 形式（`SKILL.md` + `references/00..15`），按需渐进加载。
+
+## 硬性要求
+
+- **改规范** 时：同一约定在两处都要改，保持一致。
+  - Cursor 侧改对应 `.cursor/rules/<domain>.mdc` 正文；
+  - Claude 侧改 `.claude/skills/flutter-best-practices/references/<nn-domain>.md`。
+- **新增一个领域**：三处补齐 ——
+  1. `.claude/skills/flutter-best-practices/references/<nn-xxx>.md`；
+  2. `SKILL.md` 索引表加一行；
+  3. `.cursor/rules/<xxx>.mdc`（frontmatter `description` + `globs` + 自包含正文）。
+- Cursor 规则**不引用外部文件**（不写 `@` 指向 `.claude` 或其他目录），确保 `.cursor` 自包含。
+
+## 领域 ↔ 文件对照
+
+| 领域 | Cursor rule | Claude reference |
+| --- | --- | --- |
+| 核心/总览 | `flutter-core.mdc` | `references/00-overview.md` |
+| 结构+架构 | `architecture.mdc` | `references/01-…`, `references/02-…` |
+| 命名 | `naming.mdc` | `references/03-…` |
+| 状态管理 | `state-management.mdc` | `references/04-…` |
+| 网络 | `networking.mdc` | `references/05-…` |
+| 数据模型 | `data-models.mdc` | `references/06-…` |
+| 路由 | `routing.mdc` | `references/07-…` |
+| 错误处理 | `error-handling.mdc` | `references/08-…` |
+| 主题/UI | `ui-theming.mdc` | `references/09-…` |
+| 存储/配置/安全 | `storage-config.mdc` | `references/10-…` |
+| 国际化 | `i18n.mdc` | `references/11-…` |
+| 代码生成 | `code-generation.mdc` | `references/12-…` |
+| 测试 | `testing.mdc` | `references/13-…` |
+| 性能 | `performance.mdc` | `references/14-…` |
+| Git/质量 | `git-quality.mdc` | `references/15-…` |
+| Agent 文档驱动工作流 | `agent-workflow.mdc` | `references/16-…` |

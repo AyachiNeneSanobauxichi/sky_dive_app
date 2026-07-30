@@ -1,0 +1,120 @@
+# 08 · 错误处理
+
+> 分层错误模型：底层抛 `AppException`（技术异常）→ Repository 转换为 `Failure`（面向 UI 的领域失败）→ UI 用 `AsyncValue.error` 渲染友好文案。
+
+## 概念区分
+
+| 类型 | 位置 | 用途 |
+| --- | --- | --- |
+| `AppException` | `core/error/app_exception.dart` | 技术层异常（网络/超时/解析/服务端） |
+| `Failure` | `core/error/failure.dart` | 面向业务/UI 的失败，含可展示文案 |
+| `AsyncError` | UI | Riverpod 异步态的错误分支 |
+
+## ✅ 应该
+
+- **拦截器/DataSource** 抛具体 `AppException` 子类。
+- **Repository** `catch` `AppException` 后转成 `Failure` 或直接向上抛（由 controller 用 `AsyncValue.guard` 捕获）。
+- **UI 文案** 由 `Failure` 决定，向用户展示可理解的信息，不暴露堆栈/技术细节。
+- **可恢复错误** 提供重试入口（`ref.invalidate` / 重新请求）。
+- **全局兜底**：`main` 里设置 `FlutterError.onError` 与 `PlatformDispatcher.instance.onError`，统一记日志。
+
+## ❌ 避免
+
+- ❌ `catch (e) {}` 空吞异常。
+- ❌ 把 `DioException`/堆栈直接 `Text(e.toString())` 展示给用户。
+- ❌ 用返回 `null` 表达失败（信息丢失）。
+- ❌ 在多层重复 try/catch 造成语义混乱。
+
+## 📌 异常层级
+
+```dart
+// lib/core/error/app_exception.dart
+sealed class AppException implements Exception {
+  const AppException(this.message);
+  final String message;
+}
+
+final class NetworkException extends AppException {
+  const NetworkException() : super("网络连接失败");
+}
+final class TimeoutException extends AppException {
+  const TimeoutException() : super("请求超时");
+}
+final class ServerException extends AppException {
+  const ServerException({this.statusCode, String? message})
+      : super(message ?? "服务器异常");
+  final int? statusCode;
+}
+final class ParseException extends AppException {
+  const ParseException() : super("数据解析失败");
+}
+final class UnknownException extends AppException {
+  const UnknownException() : super("未知错误");
+}
+```
+
+## 📌 Failure（面向 UI）
+
+```dart
+// lib/core/error/failure.dart
+import "package:freezed_annotation/freezed_annotation.dart";
+
+part "failure.freezed.dart";
+
+@freezed
+sealed class Failure with _$Failure {
+  const factory Failure.network() = NetworkFailure;
+  const factory Failure.server({String? message}) = ServerFailure;
+  const factory Failure.unauthorized() = UnauthorizedFailure;
+  const factory Failure.unknown() = UnknownFailure;
+}
+
+extension AppExceptionX on AppException {
+  Failure toFailure() => switch (this) {
+        NetworkException() => const Failure.network(),
+        TimeoutException() => const Failure.network(),
+        ServerException(:final statusCode, :final message) =>
+          statusCode == 401 ? const Failure.unauthorized() : Failure.server(message: message),
+        _ => const Failure.unknown(),
+      };
+}
+
+extension FailureMessage on Failure {
+  String get displayMessage => switch (this) {
+        NetworkFailure() => "网络不可用，请检查连接后重试",
+        ServerFailure(:final message) => message ?? "服务开小差了，请稍后再试",
+        UnauthorizedFailure() => "登录已过期，请重新登录",
+        UnknownFailure() => "出错了，请稍后再试",
+      };
+}
+```
+
+## 📌 全局兜底（main）
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
+
+  FlutterError.onError = (details) => AppLogger.e("FlutterError", details.exception, details.stack);
+  PlatformDispatcher.instance.onError = (error, stack) {
+    AppLogger.e("Uncaught", error, stack);
+    return true;
+  };
+
+  runApp(const ProviderScope(child: App()));
+}
+```
+
+## 📌 UI 渲染错误
+
+```dart
+todos.when(
+  data: (list) => TodoListView(items: list),
+  loading: () => const LoadingView(),
+  error: (e, _) {
+    final msg = e is Failure ? e.displayMessage : "出错了，请稍后再试";
+    return ErrorView(message: msg, onRetry: () => ref.invalidate(todoListControllerProvider));
+  },
+);
+```
