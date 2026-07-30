@@ -97,4 +97,4 @@ enum TodoPriority {
 }
 ```
 
-> 改完模型后运行 `dart run build_runner build --delete-conflicting-outputs`（见 `12-code-generation.md`）。
+> 改完模型后运行 `dart run build_runner build`（见 `12-code-generation.md`）。

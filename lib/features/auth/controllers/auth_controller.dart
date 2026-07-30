@@ -1,17 +1,19 @@
 import "dart:async";
 import "dart:convert";
 
-import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:happy_os/core/network/index.dart";
 import "package:happy_os/core/providers/index.dart";
 import "package:happy_os/core/storage/index.dart";
 import "package:happy_os/features/auth/data/index.dart";
 import "package:happy_os/features/auth/domain/index.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
+
+part "auth_controller.g.dart";
 
 /// Auth 仓库 DI：组装 DataSource（依赖全局 DioClient）。
-final authRepositoryProvider = Provider<AuthRepository>(
-  (ref) => AuthRepository(AuthRemoteDataSource(ref.watch(dioClientProvider))),
-);
+@Riverpod(keepAlive: true)
+AuthRepository authRepository(Ref ref) =>
+    AuthRepository(AuthRemoteDataSource(ref.watch(dioClientProvider)));
 
 /// 全局登录态控制器（v2）。
 ///
@@ -20,11 +22,11 @@ final authRepositoryProvider = Provider<AuthRepository>(
 ///
 /// 登录/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由页面
 /// 各自的本地标记承载；登录失败以异常上抛，页面本地捕获提示。
-final authControllerProvider = AsyncNotifierProvider<AuthController, AuthState>(
-  AuthController.new,
-);
-
-class AuthController extends AsyncNotifier<AuthState> {
+///
+/// keepAlive 必需：autoDispose 会在无监听者时重跑 [build] 的静默刷新流程，
+/// 造成登录态抖动甚至误登出。
+@Riverpod(keepAlive: true)
+class AuthController extends _$AuthController {
   AuthRepository get _repo => ref.read(authRepositoryProvider);
   SecureStorage get _storage => ref.read(secureStorageProvider);
   AccessTokenStore get _tokenStore => ref.read(accessTokenStoreProvider);

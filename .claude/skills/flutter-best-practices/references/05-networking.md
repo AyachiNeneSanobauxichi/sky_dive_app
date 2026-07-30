@@ -46,8 +46,12 @@ class DioClient {
 ## 📌 Dio 装配（provider）
 
 ```dart
-// lib/core/providers/core_providers.dart（手写 provider，非 @riverpod）
-final dioProvider = Provider<Dio>((ref) {
+// lib/core/providers/core_providers.dart
+part "core_providers.g.dart";
+
+// Dio 全局单例：keepAlive 避免监听者归零时被销毁重建
+@Riverpod(keepAlive: true)
+Dio dio(Ref ref) {
   final dio = Dio(BaseOptions(
     baseUrl: Env.apiBaseUrl,
     connectTimeout: const Duration(seconds: 15),
@@ -62,10 +66,10 @@ final dioProvider = Provider<Dio>((ref) {
   ]);
   ref.onDispose(dio.close);
   return dio;
-});
+}
 
-final dioClientProvider =
-    Provider<DioClient>((ref) => DioClient(ref.watch(dioProvider)));
+@Riverpod(keepAlive: true)
+DioClient dioClient(Ref ref) => DioClient(ref.watch(dioProvider));
 ```
 
 ## 📌 ErrorInterceptor（转换为领域异常）

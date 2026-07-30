@@ -64,16 +64,20 @@ final List<RouteBase> appRoutes = [
 ## 📌 GoRouter provider + 鉴权 redirect
 
 ```dart
-// lib/app/router/app_router.dart（手写 provider）
-final appRouterProvider = Provider<GoRouter>((ref) {
+// lib/app/router/app_router.dart
+part "app_router.g.dart";
+
+// 路由表常驻：重建 GoRouter 会丢失导航栈
+@Riverpod(keepAlive: true)
+GoRouter appRouter(Ref ref) {
   final auth = ref.watch(authControllerProvider);
   return GoRouter(
-    initialLocation: RoutePath.todos,
+    initialLocation: RoutePath.home,
     routes: appRoutes,
     redirect: (context, state) => guardRedirect(auth, state),
     errorBuilder: (context, state) => const NotFoundScreen(),
   );
-});
+}
 ```
 
 ```dart

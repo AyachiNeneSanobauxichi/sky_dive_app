@@ -1,6 +1,6 @@
 # 12 · 代码生成（build_runner / gen-l10n）
 
-> Freezed / json_serializable 依赖 `build_runner`；国际化依赖 `gen-l10n`。⚠️ Riverpod **不参与**代码生成——本仓库 provider/notifier 一律手写（工具链无法运行 `riverpod_generator`，见 `04-state-management.md` 与 `agent/study/riverpod-codegen-issue.md`）。生成文件（`*.g.dart` / `*.freezed.dart` / `app_localizations*.dart`）**不手改、不入 review 关注点，但需入库**（保证 CI/他人可编译）。
+> Freezed / json_serializable / **riverpod_generator** 依赖 `build_runner`；国际化依赖 `gen-l10n`。⚠️ riverpod 相关包的版本上限已在 `pubspec.yaml` 锁死，勿放宽（见下方「🔒 Riverpod 版本锁」）。生成文件（`*.g.dart` / `*.freezed.dart` / `app_localizations*.dart`）**不手改、不入 review 关注点，但需入库**（保证 CI/他人可编译）。
 
 ## 🚦 新增「需命令生成」的工具包 → 必须写进 README
 
@@ -15,16 +15,16 @@
 
 - 新增/修改带 `@freezed` 的类。
 - 新增/修改带 `@JsonSerializable` / `fromJson` 的类。
-- （provider/notifier 手写，改动**无需**重新生成。）
+- 新增/修改带 `@riverpod` 的函数或 Notifier 类。
 
 ## 常用命令
 
 ```bash
-# 一次性生成（推荐加 --delete-conflicting-outputs 清理旧产物）
-dart run build_runner build --delete-conflicting-outputs
+# 一次性生成（build_runner 2.15+ 已移除 --delete-conflicting-outputs，传了会被忽略）
+dart run build_runner build
 
 # 开发期监听自动生成
-dart run build_runner watch --delete-conflicting-outputs
+dart run build_runner watch
 
 # 清理生成缓存
 dart run build_runner clean
@@ -35,12 +35,79 @@ flutter gen-l10n
 
 > `pubspec.yaml` 里 `flutter: generate: true` 时，`flutter run`/`flutter build` 会自动跑一次 gen-l10n；改完 arb 想立即拿到新 `AppLocalizations` 可手动 `flutter gen-l10n`。
 
+## 🔒 Riverpod 版本锁（**改约束前必读**）
+
+`pubspec.yaml` 里这两个上限是**刻意锁死**的，写成 `^` 或跑 `flutter pub upgrade` 会让依赖解算**立刻失败**：
+
+```yaml
+dependencies:
+  flutter_riverpod: ">=3.0.0 <3.3.0"   # → 3.1.0
+  riverpod_annotation: ^4.0.0          # → 4.0.0
+dev_dependencies:
+  riverpod_generator: <4.0.6           # → 4.0.0+1
+```
+
+### 为什么
+
+**第一层——一条 SDK 下限卡住三个包**（当前 Flutter 3.38.3 / Dart 3.10.1）：
+
+| 包 | 要求 Dart SDK |
+| --- | --- |
+| `riverpod_generator` >= 4.0.6 | >= 3.12.0 ❌ |
+| `riverpod_lint` >= 3.1.6 | >= 3.12.0 ❌ |
+| `flutter_riverpod` >= 3.4.1 | >= 3.12.0 ❌ |
+
+**第二层——退到低版本后又与 Freezed 3 互斥**：
+
+- `riverpod_generator < 3.0.0-dev.17` 依赖 `build ^2.0.0`，而 `freezed 3.2.3` 依赖 `build >=3.0.0 <5.0.0`
+  → 互斥。Freezed 3 是红线，不能退。
+- `riverpod_generator 4.0.0~4.0.5` 要求 `riverpod <= 3.2.0`，而 `flutter_riverpod 3.3.2` 锁定
+  `riverpod 3.3.2` → 必须把 `flutter_riverpod` 降到 3.1.0。
+
+**`riverpod_lint` 无解**：低版本要 `analyzer ^7.0.0` 或 `analyzer_plugin ^0.11.2/^0.14.0`，但
+`build_runner 2.15.x` 要 `analyzer >=8.0.0`，且 `custom_lint <0.7.4` 还要 `freezed_annotation ^2.2.0`
+（本项目是 3.1.0）。**任何组合都装不上**，除非升 SDK。
+
+### 代价
+
+- `flutter_riverpod` 被压在 3.1.0（同属 Riverpod 3.x，API 兼容，已验证 analyze 零问题 + 构建通过）。
+- **没有 `riverpod_lint`**：漏 `ref.watch`、provider 循环依赖、`@riverpod` 用法错误等**没有静态检查兜底，只能靠 code review**。
+
+### 解锁路径
+
+升级 Flutter SDK 到带 **Dart >= 3.12.0** 的版本，然后：
+
+```yaml
+dependencies:
+  flutter_riverpod: ^3.4.2
+  riverpod_annotation: ^4.0.6
+dev_dependencies:
+  riverpod_generator: ^4.0.8
+  riverpod_lint: ^3.1.6
+  custom_lint: ^0.8.1
+```
+
+并在 `analysis_options.yaml` 加：
+
+```yaml
+analyzer:
+  plugins:
+    - custom_lint
+```
+
+⚠️ 当前 Flutter 是**全局 git checkout**（`/Users/haruka/Yui/Flutter/sdk/flutter`），升级会影响本机
+所有 Flutter 项目；若只想对本项目升级，先引入 `fvm` 做版本隔离。
+
+> 历史订正：早期规范曾断言「当前工具链**无法运行** `riverpod_generator`，provider 一律手写」。
+> 该判断不成立——障碍是依赖解算冲突，锁对版本后生成器工作正常（函数式 / `keepAlive` / 带参数 /
+> 同步 Notifier / 异步 Notifier / 带参数 Notifier 六种形态均已实测生成成功）。
+
 ## ✅ 应该
 
 - 每个使用注解的文件顶部声明对应 `part`：
   - Freezed：`part "xxx.freezed.dart";`
   - JSON：`part "xxx.g.dart";`
-  - （Riverpod 手写，无 `part` / 无 `.g.dart`。）
+  - Riverpod：`part "xxx.g.dart";`（与 json_serializable 共用同一个 `.g.dart`）。
 - 改完注解**立即** `build_runner build` 再继续，避免编译报错误导。
 - 生成产物**提交入库**（CI 环境可直接编译，减少构建时长与不确定性）。
 - 遇到冲突/幽灵错误：`build_runner clean` 后重跑。

@@ -37,7 +37,7 @@ alwaysApply: false
 
 ```bash
 dart format .                                   # 1. 格式化
-dart run build_runner build --delete-conflicting-outputs  # 2. 若改了注解，重新生成
+dart run build_runner build  # 2. 若改了注解，重新生成
 flutter analyze                                 # 3. 静态分析必须零告警
 flutter test                                    # 4. 测试通过
 ```
