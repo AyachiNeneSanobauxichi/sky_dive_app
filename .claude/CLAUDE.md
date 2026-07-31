@@ -11,7 +11,7 @@
 5. 每个目录维护 `index.dart` barrel；对外只经 barrel 引用。
 6. 提交前 `dart format` + `flutter analyze`（零告警）+ `flutter test`。禁止 `print`。
 7. **关键函数/复杂逻辑必须写注释**（讲意图/为什么）；UI 代码注释保持简洁。
-8. **禁止魔法值**：尺寸/圆角用 `HappySpacing`/`HappyRadius`，颜色用 `colorScheme`/`HappyColors`，文字用 `textTheme`/`HappyTextStyles`；禁止内联 `TextStyle(fontSize: ...)`、`Color(0xFF...)`、裸数值尺寸。
+8. **禁止魔法值**：间距用 `HappySemanticSpacing`/`HappySpacing`（`s16` 式数值命名），圆角/描边/图标/控件高度用 `HappyRadius`/`HappyBorderWidth`/`HappyIconSize`/`HappyControlSize`，颜色用 `colorScheme`（业务层**禁止**直接引 `HappyColors`），文字用 `textTheme`，渐变/阴影用 `HappyGradients`/`HappyShadows`，动效时长与曲线用 `HappyMotion`；禁止内联 `TextStyle(fontSize: ...)`、`Color(0xFF...)`、裸数值尺寸、`Duration(milliseconds: ...)`。详见 `references/09-theming-ui.md`。
 9. **页面文案禁止硬编码**：用户可见文案一律走国际化（gen-l10n `AppLocalizations`/ARB），`screens/`·`widgets/` 内不得出现中/英文字面量。
 10. **agent 生成边界**：依业务文档（`*_page.md`/`*_api.md`）生成的代码**只写业务层**，**禁止改动 infra**（`core/`、`app/router`、`theme/`、`DioClient`、工程配置等）；确有必要必须停下重点询问、由人工操作。`agent/infra/*` 文档只写 infra。**`_api.md` 只生成接口定义相关代码**（`data/` DTO/数据源/仓库 + 对应 `domain/` 实体），**`_page.md` 才生成 UI 与业务**（`screens/`·`widgets/`·`controllers/`）；不得跨文档越界。业务文档须遵循 `_page`/`_api` 拆分 + `## vN` 版本化书写模式（详见 `references/16-agent-workflow.md`）。
 11. **无真实接口用 mock**：暂无后端时在 feature 的 `data/mock/` 建 mock 数据跑通逻辑，**接入真实接口后立即删除** mock 文件夹；不确定处一律加带描述的 `TODO(<scope>): ...`。

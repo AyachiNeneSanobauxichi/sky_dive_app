@@ -1,5 +1,6 @@
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
+import "package:flutter_animate/flutter_animate.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:form_builder_validators/form_builder_validators.dart";
 import "package:go_router/go_router.dart";
@@ -9,6 +10,7 @@ import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/auth/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
 import "package:happy_os/shared/widgets/index.dart";
+import "package:lucide_icons_flutter/lucide_icons.dart";
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -44,7 +46,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     // 跨 await 前先捕获依赖 context 的对象，避免 async gap 后再读 context。
     final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
 
     setState(() => _isSubmitting = true);
     try {
@@ -59,9 +60,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } on Object catch (e) {
       if (!mounted) return;
       final msg = e is Failure ? e.displayMessage : l10n.authErrorGeneric;
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(msg)));
+      HappyToast.error(context, msg);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -82,122 +81,104 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: HappySpacing.md),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: HappySpacing.lg),
-                Center(
-                  child: Container(
-                    width: HappySpacing.xxl * 1.5,
-                    height: HappySpacing.xxl * 1.5,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
+      // 极光背景让登录页第一眼就是品牌，而不是一张空白表单
+      body: HappyAuroraBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: HappySemanticSpacing.screenPadding,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const SizedBox(height: HappySpacing.s56),
+                  const HappyBrandMark(),
+                  const SizedBox(height: HappySpacing.s24),
+                  // 叙事衬线大标题：产品调性的第一触点
+                  Text(l10n.loginTitle, style: theme.textTheme.displaySmall),
+                  const SizedBox(height: HappySpacing.s8),
+                  Text(
+                    l10n.loginSubtitle,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
-                    child: Icon(
-                      Icons.lock_outline,
-                      size: HappySpacing.xxl,
-                      color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: HappySemanticSpacing.sectionGap),
+                  AuthInput(
+                    // v2：登录标识符接受邮箱或用户名，故不再做邮箱格式校验，仅校验必填。
+                    label: l10n.authIdentifierLabel,
+                    icon: LucideIcons.user,
+                    controller: _identifierController,
+                    textInputAction: TextInputAction.next,
+                    autofillHints: const <String>[AutofillHints.username],
+                    validator: FormBuilderValidators.required(),
+                  ),
+                  const SizedBox(height: HappySemanticSpacing.itemGap),
+                  AuthPassword(
+                    // 登录只校验必填：密码复杂度规则属于注册期约束，登录不重复施加。
+                    label: l10n.authPasswordLabel,
+                    controller: _passwordController,
+                    textInputAction: TextInputAction.done,
+                    autofillHints: const <String>[AutofillHints.password],
+                    validator: FormBuilderValidators.required(),
+                  ),
+                  const SizedBox(height: HappySpacing.s4),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: Text(l10n.loginForgotPassword),
                     ),
                   ),
-                ),
-                const SizedBox(height: HappySpacing.md),
-                Text(
-                  l10n.loginTitle,
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: HappySpacing.s12),
+                  HappyButton(
+                    label: l10n.loginSubmit,
+                    onPressed: _onLogin,
+                    isLoading: _isSubmitting,
+                    size: HappyButtonSize.large,
                   ),
-                ),
-                const SizedBox(height: HappySpacing.xs),
-                Text(
-                  l10n.loginSubtitle,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                  const SizedBox(height: HappySemanticSpacing.sectionGap),
+                  OrDivider(text: l10n.commonOr),
+                  const SizedBox(height: HappySpacing.s24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: HappySpacing.s16,
+                    children: <Widget>[
+                      // Lucide 不含品牌 logo，这里先用语义图标占位。
+                      // TODO(auth): 三方登录接入后换成各家官方 SVG（flutter_svg）。
+                      SocialIconButton(icon: LucideIcons.mail, onTap: () {}),
+                      SocialIconButton(icon: LucideIcons.apple, onTap: () {}),
+                      SocialIconButton(icon: LucideIcons.wallet, onTap: () {}),
+                    ],
                   ),
-                ),
-                const SizedBox(height: HappySpacing.lg),
-                AuthInput(
-                  // v2：登录标识符接受邮箱或用户名，故不再做邮箱格式校验，仅校验必填。
-                  label: l10n.authIdentifierLabel,
-                  icon: Icons.person_outline,
-                  controller: _identifierController,
-                  textInputAction: TextInputAction.next,
-                  autofillHints: [AutofillHints.username],
-                  validator: FormBuilderValidators.required(),
-                ),
-                const SizedBox(height: HappySpacing.md),
-                AuthPassword(
-                  // 登录只校验必填：密码复杂度规则属于注册期约束，登录不重复施加。
-                  label: l10n.authPasswordLabel,
-                  controller: _passwordController,
-                  textInputAction: TextInputAction.done,
-                  autofillHints: [AutofillHints.password],
-                  validator: FormBuilderValidators.required(),
-                ),
-                const SizedBox(height: HappySpacing.xs),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text(l10n.loginForgotPassword),
-                  ),
-                ),
-                const SizedBox(height: HappySpacing.sm),
-                HappyButton(
-                  label: l10n.loginSubmit,
-                  onPressed: _onLogin,
-                  isLoading: _isSubmitting,
-                  isFullWidth: true,
-                ),
-                const SizedBox(height: HappySpacing.md),
-                Row(
-                  spacing: HappySpacing.sm,
-                  children: [
-                    const Expanded(child: Divider()),
-                    Text(l10n.commonOr, style: theme.textTheme.bodySmall),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: HappySpacing.lg),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: HappySpacing.md,
-                  children: [
-                    SocialIconButton(icon: Icons.g_mobiledata, onTap: () {}),
-                    SocialIconButton(icon: Icons.apple, onTap: () {}),
-                    SocialIconButton(icon: Icons.wallet, onTap: () {}),
-                  ],
-                ),
-                const SizedBox(height: HappySpacing.xl),
-                Center(
-                  child: Text.rich(
-                    TextSpan(
-                      style: theme.textTheme.bodyMedium,
-                      children: [
-                        TextSpan(text: l10n.loginNoAccount),
-                        TextSpan(
-                          text: l10n.loginGoRegister,
-                          style: TextStyle(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.w600,
+                  const SizedBox(height: HappySpacing.s40),
+                  Center(
+                    child: Text.rich(
+                      TextSpan(
+                        style: theme.textTheme.bodyMedium,
+                        children: <InlineSpan>[
+                          TextSpan(text: l10n.loginNoAccount),
+                          TextSpan(
+                            text: l10n.loginGoRegister,
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: theme.colorScheme.primary,
+                            ),
+                            recognizer: _goRegisterTap,
                           ),
-                          recognizer: _goRegisterTap,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: HappySpacing.lg),
-              ],
+                  const SizedBox(height: HappySpacing.s32),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    );
+      // 整页轻微上浮淡入：进入认证流程时给一个"落位"的仪式感
+    ).animate().fadeIn(duration: HappyMotion.slow, curve: HappyMotion.standard);
   }
 }

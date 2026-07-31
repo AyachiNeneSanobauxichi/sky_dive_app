@@ -1,112 +1,141 @@
 # 09 · 主题与 UI
 
-> 主题集中在 `lib/core/theme/`（`app_colors.dart` + `app_theme.dart`）；组件遵循 Material 3；复用组件下沉到 `lib/shared/widgets/`（全局）或 feature 的 `widgets/`（私有）。
+> 设计系统集中在 `lib/core/theme/`，全局组件在 `lib/shared/widgets/`（`Happy*` 前缀），feature 私有组件在各 feature 的 `widgets/`。底座是 Material 3，**不引入 shadcn_flutter / forui 之类的整套 UI 框架**（理由见文末）。
 
-## ✅ 应该
+## 🎨 设计基调：深色优先 · 电影感
 
-- **颜色/间距/圆角/字体** 集中为全局令牌（`HappyColors` / `HappySpacing` / `HappyRadius` / `HappyTextStyles`），Widget 通过 `Theme.of(context)` 取值，**不散落魔法值**（见下方红线）。
-- **Material 3**：`ThemeData(useMaterial3: true, colorScheme: ...)`，支持 `light`/`dark`；色板用 `ColorScheme.fromSeed` 生成完整角色。
-- **文本样式** 用 `Theme.of(context).textTheme`（令牌 `HappyTextStyles`），**禁止**内联 `TextStyle(fontSize: ...)`。
-- **组件拆分**：`build` 过长时拆成小 Widget（class 优先于返回 Widget 的方法，利于 const 与重建优化）。
-- **const 化**：静态子树尽量 `const`。
-- **列表** 用 `ListView.builder` / `SliverList` 懒加载；给 item 稳定 `key`。
-- **网络图** 用 `CachedNetworkImage`，配 `placeholder` 与 `errorWidget`。
-- **响应式**：用 `LayoutBuilder` / `MediaQuery` 适配，避免写死尺寸。
-- **无障碍**：交互控件提供 `Semantics`/`tooltip`，可点区域 ≥ 48dp。
+HappyOS 把用户的真实经历改写成惊险故事，主场景是"夜里读自己的故事"。因此：
 
-## ❌ 避免
+- **深色是一等设计目标**，浅色是完整支持的副场。写任何 UI 都要在两套主题下都看一眼。
+- **品牌语言 = 紫罗兰 → 品红的光**。渐变、光晕、极光背景是识别物，不是装饰。
+- **标题用衬线体**（Instrument Serif）传递叙事感，界面与正文用 Inter。
 
-- ❌ 硬编码颜色 `Color(0xFF...)`、字号、间距散落各处。
-- ❌ 用 `MediaQuery.of(context).size` 做绝对像素布局。
-- ❌ 在 `build` 里创建 controller/大对象（应在 `initState`/provider）。
-- ❌ 用 `Column` + 大量子项代替可滚动懒加载列表。
-- ❌ 业务逻辑写进 Widget。
+## 🧱 令牌总览
 
-## 🚫 红线：禁止魔法值（尺寸 / 字体 / 颜色）
+| 文件 | 类 | 管什么 |
+| --- | --- | --- |
+| `app_colors.dart` | `HappyColors` | 原始色值。**业务层禁止直接引用**，只给 `app_theme` / `app_gradients` / `app_shadows` 当原料 |
+| `app_theme.dart` | `HappyTheme` | `light` / `dark` 两套 `ThemeData` 装配 |
+| `app_text_styles.dart` | `HappyFonts`、`HappyTextStyles` | 字体族与中文回退链、完整 `TextTheme` |
+| `app_spacing.dart` | `HappySpacing`、`HappySemanticSpacing`、`HappyRadius`、`HappyBorderWidth`、`HappyIconSize`、`HappyControlSize` | 间距 / 圆角 / 描边 / 图标 / 控件尺寸 |
+| `app_gradients.dart` | `HappyGradients` | 品牌渐变、极光光斑、玻璃高光、流光 |
+| `app_shadows.dart` | `HappyShadows` | 阴影与品牌光晕（按 `Brightness` 分支） |
+| `app_motion.dart` | `HappyMotion` | 动效时长与缓动曲线 |
 
-项目**不允许**魔法数字、内联字体、硬编码颜色，一律用全局令牌：
+全部经 `lib/core/theme/index.dart` 导出，业务层 `import "package:happy_os/core/theme/index.dart";`。
 
-- 尺寸 / 间距 / 圆角 → `HappySpacing` / `HappyRadius`
-- 颜色 → `Theme.of(context).colorScheme`（组件层）/ `HappyColors`（仅 `app_theme` 组装用）
-- 文字 → `Theme.of(context).textTheme` / `HappyTextStyles`
+## 🚫 红线：禁止魔法值
 
 ```dart
 // ❌ 禁止
-textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
 padding: const EdgeInsets.all(16),
+borderRadius: BorderRadius.circular(12),
+textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
 color: const Color(0xFF7C3AED),
+duration: const Duration(milliseconds: 300),
+BoxShadow(color: Colors.black26, blurRadius: 8),
 
 // ✅ 用令牌
-textStyle: Theme.of(context).textTheme.labelLarge,
-padding: const EdgeInsets.all(HappySpacing.md),
+padding: const EdgeInsets.all(HappySemanticSpacing.cardPadding),
+borderRadius: BorderRadius.circular(HappyRadius.card),
+style: Theme.of(context).textTheme.labelLarge,
 color: Theme.of(context).colorScheme.primary,
+duration: HappyMotion.normal,
+boxShadow: HappyShadows.card(Theme.of(context).brightness),
 ```
+
+对应关系：
+
+- 间距 → `HappySemanticSpacing`（优先）/ `HappySpacing`
+- 圆角 → `HappyRadius`；描边宽度 → `HappyBorderWidth`；图标 → `HappyIconSize`；控件高度 → `HappyControlSize`
+- 颜色 → `Theme.of(context).colorScheme`
+- 文字 → `Theme.of(context).textTheme`
+- 渐变 → `HappyGradients`；阴影 / 光晕 → `HappyShadows`
+- 时长 / 曲线 → `HappyMotion`
+
+## 📌 间距：数值后缀命名
+
+`HappySpacing` 用 `s4 / s8 / s12 / s16 / s20 / s24 / s32 …` 而不是 `sm / md / lg`。T 恤码会把刻度藏起来（历史上就因此缺了 12 和 20 两档没人发现），数值命名让整条 4pt 阶梯一眼可见，也能和设计稿的 "gap 20" 一一对应。
+
+**优先用语义别名**，只有覆盖不到时才用原始刻度：
+
+```dart
+HappySemanticSpacing.screenPadding  // 页面左右边距 20
+HappySemanticSpacing.cardPadding    // 卡片内边距 16
+HappySemanticSpacing.sectionGap     // 区块间距 32
+HappySemanticSpacing.itemGap        // 条目间距 12
+HappySemanticSpacing.labelGap       // 标签与控件 8
+```
+
+## 📌 字体
+
+```dart
+// 叙事大标题（衬线）——只给故事标题、开屏、空态主文案
+Text(title, style: theme.textTheme.displaySmall)
+// 页面 / 区块标题（Inter）
+Text(section, style: theme.textTheme.headlineMedium)
+// 故事正文（行高 1.65，长阅读专用）
+Text(body, style: theme.textTheme.bodyLarge)
+```
+
+- **`display*` = Instrument Serif，只有 Regular**。给它写 `fontWeight: FontWeight.w700` 会触发系统伪粗体、字形发糊，**禁止**。层级靠字号和留白拉。
+- 其余全部 Inter（400/500/600/700 静态字重，打包在 `assets/fonts/`）。
+- **只打包拉丁字体**（约 1.5MB）。中文走系统回退（`HappyFonts.textFallback` / `displayFallback`），不打包思源黑体/宋体——一个字重就 8–16MB。
+- 新增字重 / 字体族必须同时改 `pubspec.yaml` 的 `fonts:` 段和 `HappyFonts`。
 
 ## 📌 颜色与主题
 
-```dart
-// lib/core/theme/app_colors.dart
-abstract final class AppColors {
-  static const primary = Color(0xFF2563EB);
-  static const surface = Color(0xFFFFFFFF);
-  static const error = Color(0xFFDC2626);
-}
-```
+`HappyTheme` **不用 `ColorScheme.fromSeed`**，而是逐角色显式指定。`fromSeed` 的明度台阶由算法决定，做不出"近黑带紫 + 精确三级表面"这种有个性的深色画布；显式指定后结果可预测、可评审、可校对比度。
+
+深色三级表面（层级靠色阶而不是阴影表达）：
+
+| 角色 | 用途 |
+| --- | --- |
+| `surfaceContainerLowest` / `scaffoldBackgroundColor` | 页面画布 |
+| `surfaceContainerLow` | 常规卡片 |
+| `surfaceContainer` / `surfaceContainerHigh` | 输入框、列表项、次级按钮 |
+| `surfaceContainerHighest` | 弹层、菜单、toast |
+
+`surfaceTint` 已置为透明：M3 的色调抬升会给深色卡片蒙一层紫雾，和上面的色阶打架。
+
+## 📌 阴影与光晕
+
+深色底上投黑影等于什么都没发生。所以：
+
+- **浅色**用 `HappyShadows.card(brightness)` / `lifted(brightness)` 表达层级；
+- **深色**层级靠表面色阶，"这个元素是活的/可点的"靠 `HappyShadows.glow(color)`。
 
 ```dart
-// lib/core/theme/app_theme.dart
-abstract final class AppTheme {
-  static ThemeData get light => ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      );
-
-  static ThemeData get dark => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-          brightness: Brightness.dark,
-        ),
-      );
-}
+boxShadow: HappyShadows.glow(scheme.primary),          // 主按钮、选中态
+boxShadow: HappyShadows.lifted(theme.brightness),      // 弹层、toast
 ```
 
-## 📌 复用组件（含语义化 + const）
+## 📌 动效
 
 ```dart
-// lib/shared/widgets/primary_button.dart
-class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({super.key, required this.label, this.onPressed, this.loading = false});
+AnimatedContainer(duration: HappyMotion.normal, curve: HappyMotion.standard, …)
 
-  final String label;
-  final VoidCallback? onPressed;
-  final bool loading;
+// 入场（flutter_animate）
+widget.animate().fadeIn(duration: HappyMotion.slow, curve: HappyMotion.standard)
 
-  @override
-  Widget build(BuildContext context) {
-    return FilledButton(
-      onPressed: loading ? null : onPressed,
-      child: loading
-          ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
-          : Text(label),
-    );
-  }
-}
+// 环境动效必须尊重系统"减弱动态效果"
+final shouldAnimate = !MediaQuery.disableAnimationsOf(context);
 ```
 
-## 📌 间距规范（建议 4 的倍数）
+时长档位：`instant`(90) / `fast`(160) / `normal`(240) / `slow`(400) / `story`(700) / `ambient`(6000)。
 
-```dart
-abstract final class Spacing {
-  static const xs = 4.0;
-  static const sm = 8.0;
-  static const md = 16.0;
-  static const lg = 24.0;
-  static const xl = 32.0;
-}
-```
+## 📌 全局组件（`lib/shared/widgets/`）
+
+| 组件 | 用途 | 注意 |
+| --- | --- | --- |
+| `HappyButton` | 主按钮。`variant`：`primary`（品牌渐变+光晕）/ `secondary` / `ghost` / `danger`；`size`：`small` / `medium` / `large` | 自带按下缩放 + 触感反馈；一屏最多一个 `primary` |
+| `HappyCheckbox` / `HappyCheckboxFormField` | 复选框，后者接 `Form` 校验 | |
+| `HappyToast` | 全局轻提示 | 见下 |
+| `HappyBrandMark` | 品牌标记（渐变方块 + 图标 + 光晕） | 开屏 / 认证页头 / 空态 |
+| `HappyAuroraBackground` | 品牌极光背景 | **只用在需要氛围的页面**（开屏、认证、阅读、空态）；列表 / 表单等信息密集页别用，或把 `intensity` 压到 0.5 以下 |
+| `HappyGlassCard` | 毛玻璃卡片 | `BackdropFilter` 每帧重采样背景，**一屏 1–3 个封顶**；普通内容卡用 `Card`（主题已配好描边圆角） |
+
+新增全局组件：`Happy` 前缀 + `happy_*.dart` + 放 `lib/shared/widgets/<类别>/` + 更新 barrel。详见 `03-naming-conventions.md`。
 
 ## 📌 加载态：用骨架屏，不用 loading 转圈
 
@@ -127,17 +156,60 @@ Skeletonizer(
 ```
 
 - **页面级 / 列表级加载一律骨架屏**；骨架用同一套 item widget + 占位数据渲染，不另写占位形状。
-- 例外：按钮内联忙碌态（提交中）仍可用小转圈（如 `HappyButton.isLoading`）。
-- 存量 `CircularProgressIndicator` 逐步迁移到骨架屏。
+- 例外：按钮内联忙碌态（提交中）仍可用小转圈（`HappyButton.isLoading`）。
+- 冷启动等待用 `SplashScreen` 的呼吸品牌标记，不用转圈。
 
 ## 📌 轻提示：统一走 HappyToast
 
-用户提示（成功 / 失败 / 信息）**一律用 `HappyToast`**（`lib/shared/widgets/toast/`，基于 `toastification`），**不要**直接用 `ScaffoldMessenger.showSnackBar` 或裸调 `toastification`。app 根已挂 `ToastificationWrapper`（`app.dart`）。
+用户提示（成功 / 失败 / 警告 / 信息）**一律用 `HappyToast`**（`lib/shared/widgets/toast/`，基于 `toastification` 的 `showCustom`），**不要**直接用 `ScaffoldMessenger.showSnackBar` 或裸调 `toastification`。app 根已挂 `ToastificationWrapper`（`app.dart`）。
 
 ```dart
-HappyToast.success(context, l10n.todoSaveSuccess);
+HappyToast.success(context, l10n.storySaveSuccess);
 HappyToast.error(context, failure.displayMessage);
+HappyToast.warning(context, message);
 HappyToast.info(context, message);
 ```
 
-> 样式（顶部、扁平语义色、3 秒自动关）集中在 `HappyToast`，改样式只改一处。存量 `SnackBar` 逐步迁移。
+> 样式（顶部、深色卡片 + 语义色图标胶囊、3 秒自动关、点击即关、成功/失败带触感）集中在 `HappyToast`，改样式只改一处。
+
+## 📦 可用的 UI 相关三方库
+
+| 库 | 用途 |
+| --- | --- |
+| `flutter_animate` | 声明式动画链（入场、呼吸、微交互） |
+| `animations` | M3 转场（页面转场已在 `HappyTheme` 里配好共享横轴） |
+| `gpt_markdown` | 渲染 LLM 输出（流式追加、代码块、LaTeX） |
+| `flutter_svg` | SVG 图标与插画 |
+| `lucide_icons_flutter` | 图标集（`LucideIcons.xxx`）。**Lucide 不含品牌 logo**，三方登录等场景用 SVG |
+| `skeletonizer` | 骨架屏 |
+| `toastification` | toast 底层（只经 `HappyToast` 使用） |
+| `cached_network_image` | 网络图 |
+
+### 为什么不引入整套 UI 框架
+
+`shadcn_flutter` 会用 `ShadcnApp` + `ShadTheme` 替换 `MaterialApp` / `ThemeData`，直接废掉本仓库"走 `colorScheme` / `textTheme`"的红线，`skeletonizer` 与 `toastification` 也依赖 Material `Theme`。且这类库的气质是 Web SaaS / 后台面板（中性灰、细边框、小圆角、桌面密度），和 C 端叙事产品相反。
+
+需要某个组件（Sheet、Command Palette、Toggle Group…）时的正确做法：**读 shadcn_ui / forui 的源码当参考，用本仓库的令牌重写成 `Happy*` 组件，不引依赖**。
+
+## ✅ 其它约定
+
+- **组件拆分**：`build` 过长时拆成小 Widget（class 优先于返回 Widget 的方法，利于 const 与重建优化）。
+- **const 化**：静态子树尽量 `const`。
+- **列表** 用 `ListView.builder` / `SliverList` 懒加载；给 item 稳定 `key`。
+- **网络图** 用 `CachedNetworkImage`，配 `placeholder` 与 `errorWidget`。
+- **无障碍**：交互控件提供 `Semantics` / `tooltip`，可点热区 ≥ `HappyControlSize.minTapTarget`（44）。
+- **响应式**：用 `LayoutBuilder` / `MediaQuery` 适配，避免写死尺寸。
+
+## ❌ 避免
+
+- ❌ 硬编码颜色 `Color(0xFF...)`、字号、间距、时长散落各处。
+- ❌ 业务层直接引用 `HappyColors`（应走 `colorScheme`）。
+- ❌ 给 `display*` 衬线体加 `fontWeight`。
+- ❌ 满屏 `HappyGlassCard` / `HappyAuroraBackground`（性能与注意力双输）。
+- ❌ 在 `build` 里创建 controller / 大对象（应在 `initState` / provider）。
+- ❌ 用 `Column` + 大量子项代替可滚动懒加载列表。
+- ❌ 业务逻辑写进 Widget。
+
+## 🧪 设计系统改动后
+
+`test/core/theme/happy_theme_smoke_test.dart` 会在深浅两套主题下渲染全部全局组件。改令牌或组件后必须跑通它——主题里的断言只在运行时触发，`flutter analyze` 查不出来。

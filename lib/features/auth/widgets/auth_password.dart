@@ -1,6 +1,9 @@
 import "package:flutter/material.dart";
+import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
+import "package:lucide_icons_flutter/lucide_icons.dart";
 
+/// 认证流程的密码输入框（自带明文切换）。
 class AuthPassword extends StatefulWidget {
   const AuthPassword({
     super.key,
@@ -37,16 +40,16 @@ class _AuthPasswordState extends State<AuthPassword> {
       textInputAction: widget.textInputAction,
       validator: widget.validator,
       autofillHints: widget.autofillHints,
+      style: Theme.of(context).textTheme.bodyLarge,
       decoration: InputDecoration(
-        labelText: widget.label,
-        prefixIcon: const Icon(Icons.lock_outline),
+        hintText: widget.label,
+        prefixIcon: const Icon(LucideIcons.lock, size: HappyIconSize.md),
         suffixIcon: IconButton(
           onPressed: _toggle,
           tooltip: _obscure ? l10n.authShowPassword : l10n.authHidePassword,
           icon: Icon(
-            _obscure
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
+            _obscure ? LucideIcons.eyeOff : LucideIcons.eye,
+            size: HappyIconSize.md,
           ),
         ),
       ),

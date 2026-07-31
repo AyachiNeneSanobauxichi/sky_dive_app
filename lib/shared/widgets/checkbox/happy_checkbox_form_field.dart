@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:happy_os/core/theme/index.dart";
 import "happy_checkbox.dart";
 
+/// [HappyCheckbox] 的 `FormField` 包装：接入 `Form` 的校验与提交流程。
 class HappyCheckboxFormField extends FormField<bool> {
   HappyCheckboxFormField({
     super.key,
@@ -27,9 +28,10 @@ class HappyCheckboxFormField extends FormField<bool> {
                ),
                if (field.hasError)
                  Padding(
+                   // 左内边距对齐方框右侧的文案起始位置，错误文案不会歪出来
                    padding: const EdgeInsets.only(
-                     left: HappySpacing.sm,
-                     top: HappySpacing.xs,
+                     left: HappySpacing.s32 + HappySpacing.s2,
+                     top: HappySpacing.s4,
                    ),
                    child: Text(
                      field.errorText!,

@@ -7,11 +7,13 @@ environment:
   sdk: ^3.10.1
 
 dependencies:
+  animations: ^2.2.0
   cached_network_image: ^3.4.1
   connectivity_plus: ^7.2.0
   dio: ^5.10.0
   flutter:
     sdk: flutter
+  flutter_animate: ^4.5.2
   flutter_dotenv: ^6.0.1
   flutter_localizations:
     sdk: flutter
@@ -20,12 +22,15 @@ dependencies:
   # 解锁前提：Flutter SDK 升到带 Dart >=3.12.0 的版本，详见 .claude/skills/flutter-best-practices/references/12-code-generation.md
   flutter_riverpod: ">=3.0.0 <3.3.0"
   flutter_secure_storage: ^9.2.4
+  flutter_svg: ^2.3.0
   form_builder_validators: ^11.3.0
   freezed_annotation: ^3.1.0
   go_router: ^17.3.0
+  gpt_markdown: ^1.1.8
   intl: ^0.20.2
   json_annotation: ^4.9.0
   logger: ^2.7.0
+  lucide_icons_flutter: ^3.1.15
   pretty_dio_logger: ^1.4.0
   riverpod_annotation: ^4.0.0
   skeletonizer: ^2.1.3
@@ -47,3 +52,26 @@ flutter:
   generate: true # 开启 gen-l10n：根据 lib/l10n/*.arb 生成 AppLocalizations
   assets:
     - .env # dotenv 运行时读取的环境配置（需注册为 asset 才能被 rootBundle 加载）
+
+  # 只打包拉丁字体（合计约 1.5MB）；中文交给系统字体回退，
+  # 见 lib/core/theme/app_text_styles.dart 的 HappyFonts.textFallback。
+  fonts:
+    # 界面与正文。由 Inter 可变字体实例化出的静态字重（opsz 固定 16）。
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+    # 叙事标题。⚠️ 只有 Regular，写 w700 会触发系统伪粗体，禁止。
+    - family: InstrumentSerif
+      fonts:
+        - asset: assets/fonts/InstrumentSerif-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/InstrumentSerif-Italic.ttf
+          weight: 400
+          style: italic
