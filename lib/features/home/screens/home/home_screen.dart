@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:flutter_animate/flutter_animate.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:go_router/go_router.dart";
+import "package:happy_os/app/router/index.dart";
 import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/auth/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
@@ -63,6 +65,13 @@ class HomeScreen extends ConsumerWidget {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
+                  ),
+                  HappyButton(
+                    label: l10n.homeCreateStory,
+                    icon: LucideIcons.sparkles,
+                    size: HappyButtonSize.large,
+                    isFullWidth: false,
+                    onPressed: () => context.pushNamed(RouteName.story),
                   ),
                 ],
               ),

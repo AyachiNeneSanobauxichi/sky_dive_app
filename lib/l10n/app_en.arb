@@ -122,14 +122,6 @@
     "description": "Snackbar shown after a successful registration, prompting the user to log in"
   },
 
-  "homeTitle": "Home (placeholder)",
-  "@homeTitle": {
-    "description": "Placeholder text shown on the home screen in v1 routing"
-  },
-  "homeBackToLogin": "Back to login",
-  "@homeBackToLogin": {
-    "description": "Test button on the home screen that returns to the login screen"
-  },
   "commonCancel": "Cancel",
   "@commonCancel": {
     "description": "Generic cancel button label"
@@ -167,6 +159,60 @@
   "homeLogoutFailed": "Log out failed. Please try again.",
   "@homeLogoutFailed": {
     "description": "Toast message shown when logging out fails"
+  },
+
+  "homeCreateStory": "Turn a memory into a story",
+  "@homeCreateStory": {
+    "description": "Primary call to action on the home screen that opens the story generator"
+  },
+
+  "storyTitle": "Your story",
+  "@storyTitle": {
+    "description": "App bar title of the story generation screen"
+  },
+  "storyComposerTitle": "What actually happened?",
+  "@storyComposerTitle": {
+    "description": "Headline above the experience input on the story screen"
+  },
+  "storyComposerSubtitle": "Write down something that really happened to you. The more specific, the better the story.",
+  "@storyComposerSubtitle": {
+    "description": "Supporting text under the story composer headline"
+  },
+  "storyComposerHint": "That evening on the last train home, I noticed the man opposite me had been staring at my reflection the whole time…",
+  "@storyComposerHint": {
+    "description": "Placeholder text inside the experience input, demonstrating the level of detail expected"
+  },
+  "storyExperienceLabel": "Your memory",
+  "@storyExperienceLabel": {
+    "description": "Label on the collapsed chip that shows the submitted experience"
+  },
+  "storyEditExperience": "Edit memory",
+  "@storyEditExperience": {
+    "description": "Tooltip for the button that returns to editing the submitted experience"
+  },
+  "storyThinking": "Reading your memory…",
+  "@storyThinking": {
+    "description": "Status text shown while waiting for the first streamed token"
+  },
+  "storyStopped": "Stopped",
+  "@storyStopped": {
+    "description": "Label shown under the story when the user stopped generation early"
+  },
+  "storyGenerate": "Rewrite it",
+  "@storyGenerate": {
+    "description": "Button that starts story generation"
+  },
+  "storyRegenerate": "Regenerate",
+  "@storyRegenerate": {
+    "description": "Button that generates the story again from the same memory"
+  },
+  "storyNewStory": "New memory",
+  "@storyNewStory": {
+    "description": "Button that clears the current story and returns to the composer"
+  },
+  "storyStop": "Stop",
+  "@storyStop": {
+    "description": "Button that aborts an in-progress generation"
   },
 
   "routeNotFound": "Page not found",

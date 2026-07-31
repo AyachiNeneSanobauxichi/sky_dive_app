@@ -98,12 +98,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerSuccess => 'Account created. Please log in.';
 
   @override
-  String get homeTitle => 'HappyOS';
-
-  @override
-  String get homeBackToLogin => 'Back to login';
-
-  @override
   String get commonCancel => 'Cancel';
 
   @override
@@ -119,6 +113,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonReset => 'Reset';
 
   @override
+  String get homeTitle => 'HappyOS';
+
+  @override
   String get homePlaceholder =>
       'Your stories will show up here. Nothing has been built yet.';
 
@@ -127,6 +124,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeLogoutFailed => 'Log out failed. Please try again.';
+
+  @override
+  String get homeCreateStory => 'Turn a memory into a story';
+
+  @override
+  String get storyTitle => 'Your story';
+
+  @override
+  String get storyComposerTitle => 'What actually happened?';
+
+  @override
+  String get storyComposerSubtitle =>
+      'Write down something that really happened to you. The more specific, the better the story.';
+
+  @override
+  String get storyComposerHint =>
+      'That evening on the last train home, I noticed the man opposite me had been staring at my reflection the whole time…';
+
+  @override
+  String get storyExperienceLabel => 'Your memory';
+
+  @override
+  String get storyEditExperience => 'Edit memory';
+
+  @override
+  String get storyThinking => 'Reading your memory…';
+
+  @override
+  String get storyStopped => 'Stopped';
+
+  @override
+  String get storyGenerate => 'Rewrite it';
+
+  @override
+  String get storyRegenerate => 'Regenerate';
+
+  @override
+  String get storyNewStory => 'New memory';
+
+  @override
+  String get storyStop => 'Stop';
 
   @override
   String get routeNotFound => 'Page not found';

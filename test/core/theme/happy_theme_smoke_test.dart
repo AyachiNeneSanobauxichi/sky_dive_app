@@ -44,6 +44,17 @@ void main() {
                   label: const Text("error"),
                 ),
                 const HappyGlassCard(child: Text("glass")),
+                // AI 状态表达组件
+                const HappyStreamingText(text: "streaming", isStreaming: true),
+                const HappyStreamingText(text: "done"),
+                const HappyThinkingIndicator(label: "thinking"),
+                const HappyShimmerText(text: "shimmer"),
+                const HappyMarkdownText(data: "**bold** and `code`"),
+                HappyRetryCard(
+                  message: "failed",
+                  retryLabel: "retry",
+                  onRetry: () {},
+                ),
               ],
             ),
           ),
@@ -62,9 +73,13 @@ void main() {
       await tester.pump(HappyMotion.normal);
 
       expect(tester.takeException(), isNull);
-      expect(find.byType(HappyButton), findsNWidgets(6));
+      // HappyRetryCard 内部还有一个按钮，故比变体数多 1
+      expect(find.byType(HappyButton), findsNWidgets(7));
       expect(find.byType(HappyCheckbox), findsNWidgets(2));
       expect(find.byType(HappyGlassCard), findsOneWidget);
+      expect(find.byType(HappyStreamingText), findsNWidgets(2));
+      expect(find.byType(HappyThinkingIndicator), findsOneWidget);
+      expect(find.byType(HappyMarkdownText), findsOneWidget);
     });
   }
 
@@ -74,7 +89,10 @@ void main() {
 
     final target = find.text(HappyButtonVariant.primary.name);
     final gesture = await tester.startGesture(tester.getCenter(target));
-    await tester.pump(HappyMotion.instant);
+    // 必须等过手势竞技场判定：按钮在可滚动容器里，TapGestureRecognizer 要和
+    // Scrollable 的拖拽识别器竞争，`kPressTimeout`（100ms）之前不会置高亮。
+    // 用 HappyMotion.instant（90ms）恰好卡在临界点上，会随机假红。
+    await tester.pump(HappyMotion.slow);
 
     final scale = tester.widget<AnimatedScale>(
       find.ancestor(of: target, matching: find.byType(AnimatedScale)).first,

@@ -7,6 +7,7 @@ abstract final class RouteName {
   static const login = "login";
   static const register = "register";
   static const home = "home";
+  static const story = "story";
 }
 
 abstract final class RoutePath {
@@ -15,4 +16,7 @@ abstract final class RoutePath {
   static const login = "/login";
   static const register = "/register";
   static const home = "/home";
+
+  /// 故事生成页。需登录（未登录会被 route_guard 拦回 login）。
+  static const story = "/story";
 }

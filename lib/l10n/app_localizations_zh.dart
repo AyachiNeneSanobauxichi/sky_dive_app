@@ -96,12 +96,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get registerSuccess => '注册成功，请登录';
 
   @override
-  String get homeTitle => 'HappyOS';
-
-  @override
-  String get homeBackToLogin => '返回登录';
-
-  @override
   String get commonCancel => '取消';
 
   @override
@@ -117,6 +111,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonReset => '重置';
 
   @override
+  String get homeTitle => 'HappyOS';
+
+  @override
   String get homePlaceholder => '你的故事会出现在这里，目前还没有内容。';
 
   @override
@@ -124,6 +121,45 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeLogoutFailed => '退出登录失败，请重试。';
+
+  @override
+  String get homeCreateStory => '把一段经历写成故事';
+
+  @override
+  String get storyTitle => '你的故事';
+
+  @override
+  String get storyComposerTitle => '那天到底发生了什么？';
+
+  @override
+  String get storyComposerSubtitle => '写下一段真实发生在你身上的事。越具体，改出来的故事越有劲。';
+
+  @override
+  String get storyComposerHint => '那天末班地铁上，我发现对面那个人一直在看车窗里我的倒影……';
+
+  @override
+  String get storyExperienceLabel => '你的经历';
+
+  @override
+  String get storyEditExperience => '修改经历';
+
+  @override
+  String get storyThinking => '正在读你的经历……';
+
+  @override
+  String get storyStopped => '已停止';
+
+  @override
+  String get storyGenerate => '改写成故事';
+
+  @override
+  String get storyRegenerate => '重新生成';
+
+  @override
+  String get storyNewStory => '写新的一篇';
+
+  @override
+  String get storyStop => '停止';
 
   @override
   String get routeNotFound => '页面不存在';

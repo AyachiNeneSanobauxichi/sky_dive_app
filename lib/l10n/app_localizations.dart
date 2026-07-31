@@ -272,18 +272,6 @@ abstract class AppLocalizations {
   /// **'Account created. Please log in.'**
   String get registerSuccess;
 
-  /// Home screen app bar title
-  ///
-  /// In en, this message translates to:
-  /// **'HappyOS'**
-  String get homeTitle;
-
-  /// Test button on the home screen that returns to the login screen
-  ///
-  /// In en, this message translates to:
-  /// **'Back to login'**
-  String get homeBackToLogin;
-
   /// Generic cancel button label
   ///
   /// In en, this message translates to:
@@ -314,6 +302,12 @@ abstract class AppLocalizations {
   /// **'Reset'**
   String get commonReset;
 
+  /// Home screen app bar title
+  ///
+  /// In en, this message translates to:
+  /// **'HappyOS'**
+  String get homeTitle;
+
   /// Placeholder body text on the empty home screen
   ///
   /// In en, this message translates to:
@@ -331,6 +325,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log out failed. Please try again.'**
   String get homeLogoutFailed;
+
+  /// Primary call to action on the home screen that opens the story generator
+  ///
+  /// In en, this message translates to:
+  /// **'Turn a memory into a story'**
+  String get homeCreateStory;
+
+  /// App bar title of the story generation screen
+  ///
+  /// In en, this message translates to:
+  /// **'Your story'**
+  String get storyTitle;
+
+  /// Headline above the experience input on the story screen
+  ///
+  /// In en, this message translates to:
+  /// **'What actually happened?'**
+  String get storyComposerTitle;
+
+  /// Supporting text under the story composer headline
+  ///
+  /// In en, this message translates to:
+  /// **'Write down something that really happened to you. The more specific, the better the story.'**
+  String get storyComposerSubtitle;
+
+  /// Placeholder text inside the experience input, demonstrating the level of detail expected
+  ///
+  /// In en, this message translates to:
+  /// **'That evening on the last train home, I noticed the man opposite me had been staring at my reflection the whole time…'**
+  String get storyComposerHint;
+
+  /// Label on the collapsed chip that shows the submitted experience
+  ///
+  /// In en, this message translates to:
+  /// **'Your memory'**
+  String get storyExperienceLabel;
+
+  /// Tooltip for the button that returns to editing the submitted experience
+  ///
+  /// In en, this message translates to:
+  /// **'Edit memory'**
+  String get storyEditExperience;
+
+  /// Status text shown while waiting for the first streamed token
+  ///
+  /// In en, this message translates to:
+  /// **'Reading your memory…'**
+  String get storyThinking;
+
+  /// Label shown under the story when the user stopped generation early
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped'**
+  String get storyStopped;
+
+  /// Button that starts story generation
+  ///
+  /// In en, this message translates to:
+  /// **'Rewrite it'**
+  String get storyGenerate;
+
+  /// Button that generates the story again from the same memory
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate'**
+  String get storyRegenerate;
+
+  /// Button that clears the current story and returns to the composer
+  ///
+  /// In en, this message translates to:
+  /// **'New memory'**
+  String get storyNewStory;
+
+  /// Button that aborts an in-progress generation
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get storyStop;
 
   /// Message shown by the router error page for an unknown route
   ///

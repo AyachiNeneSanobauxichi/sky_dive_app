@@ -35,8 +35,6 @@
   "authErrorGeneric": "出错了，请稍后再试",
   "registerSuccess": "注册成功，请登录",
 
-  "homeTitle": "首页（占位）",
-  "homeBackToLogin": "返回登录",
   "commonCancel": "取消",
   "commonSave": "保存",
   "commonRetry": "重试",
@@ -48,6 +46,21 @@
   "homePlaceholder": "你的故事会出现在这里，目前还没有内容。",
   "homeLogout": "退出登录",
   "homeLogoutFailed": "退出登录失败，请重试。",
+
+  "homeCreateStory": "把一段经历写成故事",
+
+  "storyTitle": "你的故事",
+  "storyComposerTitle": "那天到底发生了什么？",
+  "storyComposerSubtitle": "写下一段真实发生在你身上的事。越具体，改出来的故事越有劲。",
+  "storyComposerHint": "那天末班地铁上，我发现对面那个人一直在看车窗里我的倒影……",
+  "storyExperienceLabel": "你的经历",
+  "storyEditExperience": "修改经历",
+  "storyThinking": "正在读你的经历……",
+  "storyStopped": "已停止",
+  "storyGenerate": "改写成故事",
+  "storyRegenerate": "重新生成",
+  "storyNewStory": "写新的一篇",
+  "storyStop": "停止",
 
   "routeNotFound": "页面不存在"
 }
