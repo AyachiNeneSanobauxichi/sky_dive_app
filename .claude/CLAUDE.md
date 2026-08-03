@@ -9,7 +9,7 @@
 3. 严格 **feature-first + 分层**：`data / domain / controllers / screens / widgets`，依赖单向向下。
 4. 网络只通过 `core/network/DioClient`；错误统一 `AppException → Failure → AsyncValue`。
 5. 每个目录维护 `index.dart` barrel；对外只经 barrel 引用。
-6. 提交前 `dart format` + `flutter analyze`（零告警）+ `flutter test`。禁止 `print`。
+6. 提交前 `dart format` + `flutter analyze`（零告警）。禁止 `print`。**本项目不写自动化测试**（无 `test/` 目录），质量靠 analyze + 人工验证兜。
 7. **关键函数/复杂逻辑必须写注释**（讲意图/为什么）；UI 代码注释保持简洁。
 8. **禁止魔法值**：间距用 `HappySemanticSpacing`/`HappySpacing`（`s16` 式数值命名），圆角/描边/图标/控件高度用 `HappyRadius`/`HappyBorderWidth`/`HappyIconSize`/`HappyControlSize`，颜色用 `colorScheme`（业务层**禁止**直接引 `HappyColors`），文字用 `textTheme`，渐变/阴影用 `HappyGradients`/`HappyShadows`，动效时长与曲线用 `HappyMotion`；禁止内联 `TextStyle(fontSize: ...)`、`Color(0xFF...)`、裸数值尺寸、`Duration(milliseconds: ...)`。详见 `references/09-theming-ui.md`。
 9. **页面文案禁止硬编码**：用户可见文案一律走国际化（gen-l10n `AppLocalizations`/ARB），`screens/`·`widgets/` 内不得出现中/英文字面量。
@@ -22,7 +22,7 @@
 
 ## 📚 详细规范
 
-完整规范见 skill **`flutter-best-practices`**，编码前先读 `references/00-overview.md`，再按任务领域读对应模块（结构/架构/Riverpod/Dio/Freezed/路由/错误/UI/存储/国际化/代码生成/测试/性能/命名/Git/Agent 工作流/交互体验）。**写任何 UI（`screens/`·`widgets/`）前必读 `references/09-theming-ui.md`（视觉令牌）+ `references/17-ux-interaction.md`（交互体验）。**表单校验统一用 `form_builder_validators`。**按 `agent/` 文档生成代码前，先读 `references/16-agent-workflow.md`。**
+完整规范见 skill **`flutter-best-practices`**，编码前先读 `references/00-overview.md`，再按任务领域读对应模块（结构/架构/Riverpod/Dio/Freezed/路由/错误/UI/存储/国际化/代码生成/性能/命名/Git/Agent 工作流/交互体验）。**写任何 UI（`screens/`·`widgets/`）前必读 `references/09-theming-ui.md`（视觉令牌）+ `references/17-ux-interaction.md`（交互体验）。**表单校验统一用 `form_builder_validators`。**按 `agent/` 文档生成代码前，先读 `references/16-agent-workflow.md`。**
 
 ## 🔧 常用命令
 
@@ -32,7 +32,6 @@ dart run build_runner build   # 改了 freezed / json / @riverpod 注解后
 dart run build_runner watch   # 开发期自动生成
 dart format .
 flutter analyze
-flutter test
 ```
 
 ## 🔁 规范同步（skill ↔ rules）

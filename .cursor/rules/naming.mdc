@@ -1,6 +1,6 @@
 ---
 description: 命名规范（文件/目录/标识符/组件角色后缀）
-globs: lib/**/*.dart,test/**/*.dart
+globs: lib/**/*.dart
 alwaysApply: false
 ---
 
@@ -13,7 +13,6 @@ alwaysApply: false
 | 文件名 | `snake_case.dart` | `todo_list_controller.dart` |
 | 目录名 | `snake_case`（单数领域名） | `features/todo/` |
 | Barrel | 固定 `index.dart` | `data/index.dart` |
-| 测试文件 | 被测文件名 + `_test.dart` | `todo_repository_impl_test.dart` |
 | 生成文件 | `*.g.dart` / `*.freezed.dart` | 由 build_runner 生成，勿手改 |
 
 ## 标识符

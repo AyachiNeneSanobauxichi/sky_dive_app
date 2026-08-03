@@ -32,10 +32,26 @@
   "loginSampleStory2": "面试官把我的简历推回来时笑了一下。三个月后我签下他们最大的竞争对手，第一件事就是让人把这份简历送到他桌上。",
   "loginSampleStory3": "房东半夜换了门锁，我在楼道里坐到天亮。谁也没想到，那把被扔掉的旧钥匙，后来成了我拿回整栋楼的第一步。",
 
-  "homeTitle": "HappyOS",
-  "homePlaceholder": "你的故事会出现在这里，目前还没有内容。",
+  "homeTabStory": "故事",
+  "homeTabTrack": "轨迹",
+  "homeTabUser": "我的",
   "homeLogout": "退出登录",
   "homeLogoutFailed": "退出登录失败，请重试。",
+
+  "storyTitle": "我的故事",
+  "storyEmptyTitle": "还没有故事",
+  "storyEmptyBody": "说说你真实经历过的事，AI 把它改写成让人一口气读完的爽文。",
+  "storyEmptyAction": "写第一个故事",
+
+  "trackTitle": "成长轨迹",
+  "trackEmptyTitle": "先留下一条轨迹",
+  "trackEmptyBody": "轨迹是生成爽文的素材：记下真实发生过的事，故事才有骨架。",
+  "trackEmptyAction": "添加第一条轨迹",
+
+  "userTitle": "我的",
+  "userEmptyTitle": "完善你的设定",
+  "userEmptyBody": "昵称、故事风格、语气强度——设定越清楚，写出来的故事越像为你而写。",
+  "userEmptyAction": "去设置",
 
   "routeNotFound": "页面不存在"
 }

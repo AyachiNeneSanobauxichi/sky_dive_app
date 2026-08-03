@@ -70,6 +70,6 @@ Text(l10n.loginTitle);
 
 `lib/l10n/app_localizations*.dart` 与 `l10n_untranslated.txt` 都在 `.gitignore` 里。**唯一真源是 `.arb`**。
 
-- **clone 之后、以及任何时候改了 `.arb`，都要跑一次 `flutter gen-l10n`**；`flutter run` / `flutter build` 会自动生成，但 **`flutter analyze` 与 `flutter test` 不会**——报「`AppLocalizations` 上不存在 xxx」时，第一反应就是重新生成，而不是去改调用点。
+- **clone 之后、以及任何时候改了 `.arb`，都要跑一次 `flutter gen-l10n`**；`flutter run` / `flutter build` 会自动生成，但 **`flutter analyze` 不会**——报「`AppLocalizations` 上不存在 xxx」时，第一反应就是重新生成，而不是去改调用点。
 - 为什么和 `*.freezed.dart` / `*.g.dart` 反着来：入库会要求「改 `.arb` 必须紧跟生成、并把产物一起提交」，任何一半的回滚 / 合并冲突都会让产物与 `.arb` 脱钩——`.arb` 里明明有 key，代码里却报未定义，而 diff 干净得看不出问题。本项目真实踩过一次，所以改成本地生成。
 - **不要把产物加回 git**（`git add -f`），也不要手改产物。

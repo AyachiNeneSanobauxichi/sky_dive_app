@@ -37,6 +37,21 @@ lib/
     └── utils/                # 业务无关工具（logger 等）
 ```
 
+## 🗺️ 业务模块地图（写代码前先对号入座）
+
+产品由四个业务模块构成，**职责不重叠**；拿不准新代码该放哪个模块时按这张表判断，别就近塞。
+
+| 模块 | 位置 | 职责 | 与其它模块的关系 |
+| --- | --- | --- | --- |
+| **auth** | `features/auth/` | 手机号 + 短信验证码登录、全局登录态、令牌与会话 | 其余模块都在登录后才可达 |
+| **story** | `features/story/` | **生成并管理用户生成的爽文**：与 AI 聊天调试生成、保存、再编辑、列表管理。产品主路径 | 消费 track 的轨迹作素材，读 user 的风格设定 |
+| **track** | `features/track/` | **用户的成长轨迹**：记录真实经历（时间 / 事件 / 感受 / 结果）。条目是生成爽文的 **key**（真实骨架的来源） | 产出素材给 story |
+| **user** | `features/user/` | **用户设定**：账号信息与生成偏好（昵称 / 头像 / 故事风格 / 语气强度 / 内容边界），即"作者设定"；含退出登录 | 提供设定给 story |
+
+`features/home/` 不是业务模块，只是**外壳**：底部导航 + `IndexedStack`，承载 story / track / user 三个 tab（顺序即上表顺序）。各 tab 页面自带 `Scaffold` 与 AppBar，便于日后原样升级成独立路由。
+
+> 每个模块的需求以文档为准：`agent/service/<模块>/<模块>.md`（页面）+ `<模块>.api.md`（接口契约），见 `16-agent-workflow.md`。代码侧每个 `features/<模块>/index.dart` 顶部也写了同样的职责说明。
+
 ## ✅ 应该
 
 - **新功能** 一律在 `lib/features/<feature>/` 下新建，按 `data/domain/controllers/screens/widgets` 分层。

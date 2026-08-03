@@ -15,7 +15,6 @@
 | `refactor` | 重构（无行为变化） |
 | `perf` | 性能优化 |
 | `style` | 格式（不影响逻辑） |
-| `test` | 测试 |
 | `docs` | 文档 |
 | `build` / `chore` | 构建/杂项（依赖、脚手架） |
 
@@ -33,7 +32,6 @@
 dart format .                                   # 1. 格式化
 dart run build_runner build  # 2. 若改了注解，重新生成
 flutter analyze                                 # 3. 静态分析必须零告警
-flutter test                                    # 4. 测试通过
 ```
 
 - Barrel `index.dart` 是否补齐导出。
@@ -51,7 +49,6 @@ flutter test                                    # 4. 测试通过
 
 1. `dart format --set-exit-if-changed .`
 2. `flutter analyze`
-3. `flutter test --coverage`
 4. （可选）生成产物一致性校验：重跑 build_runner 后 `git diff` 应为空。
 
 ## .gitignore 关注点

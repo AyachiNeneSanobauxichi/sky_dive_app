@@ -7,8 +7,6 @@
       "Bash(flutter pub add:*)",
       "Bash(flutter analyze)",
       "Bash(flutter analyze:*)",
-      "Bash(flutter test)",
-      "Bash(flutter test:*)",
       "Bash(flutter doctor)",
       "Bash(flutter devices)",
       "Bash(flutter --version)",

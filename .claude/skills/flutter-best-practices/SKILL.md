@@ -4,7 +4,7 @@ description: >-
   happy_os 的 Flutter 工程规范（企业级最佳实践）。在本仓库编写、修改或审查任何
   Dart/Flutter 代码时使用：涉及 Riverpod 状态管理、Freezed 数据模型、Dio 网络层、
   go_router 路由、错误处理、主题/UI、存储与安全、国际化、build_runner 代码生成、
-  测试、性能、命名与目录结构、Git 提交规范时，先读对应的 references/ 模块再动手。
+  性能、命名与目录结构、Git 提交规范时，先读对应的 references/ 模块再动手。
 ---
 
 # Flutter 工程规范（happy_os）
@@ -18,7 +18,7 @@ description: >-
 3. 严格 **feature-first + 分层**：`data / domain / controllers / screens / widgets`，依赖单向向下（domain 不依赖 data）。
 4. 网络只通过 `core/network/DioClient`；错误统一 `AppException → Failure → AsyncValue`。
 5. 每个目录维护 `index.dart` barrel；对外只经 barrel 引用。
-6. 提交前 `dart format` + `flutter analyze`（零告警）+ `flutter test`。禁止 `print`（用 `AppLogger`）。
+6. 提交前 `dart format` + `flutter analyze`（零告警）。禁止 `print`（用 `AppLogger`）。**本项目不写自动化测试**（无 `test/` 目录），质量靠 analyze + 人工验证兜。
 7. **关键函数/复杂逻辑必须写注释**（讲意图/为什么）；UI 代码注释保持简洁。
 8. **禁止魔法值**：间距用 `HappySemanticSpacing`/`HappySpacing`（`s16` 式数值命名），圆角/描边/图标/控件高度用 `HappyRadius`/`HappyBorderWidth`/`HappyIconSize`/`HappyControlSize`，颜色用 `colorScheme`（业务层**禁止**直接引 `HappyColors`），文字用 `textTheme`，渐变/阴影用 `HappyGradients`/`HappyShadows`，动效时长与曲线用 `HappyMotion`；禁止内联 `TextStyle(fontSize: ...)`、`Color(0xFF...)`、裸数值尺寸、`Duration(milliseconds: ...)`。详见 `references/09-theming-ui.md`。
 9. **页面文案禁止硬编码**：用户可见文案一律走国际化（gen-l10n `AppLocalizations`/ARB），`screens/`·`widgets/` 内不得出现中/英文字面量。
@@ -35,7 +35,6 @@ dart run build_runner build   # 改了 freezed / json / @riverpod 注解后
 dart run build_runner watch   # 开发期自动生成
 dart format .
 flutter analyze
-flutter test
 ```
 
 ## 📚 领域模块（按需读 references/）
@@ -55,7 +54,6 @@ flutter test
 | 存储/配置/安全 | `references/10-storage-security.md` |
 | 国际化 | `references/11-i18n-localization.md` |
 | build_runner 代码生成 | `references/12-code-generation.md` |
-| 测试 | `references/13-testing.md` |
 | 性能 | `references/14-performance.md` |
 | Git 与质量门禁 | `references/15-git-and-quality.md` |
 | Agent 文档驱动工作流（业务/infra 边界、mock、TODO、_page/_api） | `references/16-agent-workflow.md` |

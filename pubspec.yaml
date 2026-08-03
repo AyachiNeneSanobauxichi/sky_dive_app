@@ -37,8 +37,7 @@ dependencies:
   toastification: ^3.2.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  # 本项目不写自动化测试（无 test/ 目录），故不引 flutter_test。
   flutter_lints: ^6.0.0
   build_runner: ^2.15.0
   freezed: ^3.2.3

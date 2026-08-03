@@ -118,13 +118,65 @@
     "description": "Placeholder excerpt of a rewritten story (3 of 3), rotating on the login screen"
   },
 
-  "homeTitle": "HappyOS",
-  "@homeTitle": {
-    "description": "Home screen app bar title"
+  "homeTabStory": "Stories",
+  "@homeTabStory": {
+    "description": "Bottom navigation label for the story module (generate and manage rewritten stories)"
   },
-  "homePlaceholder": "Your stories will show up here. Nothing has been built yet.",
-  "@homePlaceholder": {
-    "description": "Placeholder body text on the empty home screen"
+  "homeTabTrack": "Track",
+  "@homeTabTrack": {
+    "description": "Bottom navigation label for the track module (life events used as source material)"
+  },
+  "homeTabUser": "You",
+  "@homeTabUser": {
+    "description": "Bottom navigation label for the user module (account and generation preferences)"
+  },
+  "storyTitle": "My stories",
+  "@storyTitle": {
+    "description": "App bar title of the story module"
+  },
+  "storyEmptyTitle": "No stories yet",
+  "@storyEmptyTitle": {
+    "description": "Empty-state headline in the story module"
+  },
+  "storyEmptyBody": "Tell us something that really happened to you, and the AI rewrites it into a story people can't put down.",
+  "@storyEmptyBody": {
+    "description": "Empty-state body in the story module"
+  },
+  "storyEmptyAction": "Write your first story",
+  "@storyEmptyAction": {
+    "description": "Empty-state call to action in the story module"
+  },
+  "trackTitle": "Your track",
+  "@trackTitle": {
+    "description": "App bar title of the track module"
+  },
+  "trackEmptyTitle": "Start with one entry",
+  "@trackEmptyTitle": {
+    "description": "Empty-state headline in the track module"
+  },
+  "trackEmptyBody": "Your track is the raw material for every story: write down what actually happened, and the story gets a real backbone.",
+  "@trackEmptyBody": {
+    "description": "Empty-state body in the track module, explaining that entries feed story generation"
+  },
+  "trackEmptyAction": "Add your first entry",
+  "@trackEmptyAction": {
+    "description": "Empty-state call to action in the track module"
+  },
+  "userTitle": "You",
+  "@userTitle": {
+    "description": "App bar title of the user module"
+  },
+  "userEmptyTitle": "Finish your setup",
+  "@userEmptyTitle": {
+    "description": "Empty-state headline in the user module"
+  },
+  "userEmptyBody": "Nickname, story style, intensity — the clearer your setup, the more the stories read like they were written for you.",
+  "@userEmptyBody": {
+    "description": "Empty-state body in the user module"
+  },
+  "userEmptyAction": "Open settings",
+  "@userEmptyAction": {
+    "description": "Empty-state call to action in the user module"
   },
   "homeLogout": "Log out",
   "@homeLogout": {

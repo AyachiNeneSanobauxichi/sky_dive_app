@@ -124,7 +124,7 @@ riverpod_generator: <4.0.6           # 解析为 4.0.0+1
 flutter gen-l10n
 ```
 
-改了 `.arb` 之后同样要重跑。`flutter run` / `flutter build` 因 `pubspec.yaml` 的 `flutter: generate: true` 会自动生成，但 **`flutter analyze` 与 `flutter test` 不会**。
+改了 `.arb` 之后同样要重跑。`flutter run` / `flutter build` 因 `pubspec.yaml` 的 `flutter: generate: true` 会自动生成，但 **`flutter analyze` 不会**。
 
 > ⚠️ **产物不入库**：`lib/l10n/app_localizations*.dart` 已在 `.gitignore` 中忽略，与 `*.freezed.dart` / `*.g.dart` 的策略**相反**。
 >
@@ -145,7 +145,6 @@ flutter run -d <device_id>  # 指定设备运行
 ```bash
 dart format .                    # 代码格式化
 flutter analyze                  # 静态分析（提交前需零告警）
-flutter test                     # 运行测试
 dart run build_runner build      # 改了 @freezed / @JsonSerializable / @riverpod 后重新生成
 dart run build_runner watch      # 开发期自动生成
 dart run build_runner clean      # 清理生成缓存
@@ -158,11 +157,13 @@ flutter build ios                # 构建 iOS 包
 
 同一套规范以两种 AI 原生格式维护（内容等价）：
 
-- **Claude — skill**：[`.claude/skills/flutter-best-practices/`](./.claude/skills/flutter-best-practices/SKILL.md)（`SKILL.md` + `references/00..17`，按需加载）
+- **Claude — skill**：[`.claude/skills/flutter-best-practices/`](./.claude/skills/flutter-best-practices/SKILL.md)（`SKILL.md` + `references/`，按需加载）
 - **Claude 入口**：[`.claude/CLAUDE.md`](./.claude/CLAUDE.md)（自动加载的红线，指向上述 skill）
 - **Claude 团队配置**：[`.claude/settings.json`](./.claude/settings.json)（共享命令权限白名单；个人覆盖写 `.claude/settings.local.json`）
 - **Cursor — rules**：`.cursor/rules/*.mdc`（每条规则自包含，按 `globs` 自动生效）
 
 > **规范同步**：Cursor rules 与 Claude skill 是同一套规范的两种表达。改规范或新增领域时两处都要更新，领域↔文件对照见 [`.cursor/rules/sync.mdc`](./.cursor/rules/sync.mdc)。
 
-提交前请确保：`dart format` 已执行、`flutter analyze` 零告警、`flutter test` 通过。
+提交前请确保：`dart format` 已执行、`flutter analyze` 零告警。
+
+> 本项目**不写自动化测试**（无 `test/` 目录）：质量由 `flutter analyze` + 人工在真机/模拟器上验证兜。

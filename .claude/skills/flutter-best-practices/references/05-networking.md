@@ -144,7 +144,7 @@ Stream<SseEvent> postSse(String path, {Object? data, CancelToken? cancelToken});
 
 ### 解码：`SseDecoder`
 
-三个自己拼字符串一定会踩的坑（`core/network/sse/sse_decoder.dart` 已处理，配套测试在 `test/core/network/sse_decoder_test.dart`）：
+三个自己拼字符串一定会踩的坑（`core/network/sse/sse_decoder.dart` 已处理）：
 
 - **UTF-8 多字节字符会被 TCP 分块切断**。一个汉字 3 字节，很可能前 2 字节在这个 chunk、第 3 字节在下一个。必须用**有状态**的 `utf8.decoder` 转换整条流，绝不能对每个 chunk 单独 `utf8.decode`。
 - **分帧只能靠空行**，不能假设 chunk 边界 == 事件边界。
@@ -179,7 +179,7 @@ LLM 的 token 不是均匀到达的（常见 300ms 静默后一次吐 40 字）�
 _subscription = TextPacer.pace(rawDeltaStream).listen(onDelta, onError: ..., onDone: ...);
 ```
 
-两条语义保证（都有测试兜）：
+两条语义保证：
 
 - **积压自适应**：每帧吐字数 = `ceil(积压 / ticksToDrain)`，且**只上调不下调**。若每帧都按当时剩余量重算，剩余量会变成几何衰减，2000 字要放 5 秒以上，拖出长尾——正是这一层要消灭的问题。
 - **出错先把缓冲吐完再转发错误**：流式生成失败时用户必须保住已生成的部分。

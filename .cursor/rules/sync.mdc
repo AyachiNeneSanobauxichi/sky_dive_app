@@ -8,7 +8,7 @@ alwaysApply: true
 本仓库的 Flutter 工程规范以**两种原生格式**维护，内容等价：
 
 - **Cursor**：`.cursor/rules/*.mdc` —— 每条规则**自包含**（正文即完整规范，按 `globs` 自动生效，无外部引用）。
-- **Claude**：`.claude/skills/flutter-best-practices/` —— skill 形式（`SKILL.md` + `references/00..17`），按需渐进加载。
+- **Claude**：`.claude/skills/flutter-best-practices/` —— skill 形式（`SKILL.md` + `references/`，编号有空缺是因为测试模块已移除），按需渐进加载。
 
 ## 硬性要求
 
@@ -37,7 +37,6 @@ alwaysApply: true
 | 存储/配置/安全 | `storage-config.mdc` | `references/10-…` |
 | 国际化 | `i18n.mdc` | `references/11-…` |
 | 代码生成 | `code-generation.mdc` | `references/12-…` |
-| 测试 | `testing.mdc` | `references/13-…` |
 | 性能 | `performance.mdc` | `references/14-…` |
 | Git/质量 | `git-quality.mdc` | `references/15-…` |
 | Agent 文档驱动工作流 | `agent-workflow.mdc` | `references/16-…` |

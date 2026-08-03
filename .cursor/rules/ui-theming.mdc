@@ -140,6 +140,7 @@ final shouldAnimate = !MediaQuery.disableAnimationsOf(context);
 | `HappyCheckbox` / `HappyCheckboxFormField` | 复选框，后者接 `Form` 校验 | |
 | `HappyOtpField` | 分离式验证码输入（N 格 OTP），本身是 `FormField` | **透明原生 `TextField` 盖在格子上**，格子只是皮肤——这样粘贴 6 位数、iOS 短信自动填充（`oneTimeCode`）才照常工作；自绘 N 个独立输入框会丢掉这两项。填满触发 `onCompleted`（供调用方自动提交）并给一次轻触感；一次性填入多位时逐格入场；`isSuccess` 把格子换成对勾（换页前的成功确认） |
 | `HappyToast` | 全局轻提示 | 见下 |
+| `HappyEmptyState` | 空态骨架：品牌标记 + 标题 + 说明 + **引导行动** | 行动是一等参数——只写"暂无数据"的空态不合规；功能未上线时按钮给 `HappyToast.info` 而不是静默 |
 | `HappyBrandMark` | 品牌标记（渐变方块 + 图标 + 光晕） | 开屏 / 认证页头 / 空态 |
 | `HappyAuroraBackground` | 品牌极光背景 | **只用在需要氛围的页面**（开屏、认证、阅读、空态）；列表 / 表单等信息密集页别用，或把 `intensity` 压到 0.5 以下 |
 | `HappyGlassCard` | 毛玻璃卡片 | `BackdropFilter` 每帧重采样背景，**一屏 1–3 个封顶**；普通内容卡用 `Card`（主题已配好描边圆角） |
@@ -240,6 +241,3 @@ HappyToast.info(context, message);
 - ❌ 用 `Column` + 大量子项代替可滚动懒加载列表。
 - ❌ 业务逻辑写进 Widget。
 
-## 🧪 设计系统改动后
-
-`test/core/theme/happy_theme_smoke_test.dart` 会在深浅两套主题下渲染全部全局组件。改令牌或组件后必须跑通它——主题里的断言只在运行时触发，`flutter analyze` 查不出来。
