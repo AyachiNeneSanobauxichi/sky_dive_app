@@ -30,7 +30,7 @@ lib/
 ├── app/               # 应用装配（MaterialApp、router）
 ├── core/              # 跨功能基础设施（network / error / storage / config / theme）
 ├── features/          # 业务功能（feature-first：data/domain/controllers/screens/widgets）
-├── l10n/              # 国际化：*.arb 文案源 + 生成的 AppLocalizations
+├── l10n/              # 国际化：*.arb 文案源（AppLocalizations 为生成产物，不入库）
 └── shared/            # 业务无关可复用（widgets / utils）
 ```
 
@@ -95,6 +95,7 @@ dart run build_runner watch
 ```
 
 > 产物（`*.freezed.dart` / `*.g.dart`）**入库但不手改**，`analysis_options.yaml` 已将其排除在 lint 之外。
+> （注意：gen-l10n 的产物策略相反，**不入库**，见下一节。）
 > `build_runner` 2.15+ 已移除 `--delete-conflicting-outputs`，传了只会警告并忽略；要清缓存用 `dart run build_runner clean`。
 
 #### Riverpod 版本锁（勿放宽）
@@ -115,13 +116,21 @@ riverpod_generator: <4.0.6           # 解析为 4.0.0+1
 
 ### 4. 生成国际化（i18n）
 
-用户文案维护在 `lib/l10n/app_en.arb`（模板）与 `lib/l10n/app_zh.arb`，由 gen-l10n 生成 `AppLocalizations`。因 `pubspec.yaml` 配了 `flutter: generate: true`，`flutter run` / `flutter build` 会**自动生成**；改了 `.arb` 想立即拿到新文案可手动执行：
+用户文案维护在 `lib/l10n/app_en.arb`（模板）与 `lib/l10n/app_zh.arb`，由 gen-l10n 生成 `AppLocalizations`。
+
+**首次 clone 后必须先跑一次**，否则 `flutter analyze` / IDE 会报「`AppLocalizations` 上不存在 xxx」：
 
 ```bash
 flutter gen-l10n
 ```
 
-> 加新文案：先在 `app_en.arb` 加 `key` + `@key`（description），再在 `app_zh.arb` 加对应中文（两个文件 key 必须一一对应），然后重新生成。
+改了 `.arb` 之后同样要重跑。`flutter run` / `flutter build` 因 `pubspec.yaml` 的 `flutter: generate: true` 会自动生成，但 **`flutter analyze` 与 `flutter test` 不会**。
+
+> ⚠️ **产物不入库**：`lib/l10n/app_localizations*.dart` 已在 `.gitignore` 中忽略，与 `*.freezed.dart` / `*.g.dart` 的策略**相反**。
+>
+> 原因：入库会要求「改 `.arb` 必须紧跟一次 gen-l10n 并把产物一起提交」，任何一半的回滚或合并冲突都会让产物与 `.arb` 脱钩——表现是 `.arb` 里明明有 key，代码里 `l10n.xxx` 却报未定义，而 diff 里看不出任何异常。本项目真实踩过一次。改成本地生成后，唯一的真源就是 `.arb`。
+
+> 加新文案：先在 `app_en.arb` 加 `key` + `@key`（description），再在 `app_zh.arb` 加对应中文（两个文件 key 必须一一对应），然后重新生成。缺翻译会写进 `l10n_untranslated.txt`（也不入库）。
 
 ### 5. 运行应用
 
@@ -140,7 +149,7 @@ flutter test                     # 运行测试
 dart run build_runner build      # 改了 @freezed / @JsonSerializable / @riverpod 后重新生成
 dart run build_runner watch      # 开发期自动生成
 dart run build_runner clean      # 清理生成缓存
-flutter gen-l10n                 # 改了 lib/l10n/*.arb 后重新生成 AppLocalizations
+flutter gen-l10n                 # clone 后 / 改了 lib/l10n/*.arb 后生成 AppLocalizations（产物不入库）
 flutter build apk                # 构建 Android 包
 flutter build ios                # 构建 iOS 包
 ```
@@ -149,7 +158,7 @@ flutter build ios                # 构建 iOS 包
 
 同一套规范以两种 AI 原生格式维护（内容等价）：
 
-- **Claude — skill**：[`.claude/skills/flutter-best-practices/`](./.claude/skills/flutter-best-practices/SKILL.md)（`SKILL.md` + `references/00..16`，按需加载）
+- **Claude — skill**：[`.claude/skills/flutter-best-practices/`](./.claude/skills/flutter-best-practices/SKILL.md)（`SKILL.md` + `references/00..17`，按需加载）
 - **Claude 入口**：[`.claude/CLAUDE.md`](./.claude/CLAUDE.md)（自动加载的红线，指向上述 skill）
 - **Claude 团队配置**：[`.claude/settings.json`](./.claude/settings.json)（共享命令权限白名单；个人覆盖写 `.claude/settings.local.json`）
 - **Cursor — rules**：`.cursor/rules/*.mdc`（每条规则自包含，按 `globs` 自动生效）

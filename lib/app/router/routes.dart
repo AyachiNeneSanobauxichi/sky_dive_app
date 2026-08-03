@@ -3,7 +3,6 @@ import "package:happy_os/app/router/route_name.dart";
 import "package:happy_os/app/splash_screen.dart";
 import "package:happy_os/features/auth/index.dart";
 import "package:happy_os/features/home/index.dart";
-import "package:happy_os/features/story/index.dart";
 
 /// 应用路由表：所有页面在此声明式注册。
 final List<RouteBase> appRoutes = [
@@ -18,18 +17,8 @@ final List<RouteBase> appRoutes = [
     builder: (context, state) => const LoginScreen(),
   ),
   GoRoute(
-    name: RouteName.register,
-    path: RoutePath.register,
-    builder: (context, state) => const RegisterScreen(),
-  ),
-  GoRoute(
     name: RouteName.home,
     path: RoutePath.home,
     builder: (context, state) => const HomeScreen(),
-  ),
-  GoRoute(
-    name: RouteName.story,
-    path: RoutePath.story,
-    builder: (context, state) => const StoryScreen(),
   ),
 ];

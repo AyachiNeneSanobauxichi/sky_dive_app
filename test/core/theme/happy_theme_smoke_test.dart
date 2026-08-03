@@ -9,6 +9,11 @@ import "package:happy_os/shared/widgets/index.dart";
 /// `flutter analyze` 查不出来。这组测试把深浅两套主题下的全部全局组件都渲染一遍，
 /// 保证改令牌不会静默炸掉某个组件。
 void main() {
+  late TextEditingController otpController;
+
+  setUp(() => otpController = TextEditingController(text: "123"));
+  tearDown(() => otpController.dispose());
+
   /// 在指定主题下渲染全部全局组件。
   Widget harness(ThemeData theme) {
     return MaterialApp(
@@ -43,6 +48,7 @@ void main() {
                   isError: true,
                   label: const Text("error"),
                 ),
+                HappyOtpField(controller: otpController),
                 const HappyGlassCard(child: Text("glass")),
                 // AI 状态表达组件
                 const HappyStreamingText(text: "streaming", isStreaming: true),

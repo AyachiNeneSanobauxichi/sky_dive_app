@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserDto {
 
- String get username; String get email;
+ String get phone; String? get nickname;
 /// Create a copy of UserDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $UserDtoCopyWith<UserDto> get copyWith => _$UserDtoCopyWithImpl<UserDto>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserDto&&(identical(other.username, username) || other.username == username)&&(identical(other.email, email) || other.email == email));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserDto&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nickname, nickname) || other.nickname == nickname));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,username,email);
+int get hashCode => Object.hash(runtimeType,phone,nickname);
 
 @override
 String toString() {
-  return 'UserDto(username: $username, email: $email)';
+  return 'UserDto(phone: $phone, nickname: $nickname)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $UserDtoCopyWith<$Res>  {
   factory $UserDtoCopyWith(UserDto value, $Res Function(UserDto) _then) = _$UserDtoCopyWithImpl;
 @useResult
 $Res call({
- String username, String email
+ String phone, String? nickname
 });
 
 
@@ -65,11 +65,11 @@ class _$UserDtoCopyWithImpl<$Res>
 
 /// Create a copy of UserDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? username = null,Object? email = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? phone = null,Object? nickname = freezed,}) {
   return _then(_self.copyWith(
-username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,
+phone: null == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as String,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -154,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String username,  String email)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String phone,  String? nickname)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserDto() when $default != null:
-return $default(_that.username,_that.email);case _:
+return $default(_that.phone,_that.nickname);case _:
   return orElse();
 
 }
@@ -175,10 +175,10 @@ return $default(_that.username,_that.email);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String username,  String email)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String phone,  String? nickname)  $default,) {final _that = this;
 switch (_that) {
 case _UserDto():
-return $default(_that.username,_that.email);case _:
+return $default(_that.phone,_that.nickname);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +195,10 @@ return $default(_that.username,_that.email);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String username,  String email)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String phone,  String? nickname)?  $default,) {final _that = this;
 switch (_that) {
 case _UserDto() when $default != null:
-return $default(_that.username,_that.email);case _:
+return $default(_that.phone,_that.nickname);case _:
   return null;
 
 }
@@ -210,11 +210,11 @@ return $default(_that.username,_that.email);case _:
 @JsonSerializable()
 
 class _UserDto extends UserDto {
-  const _UserDto({required this.username, required this.email}): super._();
+  const _UserDto({required this.phone, this.nickname}): super._();
   factory _UserDto.fromJson(Map<String, dynamic> json) => _$UserDtoFromJson(json);
 
-@override final  String username;
-@override final  String email;
+@override final  String phone;
+@override final  String? nickname;
 
 /// Create a copy of UserDto
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +229,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserDto&&(identical(other.username, username) || other.username == username)&&(identical(other.email, email) || other.email == email));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserDto&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nickname, nickname) || other.nickname == nickname));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,username,email);
+int get hashCode => Object.hash(runtimeType,phone,nickname);
 
 @override
 String toString() {
-  return 'UserDto(username: $username, email: $email)';
+  return 'UserDto(phone: $phone, nickname: $nickname)';
 }
 
 
@@ -249,7 +249,7 @@ abstract mixin class _$UserDtoCopyWith<$Res> implements $UserDtoCopyWith<$Res> {
   factory _$UserDtoCopyWith(_UserDto value, $Res Function(_UserDto) _then) = __$UserDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String username, String email
+ String phone, String? nickname
 });
 
 
@@ -266,11 +266,11 @@ class __$UserDtoCopyWithImpl<$Res>
 
 /// Create a copy of UserDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? username = null,Object? email = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? phone = null,Object? nickname = freezed,}) {
   return _then(_UserDto(
-username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,
+phone: null == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as String,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

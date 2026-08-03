@@ -8,25 +8,29 @@ alwaysApply: false
 
 > 本仓库用 `agent/` 目录下的 Markdown 文档驱动代码生成。本规则规定：文档如何组织、生成代码时的**业务 / infra 边界**、无接口时的 **mock 生命周期**、以及不确定处的 **TODO 标记**。这些是 agent 生成代码时的硬约束。
 
-## 📁 文档组织：`_page` 与 `_api` 分离
+## 📁 文档组织：页面文档与接口文档分离
 
-业务模块（`agent/<feature>/...`）的文档**必须按职责拆分**：
+业务模块（`agent/service/<feature>/`）的文档**必须按职责拆分**成两份：
 
-- **`<feature>_page.md`** —— 只写**页面 UI 与交互逻辑**（布局、组件、状态流转、表单校验、导航意图）。不写接口契约。
-- **`<feature>_api.md`** —— 只写**接口与数据契约**（端点、请求/响应字段、DTO、错误码、缓存策略）。不写 UI。
+| 文档 | 角色 | 写什么 |
+| --- | --- | --- |
+| `<feature>.md` | **页面文档** | 只写**页面 UI 与交互逻辑**（布局、组件、状态流转、表单校验、导航意图）。不写接口契约 |
+| `<feature>.api.md` | **接口文档** | 只写**接口与数据契约**（端点、请求/响应字段、DTO、错误码、缓存策略）。不写 UI |
 
-infra 文档（`agent/infra/...`，如 `route.md`）**只写 infra**，不掺业务页面细节。
+例：`agent/service/auth/auth.md` + `agent/service/auth/auth.api.md`。
 
-> 一个文档一个职责：page 找 UI、api 找数据、infra 找基建。混写会让后续 agent 越界改动。
+infra 文档（`agent/infra/...`，如 `base.md`、`route.md`）**只写 infra**，不掺业务页面细节。
+
+> 一个文档一个职责：页面文档找 UI、接口文档找数据、infra 文档找基建。混写会让后续 agent 越界改动。
 
 ### 业务文档书写模式（必须遵守）
 
 业务文档统一按下面的模式书写，agent 依此解析生成：
 
-- **目录**：每个业务模块一个目录 `agent/<feature>/`，内含 `<feature>_page.md` 与 `<feature>_api.md` 两份文档。
+- **目录**：每个业务模块一个目录 `agent/service/<feature>/`，内含 `<feature>.md` 与 `<feature>.api.md` 两份文档。
 - **版本化章节**：用 `## v1`、`## v2` … 递增章节记录每一期需求；**新增需求追加新版本章节，不改写历史版本**。每个版本下用无序列表逐条描述该期的需求 / 变更点。
-- **`<feature>_page.md`**：标题 `# <feature> page`；每个版本列出页面 UI 与交互需求（布局、组件、状态流转、表单校验、导航意图），**不写接口字段**。
-- **`<feature>_api.md`**：标题 `# <feature> api`；每个接口一节，注明 method、path、鉴权要求，并用 TS 代码块给出 `request` / `response` 字段契约。
+- **`<feature>.md`（页面文档）**：标题 `# <feature>`；每个版本列出页面 UI 与交互需求（布局、组件、状态流转、表单校验、导航意图），**不写接口字段**。
+- **`<feature>.api.md`（接口文档）**：标题 `# <feature> api`；每个接口一节，注明 method、path、鉴权要求，并用 TS 代码块给出 `request` / `response` 字段契约。
 
 > infra 文档放 `agent/infra/`、学习笔记放 `agent/study/`，均不套用本业务模式。
 
@@ -38,11 +42,11 @@ infra 文档（`agent/infra/...`，如 `route.md`）**只写 infra**，不掺业
 - 视觉要现代且贴合本项目主题；**发现更优 UI / 交互方案必须主动提醒用户**（每次交付 UI 附 1–3 条建议）。
 - 暂无后端，用 mock 把完整交互链路（含加载 / 空 / 错误态）跑通。
 
-> 落地细则见 `ux-interaction.mdc`。读 `<feature>_page.md` 之前先把 base.md 当约束读一遍——page 文档只描述"要什么页面"，体验标准由 base.md + `ux-interaction.mdc` 兜。
+> 落地细则见 `ux-interaction.mdc`。读 `<feature>.md` 之前先把 base.md 当约束读一遍——页面文档只描述"要什么页面"，体验标准由 base.md + `ux-interaction.mdc` 兜。
 
 ## 🚧 生成边界：业务归业务，infra 不许碰
 
-按**业务模块文档**（`*_page.md` / `*_api.md`）生成的代码，**只允许写业务层**——即 feature 内部：
+按**业务模块文档**（`<feature>.md` / `<feature>.api.md`）生成的代码，**只允许写业务层**——即 feature 内部：
 
 ```
 lib/features/<feature>/{data,domain,controllers,screens,widgets}/
@@ -59,16 +63,18 @@ lib/features/<feature>/{data,domain,controllers,screens,widgets}/
 
 对应地，`agent/infra/*` 文档驱动的生成**只写 infra**，不写业务页面。
 
-### `_api.md` 与 `_page.md` 各自的生成范围
+### 接口文档与页面文档各自的生成范围
 
 同为业务层，但**两类文档生成的代码严格分工**：
 
 | 文档 | 只允许生成 | 不得生成 |
 | --- | --- | --- |
-| `<feature>_api.md` | **接口定义相关**：`data/dto/`（DTO + JSON 序列化）、`data/<feature>_remote_data_source.dart`（端点）、`data/<feature>_repository.dart`（DTO↔Entity 映射、异常收敛），以及契约直接对应的 `domain/` 实体 | UI（`screens/`·`widgets/`）、`controllers/`、导航 |
-| `<feature>_page.md` | **UI 与业务**：`screens/`、`widgets/`、`controllers/`（状态编排、交互、导航），复用 `_api.md` 已生成的 data/domain | 接口契约（DTO / 端点）——要改接口回 `_api.md` |
+| `<feature>.api.md`（接口文档） | **接口定义相关**：`data/dto/`（DTO + JSON 序列化）、`data/<feature>_remote_data_source.dart`（端点）、`data/<feature>_repository.dart`（DTO↔Entity 映射、异常收敛），以及契约直接对应的 `domain/` 实体 | UI（`screens/`·`widgets/`）、`controllers/`、导航 |
+| `<feature>.md`（页面文档） | **UI 与业务**：`screens/`、`widgets/`、`controllers/`（状态编排、交互、导航），复用接口文档已生成的 data/domain | 接口契约（DTO / 端点）——要改接口回 `<feature>.api.md` |
 
-> 一句话：**api 文档 → 怎么拿数据；page 文档 → 怎么展示与交互**。缺了对应文档就停下询问，不要跨文档补写。
+> 一句话：**接口文档 → 怎么拿数据；页面文档 → 怎么展示与交互**。缺了对应文档就停下询问，不要跨文档补写。
+>
+> 接口文档为空（契约未定）时不算"缺文档"：按下面的 mock 规范先把链路跑通，并把假设写成 `TODO(<scope>)`。
 
 ## 🧪 Mock 生命周期：无真实接口时
 
@@ -111,8 +117,8 @@ lib/features/<feature>/data/
 - [ ] 只改了 feature 业务层，没碰 `core/` `app/` `theme/` 与工程配置。
 - [ ] 交付 UI 的改动已过 `ux-interaction.mdc` 的交互自检清单（反馈四时刻、异步四态齐全、键盘、触感、无障碍）。
 - [ ] 回复里附了「UI / 交互建议」1–3 条（改什么 / 为什么更好 / 代价），或明确说明当前实现已是更优方案。
-- [ ] 依 `_api.md` 只生成了 data/domain 契约层，依 `_page.md` 只生成了 screens/widgets/controllers，无跨文档越界。
-- [ ] 业务文档遵循 `_page`/`_api` 拆分 + `## vN` 版本化书写模式。
+- [ ] 依 `<feature>.api.md` 只生成了 data/domain 契约层，依 `<feature>.md` 只生成了 screens/widgets/controllers，无跨文档越界。
+- [ ] 业务文档遵循 `<feature>.md` / `<feature>.api.md` 拆分 + `## vN` 版本化书写模式。
 - [ ] 页面无硬编码文案（或已用 TODO 标出待抽取，且 i18n 基建缺失已上报）。
 - [ ] 无真实接口的部分放在 `data/mock/`，并已说明「接完即删」。
 - [ ] 所有不确定处都有带描述的 `TODO(<scope>):`。

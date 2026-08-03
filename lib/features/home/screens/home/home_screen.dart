@@ -1,18 +1,19 @@
 import "package:flutter/material.dart";
 import "package:flutter_animate/flutter_animate.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:go_router/go_router.dart";
-import "package:happy_os/app/router/index.dart";
 import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/auth/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
 import "package:happy_os/shared/widgets/index.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
-/// 首页占位：模版业务已清空，等 HappyOS 首个 feature 落地后替换本页。
+/// 首页占位：业务页面已清空，等首个正式 feature（聊天生成爽文）落地后替换本页。
 ///
 /// 之所以保留这一页而不是直接删掉 home 路由：登录成功后的重定向目标
-/// （[RouteName.home]）由 route_guard 依赖，缺页会让整条登录链路断掉。
+/// （`RouteName.home`）由 route_guard 依赖，缺页会让整条登录链路断掉。
+///
+/// 这里刻意**不放**行动按钮：占位期没有真实去处，给一个点了什么都不发生的按钮
+/// 比空着更糟。真实首页落地时按空态规范补「引导下一步」的入口。
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -65,13 +66,6 @@ class HomeScreen extends ConsumerWidget {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
-                  ),
-                  HappyButton(
-                    label: l10n.homeCreateStory,
-                    icon: LucideIcons.sparkles,
-                    size: HappyButtonSize.large,
-                    isFullWidth: false,
-                    onPressed: () => context.pushNamed(RouteName.story),
                   ),
                 ],
               ),

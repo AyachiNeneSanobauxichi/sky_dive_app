@@ -10,7 +10,8 @@ Future<void> main() async {
   // 异步初始化前需先绑定 Flutter engine。
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 加载 .env 环境配置；文件缺失/未注册时不致命，Env 会回退到默认值。
+  // 加载 .env 环境配置；文件缺失 / 未注册时不致命——`Env` 会判 `dotenv.isInitialized`
+  // 后回退到本地开发默认值（这道判断在 Env 里，别删）。
   try {
     await dotenv.load();
   } catch (e) {

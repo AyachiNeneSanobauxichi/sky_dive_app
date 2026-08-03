@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$User {
 
- String get username; String get email;
+ String get phone; String? get nickname;
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $UserCopyWith<User> get copyWith => _$UserCopyWithImpl<User>(this as User, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is User&&(identical(other.username, username) || other.username == username)&&(identical(other.email, email) || other.email == email));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is User&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nickname, nickname) || other.nickname == nickname));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,username,email);
+int get hashCode => Object.hash(runtimeType,phone,nickname);
 
 @override
 String toString() {
-  return 'User(username: $username, email: $email)';
+  return 'User(phone: $phone, nickname: $nickname)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $UserCopyWith<$Res>  {
   factory $UserCopyWith(User value, $Res Function(User) _then) = _$UserCopyWithImpl;
 @useResult
 $Res call({
- String username, String email
+ String phone, String? nickname
 });
 
 
@@ -62,11 +62,11 @@ class _$UserCopyWithImpl<$Res>
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? username = null,Object? email = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? phone = null,Object? nickname = freezed,}) {
   return _then(_self.copyWith(
-username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,
+phone: null == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as String,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -151,10 +151,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String username,  String email)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String phone,  String? nickname)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
-return $default(_that.username,_that.email);case _:
+return $default(_that.phone,_that.nickname);case _:
   return orElse();
 
 }
@@ -172,10 +172,10 @@ return $default(_that.username,_that.email);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String username,  String email)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String phone,  String? nickname)  $default,) {final _that = this;
 switch (_that) {
 case _User():
-return $default(_that.username,_that.email);case _:
+return $default(_that.phone,_that.nickname);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -192,10 +192,10 @@ return $default(_that.username,_that.email);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String username,  String email)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String phone,  String? nickname)?  $default,) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
-return $default(_that.username,_that.email);case _:
+return $default(_that.phone,_that.nickname);case _:
   return null;
 
 }
@@ -207,11 +207,11 @@ return $default(_that.username,_that.email);case _:
 
 
 class _User implements User {
-  const _User({required this.username, required this.email});
+  const _User({required this.phone, this.nickname});
   
 
-@override final  String username;
-@override final  String email;
+@override final  String phone;
+@override final  String? nickname;
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
@@ -223,16 +223,16 @@ _$UserCopyWith<_User> get copyWith => __$UserCopyWithImpl<_User>(this, _$identit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _User&&(identical(other.username, username) || other.username == username)&&(identical(other.email, email) || other.email == email));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _User&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nickname, nickname) || other.nickname == nickname));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,username,email);
+int get hashCode => Object.hash(runtimeType,phone,nickname);
 
 @override
 String toString() {
-  return 'User(username: $username, email: $email)';
+  return 'User(phone: $phone, nickname: $nickname)';
 }
 
 
@@ -243,7 +243,7 @@ abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   factory _$UserCopyWith(_User value, $Res Function(_User) _then) = __$UserCopyWithImpl;
 @override @useResult
 $Res call({
- String username, String email
+ String phone, String? nickname
 });
 
 
@@ -260,11 +260,11 @@ class __$UserCopyWithImpl<$Res>
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? username = null,Object? email = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? phone = null,Object? nickname = freezed,}) {
   return _then(_User(
-username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,
+phone: null == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as String,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

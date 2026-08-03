@@ -54,3 +54,14 @@ app.*.map.json
 
 # gen-l10n 生成的未翻译报告（构建产物，不入库）
 l10n_untranslated.txt
+
+# gen-l10n 生成的 AppLocalizations（构建产物，不入库）
+#
+# 为什么不入库：入库就要求「改 .arb 必须紧跟一次 gen-l10n 并把产物一起提交」，
+# 任何一半的回滚 / 合并冲突都会让产物与 .arb 脱钩——表现是 .arb 里明明有 key，
+# 代码里 `l10n.xxx` 却报「未定义」，而且 diff 看不出问题（产物"干净"得像没动过）。
+# 真实发生过一次。改成本地生成后，唯一的真源就是 .arb。
+# 代价：clone 后、或 `flutter analyze` 之前需先跑一次 `flutter gen-l10n`
+#（`flutter run` / `flutter build` 因 pubspec 的 `generate: true` 会自动生成）。
+lib/l10n/app_localizations.dart
+lib/l10n/app_localizations_*.dart

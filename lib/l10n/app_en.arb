@@ -6,142 +6,116 @@
     "description": "Application name shown as the app title"
   },
 
-  "commonOr": "or",
-  "@commonOr": {
-    "description": "Divider label between primary action and social login"
-  },
-  "authEmailLabel": "Email",
-  "@authEmailLabel": {
-    "description": "Label for the email input field"
-  },
-  "authPasswordLabel": "Password",
-  "@authPasswordLabel": {
-    "description": "Label for the password input field"
-  },
-  "authShowPassword": "Show password",
-  "@authShowPassword": {
-    "description": "Tooltip for the button that reveals the password"
-  },
-  "authHidePassword": "Hide password",
-  "@authHidePassword": {
-    "description": "Tooltip for the button that hides the password"
-  },
-  "authIdentifierLabel": "Email or username",
-  "@authIdentifierLabel": {
-    "description": "Label for the login identifier field that accepts an email or a username"
-  },
-  "authPasswordWeak": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-  "@authPasswordWeak": {
-    "description": "Validation error when the password does not meet the complexity requirements"
+  "commonComingSoon": "This is coming soon",
+  "@commonComingSoon": {
+    "description": "Toast shown when tapping an entry point whose page is not built yet"
   },
 
-  "loginTitle": "Welcome back",
+  "authPhoneHint": "Phone number",
+  "@authPhoneHint": {
+    "description": "Placeholder inside the phone number input"
+  },
+  "authPhoneRequired": "Enter your phone number",
+  "@authPhoneRequired": {
+    "description": "Validation error when the phone field is empty"
+  },
+  "authPhoneInvalid": "That doesn't look like a valid phone number",
+  "@authPhoneInvalid": {
+    "description": "Validation error when the phone number format is wrong"
+  },
+  "authCodeHint": "Code",
+  "@authCodeHint": {
+    "description": "Placeholder inside the SMS verification code input"
+  },
+  "authCodeRequired": "Enter the code",
+  "@authCodeRequired": {
+    "description": "Validation error when the verification code field is empty"
+  },
+  "authCodeInvalid": "Enter the 6-digit code",
+  "@authCodeInvalid": {
+    "description": "Validation error when the verification code is not 6 digits"
+  },
+  "authSendCode": "Get code",
+  "@authSendCode": {
+    "description": "Button that requests an SMS verification code"
+  },
+  "authResendAfter": "Resend in {seconds}s",
+  "@authResendAfter": {
+    "description": "Plain text (not a button) shown during the resend cooldown, replacing the send-code button",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "authCodeSent": "Code sent",
+  "@authCodeSent": {
+    "description": "Toast shown after the verification code was sent successfully"
+  },
+  "authChangePhone": "Change",
+  "@authChangePhone": {
+    "description": "Button that reopens the phone number field after the code was sent"
+  },
+  "authCodeSentTo": "Code sent to",
+  "@authCodeSentTo": {
+    "description": "Small caption above the masked phone number in the collapsed summary"
+  },
+  "authAgreementPrefix": "I have read and agree to",
+  "@authAgreementPrefix": {
+    "description": "Label of the consent checkbox; the agreement links sit on their own row below it"
+  },
+  "authUserAgreement": "User Agreement",
+  "@authUserAgreement": {
+    "description": "User agreement link text"
+  },
+  "authAgreementAnd": "and",
+  "@authAgreementAnd": {
+    "description": "Conjunction between the two agreement link buttons"
+  },
+  "authPrivacyPolicy": "Privacy Policy",
+  "@authPrivacyPolicy": {
+    "description": "Privacy policy link text"
+  },
+  "authAgreementRequired": "Please read and agree to the User Agreement first",
+  "@authAgreementRequired": {
+    "description": "Validation error when the consent checkbox is not checked"
+  },
+  "authErrorGeneric": "Something went wrong. Please try again.",
+  "@authErrorGeneric": {
+    "description": "Generic fallback error message shown when an auth request fails"
+  },
+
+  "loginTitle": "Start your story",
   "@loginTitle": {
     "description": "Login screen headline"
   },
-  "loginSubtitle": "Log in to continue managing your tasks",
+  "loginSubtitle": "Turn what really happened to you into a story people can't put down",
   "@loginSubtitle": {
-    "description": "Login screen supporting text under the headline"
-  },
-  "loginForgotPassword": "Forgot password?",
-  "@loginForgotPassword": {
-    "description": "Forgot-password link on the login screen"
+    "description": "Login screen supporting text under the headline: states what the product does, so first-time visitors know what they are signing into"
   },
   "loginSubmit": "Log in",
   "@loginSubmit": {
     "description": "Login submit button label"
   },
-  "loginNoAccount": "Don't have an account? ",
-  "@loginNoAccount": {
-    "description": "Prompt before the sign-up link on the login screen"
+  "loginSignUpNotice": "New numbers get an account automatically",
+  "@loginSignUpNotice": {
+    "description": "Note under the login button explaining that unregistered numbers are signed up on the fly"
   },
-  "loginGoRegister": "Sign up",
-  "@loginGoRegister": {
-    "description": "Link that navigates to the register screen"
+  "loginSampleLabel": "Sample rewrite",
+  "@loginSampleLabel": {
+    "description": "Badge on the sample story card shown on the login screen"
   },
-
-  "registerTitle": "Create account",
-  "@registerTitle": {
-    "description": "Register screen headline"
+  "loginSampleStory1": "The last train was empty except for me. In the reflection on the window opposite, the man in the grey coat looked up for the third time — and behind me, there was no one at all.",
+  "@loginSampleStory1": {
+    "description": "Placeholder excerpt of a rewritten story (1 of 3), rotating on the login screen so first-time visitors can see what the product produces"
   },
-  "registerSubtitle": "Start managing your tasks",
-  "@registerSubtitle": {
-    "description": "Register screen supporting text under the headline"
+  "loginSampleStory2": "The interviewer smiled as he slid my resume back across the table. Three months later I signed with his biggest competitor, and the first thing I did was have that same resume delivered to his desk.",
+  "@loginSampleStory2": {
+    "description": "Placeholder excerpt of a rewritten story (2 of 3), rotating on the login screen"
   },
-  "registerUsernameLabel": "Username",
-  "@registerUsernameLabel": {
-    "description": "Label for the username input field"
-  },
-  "registerConfirmPasswordLabel": "Confirm password",
-  "@registerConfirmPasswordLabel": {
-    "description": "Label for the confirm-password input field"
-  },
-  "registerPasswordMismatch": "Passwords do not match",
-  "@registerPasswordMismatch": {
-    "description": "Validation error when the two passwords differ"
-  },
-  "registerAgreementPrefix": "I have read and agree to the ",
-  "@registerAgreementPrefix": {
-    "description": "Text before the agreement links in the consent checkbox"
-  },
-  "registerUserAgreement": "User Agreement",
-  "@registerUserAgreement": {
-    "description": "User agreement link text"
-  },
-  "registerAgreementAnd": " and ",
-  "@registerAgreementAnd": {
-    "description": "Conjunction between the two agreement links"
-  },
-  "registerPrivacyPolicy": "Privacy Policy",
-  "@registerPrivacyPolicy": {
-    "description": "Privacy policy link text"
-  },
-  "registerAgreementRequired": "Please read and agree to the User Agreement first",
-  "@registerAgreementRequired": {
-    "description": "Validation error when the consent checkbox is not checked"
-  },
-  "registerSubmit": "Sign up",
-  "@registerSubmit": {
-    "description": "Register submit button label"
-  },
-  "registerHaveAccount": "Already have an account? ",
-  "@registerHaveAccount": {
-    "description": "Prompt before the log-in link on the register screen"
-  },
-  "registerGoLogin": "Log in",
-  "@registerGoLogin": {
-    "description": "Link that navigates to the login screen"
-  },
-
-  "authErrorGeneric": "Something went wrong. Please try again.",
-  "@authErrorGeneric": {
-    "description": "Generic fallback error message shown when an auth request fails"
-  },
-  "registerSuccess": "Account created. Please log in.",
-  "@registerSuccess": {
-    "description": "Snackbar shown after a successful registration, prompting the user to log in"
-  },
-
-  "commonCancel": "Cancel",
-  "@commonCancel": {
-    "description": "Generic cancel button label"
-  },
-  "commonSave": "Save",
-  "@commonSave": {
-    "description": "Generic save button label"
-  },
-  "commonRetry": "Retry",
-  "@commonRetry": {
-    "description": "Generic retry button label"
-  },
-
-  "commonApply": "Apply",
-  "@commonApply": {
-    "description": "Generic apply button label"
-  },
-  "commonReset": "Reset",
-  "@commonReset": {
-    "description": "Generic reset button label"
+  "loginSampleStory3": "The landlord changed the locks at midnight and I sat in the stairwell until dawn. Nobody guessed that the old key he threw away would be my first step to owning the whole building.",
+  "@loginSampleStory3": {
+    "description": "Placeholder excerpt of a rewritten story (3 of 3), rotating on the login screen"
   },
 
   "homeTitle": "HappyOS",
@@ -159,60 +133,6 @@
   "homeLogoutFailed": "Log out failed. Please try again.",
   "@homeLogoutFailed": {
     "description": "Toast message shown when logging out fails"
-  },
-
-  "homeCreateStory": "Turn a memory into a story",
-  "@homeCreateStory": {
-    "description": "Primary call to action on the home screen that opens the story generator"
-  },
-
-  "storyTitle": "Your story",
-  "@storyTitle": {
-    "description": "App bar title of the story generation screen"
-  },
-  "storyComposerTitle": "What actually happened?",
-  "@storyComposerTitle": {
-    "description": "Headline above the experience input on the story screen"
-  },
-  "storyComposerSubtitle": "Write down something that really happened to you. The more specific, the better the story.",
-  "@storyComposerSubtitle": {
-    "description": "Supporting text under the story composer headline"
-  },
-  "storyComposerHint": "That evening on the last train home, I noticed the man opposite me had been staring at my reflection the whole time…",
-  "@storyComposerHint": {
-    "description": "Placeholder text inside the experience input, demonstrating the level of detail expected"
-  },
-  "storyExperienceLabel": "Your memory",
-  "@storyExperienceLabel": {
-    "description": "Label on the collapsed chip that shows the submitted experience"
-  },
-  "storyEditExperience": "Edit memory",
-  "@storyEditExperience": {
-    "description": "Tooltip for the button that returns to editing the submitted experience"
-  },
-  "storyThinking": "Reading your memory…",
-  "@storyThinking": {
-    "description": "Status text shown while waiting for the first streamed token"
-  },
-  "storyStopped": "Stopped",
-  "@storyStopped": {
-    "description": "Label shown under the story when the user stopped generation early"
-  },
-  "storyGenerate": "Rewrite it",
-  "@storyGenerate": {
-    "description": "Button that starts story generation"
-  },
-  "storyRegenerate": "Regenerate",
-  "@storyRegenerate": {
-    "description": "Button that generates the story again from the same memory"
-  },
-  "storyNewStory": "New memory",
-  "@storyNewStory": {
-    "description": "Button that clears the current story and returns to the composer"
-  },
-  "storyStop": "Stop",
-  "@storyStop": {
-    "description": "Button that aborts an in-progress generation"
   },
 
   "routeNotFound": "Page not found",

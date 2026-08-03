@@ -132,6 +132,7 @@ final shouldAnimate = !MediaQuery.disableAnimationsOf(context);
 | --- | --- | --- |
 | `HappyButton` | 主按钮。`variant`：`primary`（品牌渐变+光晕）/ `secondary` / `ghost` / `danger`；`size`：`small` / `medium` / `large` | 自带按下缩放 + 触感反馈；一屏最多一个 `primary` |
 | `HappyCheckbox` / `HappyCheckboxFormField` | 复选框，后者接 `Form` 校验 | |
+| `HappyOtpField` | 分离式验证码输入（N 格 OTP），本身是 `FormField` | **透明原生 `TextField` 盖在格子上**，格子只是皮肤——这样粘贴 6 位数、iOS 短信自动填充（`oneTimeCode`）才照常工作；自绘 N 个独立输入框会丢掉这两项。填满触发 `onCompleted`（供调用方自动提交）并给一次轻触感；一次性填入多位时逐格入场；`isSuccess` 把格子换成对勾（换页前的成功确认） |
 | `HappyToast` | 全局轻提示 | 见下 |
 | `HappyBrandMark` | 品牌标记（渐变方块 + 图标 + 光晕） | 开屏 / 认证页头 / 空态 |
 | `HappyAuroraBackground` | 品牌极光背景 | **只用在需要氛围的页面**（开屏、认证、阅读、空态）；列表 / 表单等信息密集页别用，或把 `intensity` 压到 0.5 以下 |

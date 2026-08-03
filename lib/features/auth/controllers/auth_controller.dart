@@ -62,16 +62,28 @@ class AuthController extends _$AuthController {
     }
   }
 
-  /// 登录：accessToken 写内存、refreshToken + 用户快照落盘，置为已登录态。
-  /// 失败抛出 [Failure]（由页面本地捕获提示），不污染全局 [state]。
-  Future<void> login({
-    required String identifier,
-    required String password,
-  }) async {
-    final session = await _repo.login(
-      identifier: identifier,
-      password: password,
-    );
+  /// 手机号验证码登录（v3）：一步完成「校验 + 落地会话」。
+  ///
+  /// 失败抛出 [Failure]（由页面本地捕获提示），不污染全局 [state]——否则登录失败
+  /// 会把路由打回 splash，用户已填的手机号和验证码全丢。
+  Future<void> login({required String phone, required String code}) async =>
+      completeSession(await authenticate(phone: phone, code: code));
+
+  /// 只校验手机号 + 验证码，拿到会话但**不改登录态**。
+  ///
+  /// 拆出这一步是为了给页面留出"成功确认"的时间：登录态一翻转，路由守卫立刻换页，
+  /// 用户刚填完最后一位就被"啪"地弹走，没有任何成果确认。页面拿到会话后可以先播
+  /// 一段确认动效，再调 [completeSession]。
+  Future<AuthSession> authenticate({
+    required String phone,
+    required String code,
+  }) => _repo.login(phone: phone, code: code);
+
+  /// 落地会话：accessToken 写内存、refreshToken + 用户快照落盘，置为已登录态。
+  ///
+  /// **这一步会触发路由重定向**，所以调用方要在确认动效播完后再调；也**不要**因为
+  /// 页面已经卸载就跳过它——会话丢了用户得重新登录一次。
+  Future<void> completeSession(AuthSession session) async {
     _tokenStore.set(session.tokens.accessToken);
     final refreshToken = session.tokens.refreshToken;
     if (refreshToken != null && refreshToken.isNotEmpty) {
@@ -80,14 +92,6 @@ class AuthController extends _$AuthController {
     await _storage.writeUser(_encodeUser(session.user));
     state = AsyncData(AuthState.authenticated(session.user));
   }
-
-  /// 注册：**不改变登录态**（后端不下发令牌），成功返回用户，由页面导航到登录页。
-  /// 失败抛出 [Failure]，页面自行捕获提示。
-  Future<User> register({
-    required String username,
-    required String email,
-    required String password,
-  }) => _repo.register(username: username, email: email, password: password);
 
   /// 登出：先请求后端（尽力而为），无论成败都清空本地会话并置为未登录。
   Future<void> logout() async {
@@ -113,17 +117,17 @@ class AuthController extends _$AuthController {
 
   /// 用户快照持久化：User 是纯领域实体（无 JSON 耦合），这里手动序列化最小字段。
   String _encodeUser(User user) =>
-      jsonEncode({"username": user.username, "email": user.email});
+      jsonEncode({"phone": user.phone, "nickname": user.nickname});
 
   Future<User?> _readPersistedUser() async {
     final raw = await _storage.readUser();
     if (raw == null || raw.isEmpty) return null;
     try {
       final map = jsonDecode(raw) as Map<String, dynamic>;
-      final username = map["username"] as String?;
-      final email = map["email"] as String?;
-      if (username == null || email == null) return null;
-      return User(username: username, email: email);
+      final phone = map["phone"] as String?;
+      // 手机号是身份锚点，缺了就当快照失效；昵称可空，不参与判断。
+      if (phone == null) return null;
+      return User(phone: phone, nickname: map["nickname"] as String?);
     } on Object {
       return null;
     }

@@ -5,18 +5,14 @@
 abstract final class RouteName {
   static const splash = "splash";
   static const login = "login";
-  static const register = "register";
   static const home = "home";
-  static const story = "story";
 }
 
 abstract final class RoutePath {
   /// 启动占位页，作为 initialLocation：登录态未定时停留于此。
   static const splash = "/";
-  static const login = "/login";
-  static const register = "/register";
-  static const home = "/home";
 
-  /// 故事生成页。需登录（未登录会被 route_guard 拦回 login）。
-  static const story = "/story";
+  /// 登录页（手机号 + 验证码）。v3 起没有独立注册页——未注册手机号直接建号。
+  static const login = "/login";
+  static const home = "/home";
 }
