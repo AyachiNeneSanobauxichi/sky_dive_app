@@ -1,5 +1,7 @@
 # 09 · 主题与 UI
 
+> ⚠️ 本模块只管**视觉令牌**（用什么颜色 / 间距 / 时长）。**交互体验**（反馈四时刻、异步四态、触感、键盘、无障碍、主动提更优 UI 方案）见 `17-ux-interaction.md`——本项目是 C 端产品，两个模块都必须过。
+
 > 设计系统集中在 `lib/core/theme/`，全局组件在 `lib/shared/widgets/`（`Happy*` 前缀），feature 私有组件在各 feature 的 `widgets/`。底座是 Material 3，**不引入 shadcn_flutter / forui 之类的整套 UI 框架**（理由见文末）。
 
 ## 🎨 设计基调：深色优先 · 电影感
