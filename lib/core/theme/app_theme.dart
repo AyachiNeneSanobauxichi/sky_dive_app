@@ -173,6 +173,10 @@ abstract final class HappyTheme {
     );
   }
 
+  // 底部导航条不配 navigationBarTheme：首页的条子是自绘的（中间 story 要做成
+  // 凸起的品牌渐变圆，M3 NavigationBar 的固定布局塞不进去），配了也没人用。
+  // 相关视觉决策都写在 `features/home/widgets/home_bottom_nav_bar.dart`。
+
   /// 输入框：填充式而非描边式。深色底上一个"凹下去的槽"比一圈细线更清晰，
   /// 也更贴近当下 C 端产品的观感；聚焦时才用品牌色描边给出强反馈。
   static InputDecorationThemeData _inputDecorationTheme(

@@ -7,7 +7,7 @@ import "package:happy_os/features/auth/index.dart";
 ///
 /// 三态：
 /// - 未定（冷启动静默刷新中，`AsyncLoading`）→ 停在 splash，不干预。
-/// - 已登录 → 不该停在 splash / login，跳 home。
+/// - 已登录 → 不该停在 splash / login，跳首页默认 tab（[RoutePath.home]）。
 /// - 未登录 → 只能待在 login，其余一律回 login。
 String? guardRedirect(AsyncValue<AuthState> auth, GoRouterState state) {
   final loc = state.matchedLocation;

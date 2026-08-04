@@ -187,6 +187,19 @@
     "description": "Toast message shown when logging out fails"
   },
 
+  "homeStoryQuickTitle": "Quick start",
+  "@homeStoryQuickTitle": {
+    "description": "Title of the sheet opened by long-pressing the raised story tab"
+  },
+  "homeStoryQuickNew": "New story",
+  "@homeStoryQuickNew": {
+    "description": "Quick action that starts writing a brand new story"
+  },
+  "homeStoryQuickContinue": "Resume last draft",
+  "@homeStoryQuickContinue": {
+    "description": "Quick action that reopens the most recent unfinished story"
+  },
+
   "routeNotFound": "Page not found",
   "@routeNotFound": {
     "description": "Message shown by the router error page for an unknown route"

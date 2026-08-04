@@ -53,5 +53,9 @@
   "userEmptyBody": "昵称、故事风格、语气强度——设定越清楚，写出来的故事越像为你而写。",
   "userEmptyAction": "去设置",
 
+  "homeStoryQuickTitle": "快速开始",
+  "homeStoryQuickNew": "新建故事",
+  "homeStoryQuickContinue": "继续上次生成",
+
   "routeNotFound": "页面不存在"
 }

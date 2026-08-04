@@ -14,8 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SmsCodeState {
 
-/// 请求进行中（按钮进入忙碌态，防止重复发送）。
- bool get isSending;/// 距离可再次发送的剩余秒数，0 表示无冷却。
+/// 距离可再次发送的剩余秒数，0 表示无冷却。
  int get cooldownSeconds;
 /// Create a copy of SmsCodeState
 /// with the given fields replaced by the non-null parameter values.
@@ -27,16 +26,16 @@ $SmsCodeStateCopyWith<SmsCodeState> get copyWith => _$SmsCodeStateCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SmsCodeState&&(identical(other.isSending, isSending) || other.isSending == isSending)&&(identical(other.cooldownSeconds, cooldownSeconds) || other.cooldownSeconds == cooldownSeconds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SmsCodeState&&(identical(other.cooldownSeconds, cooldownSeconds) || other.cooldownSeconds == cooldownSeconds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isSending,cooldownSeconds);
+int get hashCode => Object.hash(runtimeType,cooldownSeconds);
 
 @override
 String toString() {
-  return 'SmsCodeState(isSending: $isSending, cooldownSeconds: $cooldownSeconds)';
+  return 'SmsCodeState(cooldownSeconds: $cooldownSeconds)';
 }
 
 
@@ -47,7 +46,7 @@ abstract mixin class $SmsCodeStateCopyWith<$Res>  {
   factory $SmsCodeStateCopyWith(SmsCodeState value, $Res Function(SmsCodeState) _then) = _$SmsCodeStateCopyWithImpl;
 @useResult
 $Res call({
- bool isSending, int cooldownSeconds
+ int cooldownSeconds
 });
 
 
@@ -64,10 +63,9 @@ class _$SmsCodeStateCopyWithImpl<$Res>
 
 /// Create a copy of SmsCodeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isSending = null,Object? cooldownSeconds = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? cooldownSeconds = null,}) {
   return _then(_self.copyWith(
-isSending: null == isSending ? _self.isSending : isSending // ignore: cast_nullable_to_non_nullable
-as bool,cooldownSeconds: null == cooldownSeconds ? _self.cooldownSeconds : cooldownSeconds // ignore: cast_nullable_to_non_nullable
+cooldownSeconds: null == cooldownSeconds ? _self.cooldownSeconds : cooldownSeconds // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -153,10 +151,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isSending,  int cooldownSeconds)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int cooldownSeconds)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SmsCodeState() when $default != null:
-return $default(_that.isSending,_that.cooldownSeconds);case _:
+return $default(_that.cooldownSeconds);case _:
   return orElse();
 
 }
@@ -174,10 +172,10 @@ return $default(_that.isSending,_that.cooldownSeconds);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isSending,  int cooldownSeconds)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int cooldownSeconds)  $default,) {final _that = this;
 switch (_that) {
 case _SmsCodeState():
-return $default(_that.isSending,_that.cooldownSeconds);case _:
+return $default(_that.cooldownSeconds);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +192,10 @@ return $default(_that.isSending,_that.cooldownSeconds);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isSending,  int cooldownSeconds)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int cooldownSeconds)?  $default,) {final _that = this;
 switch (_that) {
 case _SmsCodeState() when $default != null:
-return $default(_that.isSending,_that.cooldownSeconds);case _:
+return $default(_that.cooldownSeconds);case _:
   return null;
 
 }
@@ -209,11 +207,9 @@ return $default(_that.isSending,_that.cooldownSeconds);case _:
 
 
 class _SmsCodeState extends SmsCodeState {
-  const _SmsCodeState({this.isSending = false, this.cooldownSeconds = 0}): super._();
+  const _SmsCodeState({this.cooldownSeconds = 0}): super._();
   
 
-/// 请求进行中（按钮进入忙碌态，防止重复发送）。
-@override@JsonKey() final  bool isSending;
 /// 距离可再次发送的剩余秒数，0 表示无冷却。
 @override@JsonKey() final  int cooldownSeconds;
 
@@ -227,16 +223,16 @@ _$SmsCodeStateCopyWith<_SmsCodeState> get copyWith => __$SmsCodeStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SmsCodeState&&(identical(other.isSending, isSending) || other.isSending == isSending)&&(identical(other.cooldownSeconds, cooldownSeconds) || other.cooldownSeconds == cooldownSeconds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SmsCodeState&&(identical(other.cooldownSeconds, cooldownSeconds) || other.cooldownSeconds == cooldownSeconds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isSending,cooldownSeconds);
+int get hashCode => Object.hash(runtimeType,cooldownSeconds);
 
 @override
 String toString() {
-  return 'SmsCodeState(isSending: $isSending, cooldownSeconds: $cooldownSeconds)';
+  return 'SmsCodeState(cooldownSeconds: $cooldownSeconds)';
 }
 
 
@@ -247,7 +243,7 @@ abstract mixin class _$SmsCodeStateCopyWith<$Res> implements $SmsCodeStateCopyWi
   factory _$SmsCodeStateCopyWith(_SmsCodeState value, $Res Function(_SmsCodeState) _then) = __$SmsCodeStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isSending, int cooldownSeconds
+ int cooldownSeconds
 });
 
 
@@ -264,10 +260,9 @@ class __$SmsCodeStateCopyWithImpl<$Res>
 
 /// Create a copy of SmsCodeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isSending = null,Object? cooldownSeconds = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? cooldownSeconds = null,}) {
   return _then(_SmsCodeState(
-isSending: null == isSending ? _self.isSending : isSending // ignore: cast_nullable_to_non_nullable
-as bool,cooldownSeconds: null == cooldownSeconds ? _self.cooldownSeconds : cooldownSeconds // ignore: cast_nullable_to_non_nullable
+cooldownSeconds: null == cooldownSeconds ? _self.cooldownSeconds : cooldownSeconds // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
