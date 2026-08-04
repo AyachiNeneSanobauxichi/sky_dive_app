@@ -8,6 +8,59 @@ part of 'inspiration_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Story 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+///
+// TODO(story): 生成历史接口定稿后也复用本 provider，别再各自 new 一份。
+
+@ProviderFor(storyRepository)
+final storyRepositoryProvider = StoryRepositoryProvider._();
+
+/// Story 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+///
+// TODO(story): 生成历史接口定稿后也复用本 provider，别再各自 new 一份。
+
+final class StoryRepositoryProvider
+    extends
+        $FunctionalProvider<StoryRepository, StoryRepository, StoryRepository>
+    with $Provider<StoryRepository> {
+  /// Story 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+  ///
+  // TODO(story): 生成历史接口定稿后也复用本 provider，别再各自 new 一份。
+  StoryRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'storyRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$storyRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<StoryRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  StoryRepository create(Ref ref) {
+    return storyRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(StoryRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<StoryRepository>(value),
+    );
+  }
+}
+
+String _$storyRepositoryHash() => r'3ca3ac9b0cfcee1aa95ce3d3583055850348e447';
+
 /// 「灵感一下」控制器：从灵感池里抽几条展示，支持换一换。
 ///
 /// 抽签逻辑放在 controller 而不是 UI：换一换要保证**和上一轮不重复**——
@@ -50,7 +103,7 @@ final class InspirationControllerProvider
 }
 
 String _$inspirationControllerHash() =>
-    r'bbcaf4d0bfa65d5678b89f1b166a117ec1384ff1';
+    r'33c9d947a93c7944854a4f64b75833f055f72e19';
 
 /// 「灵感一下」控制器：从灵感池里抽几条展示，支持换一换。
 ///

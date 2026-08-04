@@ -289,7 +289,9 @@ as StoryStatus,
 /// @nodoc
 mixin _$InspirationPrompt {
 
- String get id; String get text;
+ String get id; String get text;/// 情绪 / 题材标签（如 觉醒、职场）。契约有，但当前 UI 还没展示。
+ String? get tag;/// 叙事分类（如 转折、成长）。契约有，但当前 UI 还没展示。
+ String? get category;
 /// Create a copy of InspirationPrompt
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -300,16 +302,16 @@ $InspirationPromptCopyWith<InspirationPrompt> get copyWith => _$InspirationPromp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspirationPrompt&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspirationPrompt&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.tag, tag) || other.tag == tag)&&(identical(other.category, category) || other.category == category));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,text);
+int get hashCode => Object.hash(runtimeType,id,text,tag,category);
 
 @override
 String toString() {
-  return 'InspirationPrompt(id: $id, text: $text)';
+  return 'InspirationPrompt(id: $id, text: $text, tag: $tag, category: $category)';
 }
 
 
@@ -320,7 +322,7 @@ abstract mixin class $InspirationPromptCopyWith<$Res>  {
   factory $InspirationPromptCopyWith(InspirationPrompt value, $Res Function(InspirationPrompt) _then) = _$InspirationPromptCopyWithImpl;
 @useResult
 $Res call({
- String id, String text
+ String id, String text, String? tag, String? category
 });
 
 
@@ -337,11 +339,13 @@ class _$InspirationPromptCopyWithImpl<$Res>
 
 /// Create a copy of InspirationPrompt
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? text = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? text = null,Object? tag = freezed,Object? category = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
-as String,
+as String,tag: freezed == tag ? _self.tag : tag // ignore: cast_nullable_to_non_nullable
+as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -426,10 +430,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String text)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String text,  String? tag,  String? category)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InspirationPrompt() when $default != null:
-return $default(_that.id,_that.text);case _:
+return $default(_that.id,_that.text,_that.tag,_that.category);case _:
   return orElse();
 
 }
@@ -447,10 +451,10 @@ return $default(_that.id,_that.text);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String text)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String text,  String? tag,  String? category)  $default,) {final _that = this;
 switch (_that) {
 case _InspirationPrompt():
-return $default(_that.id,_that.text);case _:
+return $default(_that.id,_that.text,_that.tag,_that.category);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -467,10 +471,10 @@ return $default(_that.id,_that.text);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String text)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String text,  String? tag,  String? category)?  $default,) {final _that = this;
 switch (_that) {
 case _InspirationPrompt() when $default != null:
-return $default(_that.id,_that.text);case _:
+return $default(_that.id,_that.text,_that.tag,_that.category);case _:
   return null;
 
 }
@@ -482,11 +486,15 @@ return $default(_that.id,_that.text);case _:
 
 
 class _InspirationPrompt implements InspirationPrompt {
-  const _InspirationPrompt({required this.id, required this.text});
+  const _InspirationPrompt({required this.id, required this.text, this.tag, this.category});
   
 
 @override final  String id;
 @override final  String text;
+/// 情绪 / 题材标签（如 觉醒、职场）。契约有，但当前 UI 还没展示。
+@override final  String? tag;
+/// 叙事分类（如 转折、成长）。契约有，但当前 UI 还没展示。
+@override final  String? category;
 
 /// Create a copy of InspirationPrompt
 /// with the given fields replaced by the non-null parameter values.
@@ -498,16 +506,16 @@ _$InspirationPromptCopyWith<_InspirationPrompt> get copyWith => __$InspirationPr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspirationPrompt&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspirationPrompt&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.tag, tag) || other.tag == tag)&&(identical(other.category, category) || other.category == category));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,text);
+int get hashCode => Object.hash(runtimeType,id,text,tag,category);
 
 @override
 String toString() {
-  return 'InspirationPrompt(id: $id, text: $text)';
+  return 'InspirationPrompt(id: $id, text: $text, tag: $tag, category: $category)';
 }
 
 
@@ -518,7 +526,7 @@ abstract mixin class _$InspirationPromptCopyWith<$Res> implements $InspirationPr
   factory _$InspirationPromptCopyWith(_InspirationPrompt value, $Res Function(_InspirationPrompt) _then) = __$InspirationPromptCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String text
+ String id, String text, String? tag, String? category
 });
 
 
@@ -535,11 +543,13 @@ class __$InspirationPromptCopyWithImpl<$Res>
 
 /// Create a copy of InspirationPrompt
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? text = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? text = null,Object? tag = freezed,Object? category = freezed,}) {
   return _then(_InspirationPrompt(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
-as String,
+as String,tag: freezed == tag ? _self.tag : tag // ignore: cast_nullable_to_non_nullable
+as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

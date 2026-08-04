@@ -209,7 +209,7 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$dioHash() => r'1d0a16ff481e51d9eaaf790a5e698dde9702c96c';
+String _$dioHash() => r'96d69ede0fad1d1252a6324ee5970d20cf974cb3';
 
 /// 网络访问门面：业务层只依赖 `DioClient`，不直接接触 `Dio`。
 

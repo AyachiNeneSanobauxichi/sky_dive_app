@@ -1,10 +1,18 @@
 import "dart:math";
 
+import "package:happy_os/core/providers/index.dart";
 import "package:happy_os/features/story/data/index.dart";
 import "package:happy_os/features/story/domain/index.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
 part "inspiration_controller.g.dart";
+
+/// Story 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+///
+// TODO(story): 生成历史接口定稿后也复用本 provider，别再各自 new 一份。
+@Riverpod(keepAlive: true)
+StoryRepository storyRepository(Ref ref) =>
+    StoryRepository(StoryRemoteDataSource(ref.watch(dioClientProvider)));
 
 /// 「灵感一下」控制器：从灵感池里抽几条展示，支持换一换。
 ///
@@ -22,7 +30,9 @@ class InspirationController extends _$InspirationController {
 
   @override
   Future<List<InspirationPrompt>> build() async {
-    _pool = await StoryMockApi.fetchInspirations();
+    // 一次拿全量推荐，「换一换」在本地这一池里抽——换一下就打一次接口的话，
+    // 用户连点几下就是几次请求，而且慢网下会出现"点了没反应"。
+    _pool = await ref.read(storyRepositoryProvider).fetchInspirations();
     return _pick(exclude: const <InspirationPrompt>[]);
   }
 

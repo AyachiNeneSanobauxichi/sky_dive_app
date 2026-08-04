@@ -109,7 +109,7 @@ final class AuthControllerProvider
   AuthController create() => AuthController();
 }
 
-String _$authControllerHash() => r'4a4dfb044371836b80f439fc474528e1410920c5';
+String _$authControllerHash() => r'd538ffc19562a5d5166d21c1490087147a5f040a';
 
 /// 全局登录态控制器（v2）。
 ///

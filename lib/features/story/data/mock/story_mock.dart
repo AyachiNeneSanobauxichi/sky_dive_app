@@ -1,10 +1,12 @@
 import "package:happy_os/features/story/domain/index.dart";
 
-/// story 模块的假数据源（无真实接口期间的临时占位）。
+/// story 模块**生成历史**的假数据源（无真实接口期间的临时占位）。
 ///
-/// ⚠️ **接完真实接口立即删除整个 `data/mock/` 目录**，并按
-/// `agent/service/story/story.api.md` 定稿的契约补 DTO / DataSource / Repository。
-// TODO(story): 等 story.api.md 定稿后删除本文件，切回真实 DataSource。
+/// 灵感推荐已在 `story.api.md` v2 定稿并接了真实接口（见 `StoryRepository`），
+/// 对应的假灵感池已随之删除；只剩生成历史契约未定，暂留这一份。
+///
+/// ⚠️ **历史接口接完后立即删除整个 `data/mock/` 目录**。
+// TODO(story): story.api.md 补上生成历史契约后删除本文件，切回真实 DataSource。
 abstract final class StoryMockApi {
   /// 假网络延迟。留足时间是为了让骨架屏真的被看见。
   static const Duration _latency = Duration(milliseconds: 900);
@@ -21,12 +23,6 @@ abstract final class StoryMockApi {
       throw Exception("mock: failed to load story history");
     }
     return simulateEmpty ? const <Story>[] : _history;
-  }
-
-  /// 灵感池。「换一换」从这里取，所以要比一屏展示的条数多几倍才换得出花样。
-  static Future<List<InspirationPrompt>> fetchInspirations() async {
-    await Future<void>.delayed(_latency);
-    return _inspirations;
   }
 
   /// 历史列表：故意混入一条"生成中"和一条"失败"，好让两种状态的样式都能被看到。
@@ -81,17 +77,5 @@ abstract final class StoryMockApi {
       excerpt: "饭桌上我妈忽然停了筷子，说了一句我等了二十年的话。",
       createdAt: DateTime(2026, 7, 12, 19, 45),
     ),
-  ];
-
-  static const List<InspirationPrompt> _inspirations = <InspirationPrompt>[
-    InspirationPrompt(id: "i1", text: "一次被当众否定，后来我怎么翻回来的"),
-    InspirationPrompt(id: "i2", text: "那个看不起我的人，后来求我帮忙"),
-    InspirationPrompt(id: "i3", text: "我一个人扛下了所有人都说做不到的事"),
-    InspirationPrompt(id: "i4", text: "搬进第一间自己租的房子那天"),
-    InspirationPrompt(id: "i5", text: "被裁员那天，我在楼下坐了很久"),
-    InspirationPrompt(id: "i6", text: "十年没联系的朋友突然发来一条消息"),
-    InspirationPrompt(id: "i7", text: "一场没人看好的考试，我考了第一"),
-    InspirationPrompt(id: "i8", text: "父母第一次说他们以我为荣"),
-    InspirationPrompt(id: "i9", text: "我把辞职信递上去的那个下午"),
   ];
 }
