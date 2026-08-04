@@ -293,6 +293,58 @@
   "@trackEmptyBody": {
     "description": "Empty-state body in the track module, explaining that entries feed story generation"
   },
+  "trackGreetingBody": "Write down what actually happened — when, how it felt, how it turned out. This is what stories are made of.",
+  "@trackGreetingBody": {
+    "description": "Sub-headline at the top of the track tab"
+  },
+  "trackFilterAll": "All",
+  "@trackFilterAll": {
+    "description": "Filter chip that shows every track entry"
+  },
+  "trackTagChildhood": "Childhood",
+  "@trackTagChildhood": {
+    "description": "Track tag"
+  },
+  "trackTagHighlight": "Highlight",
+  "@trackTagHighlight": {
+    "description": "Track tag"
+  },
+  "trackTagLowPoint": "Low point",
+  "@trackTagLowPoint": {
+    "description": "Track tag"
+  },
+  "trackTagGoodMoment": "Good moment",
+  "@trackTagGoodMoment": {
+    "description": "Track tag"
+  },
+  "trackOutcomePrefix": "Then",
+  "@trackOutcomePrefix": {
+    "description": "Prefix of the outcome line on a track card"
+  },
+  "trackOutcomePending": "No outcome yet",
+  "@trackOutcomePending": {
+    "description": "Shown in place of the outcome when the entry has none"
+  },
+  "trackAddAction": "Add one",
+  "@trackAddAction": {
+    "description": "Floating action button that records a new life event"
+  },
+  "trackLoadFailed": "Couldn't load your tracks. Check your connection and retry.",
+  "@trackLoadFailed": {
+    "description": "Inline error message when the track list request fails"
+  },
+  "trackFilteredEmptyTitle": "Nothing under this tag",
+  "@trackFilteredEmptyTitle": {
+    "description": "Empty-state title when the selected tag has no entries"
+  },
+  "trackFilteredEmptyBody": "Try another tag, or add one under this tag.",
+  "@trackFilteredEmptyBody": {
+    "description": "Empty-state body when the selected tag has no entries"
+  },
+  "trackFilteredEmptyClear": "See all",
+  "@trackFilteredEmptyClear": {
+    "description": "Action that clears the tag filter"
+  },
   "trackEmptyAction": "Add your first entry",
   "@trackEmptyAction": {
     "description": "Empty-state call to action in the track module"

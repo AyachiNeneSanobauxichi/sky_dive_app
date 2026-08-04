@@ -5,4 +5,7 @@
 /// 首页第 2 个 tab。需求文档：`agent/service/track/track.md` / `track.api.md`。
 library;
 
+export "controllers/index.dart";
+export "domain/index.dart";
 export "screens/index.dart";
+export "widgets/index.dart";

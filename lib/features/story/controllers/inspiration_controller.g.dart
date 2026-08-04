@@ -50,7 +50,7 @@ final class InspirationControllerProvider
 }
 
 String _$inspirationControllerHash() =>
-    r'c93b384c396d825b5cecabdafb74f3baa3b69b2f';
+    r'bbcaf4d0bfa65d5678b89f1b166a117ec1384ff1';
 
 /// 「灵感一下」控制器：从灵感池里抽几条展示，支持换一换。
 ///
