@@ -61,3 +61,41 @@ const response = {
   timestamp: 1785860968603,
 };
 ```
+
+## v3
+
+- 换一换接口
+
+```ts
+// get
+const path =
+  "https://lifescript.happylifeos.com/api/epicScript/inspiration/random?size=3";
+
+const response = {
+  code: 200,
+  message: "操作成功",
+  data: [
+    {
+      text: "把一段关系里的告别，写成重新认识自己的旅程。",
+      tag: "关系",
+      category: "治愈",
+    },
+    {
+      text: "让我的童年记忆成为故事里的隐藏力量。",
+      tag: "童年",
+      category: "力量",
+    },
+    {
+      text: "我想把最近一次低谷，改写成主角觉醒的开端。",
+      tag: "觉醒",
+      category: "转折",
+    },
+    {
+      text: "我想见到十年后的自己，让 TA 给现在的我一封信。",
+      tag: "未来",
+      category: "对话",
+    },
+  ],
+  timestamp: 1785863527174,
+};
+```
