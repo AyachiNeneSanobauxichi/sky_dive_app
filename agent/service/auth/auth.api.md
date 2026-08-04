@@ -74,3 +74,13 @@ const headers = {
 - 未授权的响应形态待后端确认：是 HTTP 401，还是 HTTP 200 + 信封 `code` 为 401（本项目信封成功码为 200，业务码与 HTTP 码同形）。当前客户端只按 **HTTP 401** 处理。
 
 - 登录成功后获取用户信息：接口见 `agent/service/user/user.api.md` v2 的 `GET /user-profile/me`（需鉴权头）。
+
+## v3
+
+- logout 接口
+- 需要清空缓存
+
+```ts
+// post
+const = "https://lifescript.happylifeos.com/api/auth/logout";
+```

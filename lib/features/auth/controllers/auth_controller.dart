@@ -1,6 +1,7 @@
 import "dart:async";
 import "dart:convert";
 
+import "package:flutter/painting.dart" show PaintingBinding;
 import "package:happy_os/core/network/index.dart";
 import "package:happy_os/core/providers/index.dart";
 import "package:happy_os/core/storage/index.dart";
@@ -27,6 +28,10 @@ AuthRepository authRepository(Ref ref) =>
 /// 造成登录态抖动甚至误登出。
 @Riverpod(keepAlive: true)
 class AuthController extends _$AuthController {
+  /// 等服务端确认登出的上限。这是业务等待而非动效时长，故不取 `HappyMotion`。
+  /// 取值短于 DioClient 的 15 秒超时——见 [logout] 的说明。
+  static const Duration _serverLogoutTimeout = Duration(seconds: 5);
+
   AuthRepository get _repo => ref.read(authRepositoryProvider);
   SecureStorage get _storage => ref.read(secureStorageProvider);
   AccessTokenStore get _tokenStore => ref.read(accessTokenStoreProvider);
@@ -93,12 +98,26 @@ class AuthController extends _$AuthController {
     state = AsyncData(AuthState.authenticated(session.user));
   }
 
-  /// 登出：先请求后端（尽力而为），无论成败都清空本地会话并置为未登录。
+  /// 登出（v3）：请求后端吊销会话（尽力而为、有等待上限），无论成败都清空本地会话与
+  /// 缓存并置为未登录。
+  ///
+  /// 三个刻意的取舍：
+  /// 1. **先请求再清 token**：鉴权头是拦截器在发送那一刻从 [AccessTokenStore] 取的，
+  ///    先清就等于把一个匿名请求发过去，服务端那边的会话根本不会被吊销。
+  /// 2. **等待有上限**（[_serverLogoutTimeout]，短于 DioClient 的 15 秒）：登出是
+  ///    "我现在就要离开"的诉求，服务端不可达时让用户对着没反馈的页面干等 15 秒是最差的
+  ///    结果——本地登出必须几秒内生效。超时只是**不再等**，请求并未取消，服务端仍有机会
+  ///    把会话吊销掉。
+  /// 3. **失败也照清**：token 可能本来就失效了（这也是用户想登出的常见原因），
+  ///    服务端成不成功都不该影响"本地不再留着这个账号"。
   Future<void> logout() async {
+    // 已经是未登录就别再打一次接口：连点两次退出、或会话刚失效紧接着点退出都会走到这。
+    if (state case AsyncData(value: Unauthenticated())) return;
+
     try {
-      await _repo.logout();
+      await _repo.logout().timeout(_serverLogoutTimeout);
     } on Object {
-      // 后端登出失败不阻塞本地登出：token 可能已失效，本地清理仍需执行。
+      // 后端登出失败 / 超时不阻塞本地登出。
     }
     await _clearSession();
     state = const AsyncData(AuthState.unauthenticated());
@@ -122,9 +141,23 @@ class AuthController extends _$AuthController {
     }
   }
 
+  /// 清空本地会话与缓存（v3「需要清空缓存」）。
+  ///
+  /// 覆盖三类残留：
+  /// 1. 内存态 accessToken；
+  /// 2. 安全存储里的 refreshToken 与用户快照（`deleteAll`）；
+  /// 3. 图片解码缓存——同一台设备换个账号登录，不该在别人的页面上闪出上一个人的头像。
+  ///
+  /// 各页面的数据缓存（档案 / 灵感 / 轨迹 / 历史）不用在这里逐个清：它们的 controller
+  /// 都是 autoDispose，登出触发重定向后整个 shell 卸载，无监听者即销毁，下次登录重新取数。
+  // TODO(auth): cached_network_image 的**磁盘**缓存清不掉——需要 flutter_cache_manager
+  //   进 pubspec（属工程配置，须人工确认）。头像字段目前后端还没下发，等真有头像再补。
   Future<void> _clearSession() async {
     _tokenStore.clear();
     await _storage.clear();
+    PaintingBinding.instance.imageCache
+      ..clear()
+      ..clearLiveImages();
   }
 
   /// 用户快照持久化：User 是纯领域实体（无 JSON 耦合），这里手动序列化。

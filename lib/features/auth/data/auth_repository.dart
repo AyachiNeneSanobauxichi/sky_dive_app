@@ -40,9 +40,9 @@ class AuthRepository {
     return RefreshTokenResponseDto.fromJson(json).accessToken;
   });
 
-  /// 登出。
+  /// 登出（v3）：请求服务端吊销当前会话。
   ///
-  // TODO(auth): 契约未在 auth.api.md v1 定义；失败不阻塞本地登出（见 AuthController）。
+  /// 失败**不阻塞**本地登出——由 `AuthController.logout` 兜底清理（见那里的注释）。
   Future<void> logout() => _guard(_remote.logout);
 
   /// 统一异常收敛：底层抛的 [AppException] 转成 [Failure] 再抛出，controller 用
