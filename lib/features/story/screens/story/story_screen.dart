@@ -1,34 +1,371 @@
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:go_router/go_router.dart";
+import "package:happy_os/app/router/index.dart";
+import "package:happy_os/core/error/index.dart";
+import "package:happy_os/core/theme/index.dart";
+import "package:happy_os/features/story/controllers/index.dart";
+import "package:happy_os/features/story/domain/index.dart";
+import "package:happy_os/features/story/widgets/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
 import "package:happy_os/shared/widgets/index.dart";
+import "package:intl/intl.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
-/// story 模块占位页（v1）。
+/// story 模块主页（v2）：创作入口 + 生成历史。首页第 1 个 tab，产品主路径。
 ///
-/// 模块职责：**生成并管理用户生成的爽文**——与 AI 聊天调试生成、保存、再编辑、
-/// 列表管理都在这里。素材来自 track 模块的成长轨迹，风格取自 user 模块的设定。
-/// 是产品主路径（首页第 1 个 tab）。
+/// 自上而下三段，对应"先给话头 → 再开口 → 回头看"：
+/// 1. **灵感一下**：三条具体的句子 + 换一换。放在最前面是因为"不知道写什么"才是
+///    真正的门槛——先让人看到能直接下笔的开头，再把输入入口递过去；
+/// 2. **创作入口**（[StoryComposer]）：居中突出的语音圆钮（按住说话）+ 文本入口，
+///    两条路径都通向对话页。挨着灵感放，挑中一条的下一秒就能开口；
+/// 3. **生成历史**：只露最近 5 条 + 「查看全部」进全量页。这一屏的主角是创作，
+///    历史是"回头看一眼"；铺满一屏会把创作入口挤到屏幕外。
 ///
-/// 本期只有空态：按规范空态必须带"引导下一步"，功能未上线时按钮给轻提示而不是
-/// 静默无反应。真实内容落地后，这一页要补齐加载（骨架）/ 空 / 错误（可重试）/ 有数据四态。
-// TODO(story): 接入真实生成与列表（等 agent/service/story/story.api.md 定稿）。
-class StoryScreen extends StatelessWidget {
+/// 没有 AppBar：第一屏留给"今天想写什么"这句招呼，再顶一行"我的故事"是重复信息。
+///
+/// 打字时**把灵感区折叠起来**：已经在写了就不需要话头，收起来能把输入区顶到屏幕
+/// 中部、把右下角的生成键完整露出来。点页面空白处（或向下拖）失焦收键盘——
+/// 输入区在页面中部，没有这两条用户想看下面的历史时得先找收起键。
+///
+/// 四态齐全（历史列表）：加载=骨架屏 / 空=引导去用上面的灵感 / 错误=内联重试卡 /
+/// 有数据=列表。灵感区自己也有加载骨架。
+class StoryScreen extends ConsumerStatefulWidget {
   const StoryScreen({super.key});
+
+  @override
+  ConsumerState<StoryScreen> createState() => _StoryScreenState();
+}
+
+class _StoryScreenState extends ConsumerState<StoryScreen> {
+  /// 输入框是否正在被编辑（决定灵感区折不折叠）。
+  bool _isComposing = false;
+
+  void _onComposerFocusChanged(bool hasFocus) {
+    if (_isComposing == hasFocus) return;
+    setState(() => _isComposing = hasFocus);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final history = ref.watch(storyHistoryControllerProvider);
+    final inspirations = ref.watch(inspirationControllerProvider);
+
+    return Scaffold(
+      // 透明底：让外层首页的极光背景透上来。
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        // 底部不留：外壳的导航条自己会让出手势条高度。
+        bottom: false,
+        // 点空白处收键盘：translucent 让空白区也能接到点击，
+        // 而按钮/输入框自己会赢下手势竞争，不受影响。
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: RefreshIndicator(
+            onRefresh: () =>
+                ref.read(storyHistoryControllerProvider.notifier).reload(),
+            child: ListView(
+              // 往下拖也收键盘：想看下面的历史时不必先找收起键。
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(
+                left: HappySemanticSpacing.screenPadding,
+                right: HappySemanticSpacing.screenPadding,
+                top: HappySemanticSpacing.cardPadding,
+                bottom: HappySemanticSpacing.sectionGap,
+              ),
+              children: <Widget>[
+                Text(l10n.storyGreeting, style: theme.textTheme.displaySmall),
+                const SizedBox(height: HappySpacing.s8),
+                Text(
+                  l10n.storyGreetingBody,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                // 打字时折叠：AnimatedSize 把高度平滑收到 0，不是"啪"一下消失。
+                AnimatedSize(
+                  duration: HappyMotion.normal,
+                  curve: HappyMotion.standard,
+                  alignment: Alignment.topCenter,
+                  child: _isComposing
+                      ? const SizedBox(width: double.infinity)
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            const SizedBox(
+                              height: HappySemanticSpacing.sectionGap,
+                            ),
+                            _InspirationBlock(
+                              state: inspirations,
+                              onShuffle: () => ref
+                                  .read(inspirationControllerProvider.notifier)
+                                  .shuffle(),
+                              onSelect: (_) =>
+                                  _openChat(context, ChatSource.inspiration),
+                            ),
+                          ],
+                        ),
+                ),
+                const SizedBox(height: HappySemanticSpacing.sectionGap),
+                StoryComposer(
+                  hint: l10n.storyComposerHint,
+                  holdHint: l10n.storyVoiceHoldHint,
+                  releaseHint: l10n.storyVoiceReleaseHint,
+                  cancelHint: l10n.storyVoiceCancelHint,
+                  cancelReleaseHint: l10n.storyVoiceCancelReleaseHint,
+                  submitLabel: l10n.storyComposerSubmit,
+                  submitHint: l10n.storyComposerSubmitHint,
+                  remainingLabel: l10n.storyComposerRemaining,
+                  onFocusChanged: _onComposerFocusChanged,
+                  onSubmit: (text) =>
+                      _openChat(context, ChatSource.text, seed: text),
+                  onVoiceComplete: () => _openChat(context, ChatSource.voice),
+                  // 短按不跳页，先把"要按住"这个手势教给用户。
+                  onVoiceTapped: () =>
+                      HappyToast.info(context, l10n.storyVoiceHoldHint),
+                ),
+                const SizedBox(height: HappySemanticSpacing.sectionGap),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        l10n.storyHistoryTitle,
+                        style: theme.textTheme.titleMedium,
+                      ),
+                    ),
+                    // 首页只露最近几条，全量翻阅去历史页。
+                    TextButton.icon(
+                      onPressed: () =>
+                          context.pushNamed(RouteName.storyHistory),
+                      iconAlignment: IconAlignment.end,
+                      icon: const Icon(
+                        LucideIcons.chevronRight,
+                        size: HappyIconSize.sm,
+                      ),
+                      label: Text(l10n.storyHistoryViewAll),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: HappySpacing.s8),
+                _HistoryBlock(
+                  state: history,
+                  onRetry: () => ref
+                      .read(storyHistoryControllerProvider.notifier)
+                      .reload(showSkeleton: true),
+                  onEmptyAction: () =>
+                      _openChat(context, ChatSource.inspiration),
+                  onOpenStory: (_) => _openChat(context, ChatSource.text),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 进对话页。来源透给聊天页（`?source=voice`），它据此决定开场方式；
+  /// [seed] 是用户已经写好的草稿，一并带过去，对话从这段话开始。
+  void _openChat(BuildContext context, ChatSource source, {String? seed}) {
+    context.pushNamed(
+      RouteName.storyChat,
+      queryParameters: <String, String>{
+        RouteQuery.chatSource: source.name,
+        if (seed != null && seed.isNotEmpty) RouteQuery.chatSeed: seed,
+      },
+    );
+  }
+}
+
+/// 灵感区的三态：加载=骨架（三张占位卡）/ 有数据=真提示 / 出错=直接不显示这一区。
+///
+/// 灵感是"锦上添花"的区块：它挂了不该拦住用户去用上面的输入区，所以错误态选择
+/// **静默降级**（不占位、不报错），而不是给一张让人分心的错误卡。
+class _InspirationBlock extends StatelessWidget {
+  const _InspirationBlock({
+    required this.state,
+    required this.onShuffle,
+    required this.onSelect,
+  });
+
+  final AsyncValue<List<InspirationPrompt>> state;
+  final VoidCallback onShuffle;
+  final ValueChanged<InspirationPrompt> onSelect;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return Scaffold(
-      // 透明底：让外层首页的极光背景透上来。
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(title: Text(l10n.storyTitle)),
-      body: HappyEmptyState(
-        icon: LucideIcons.bookOpen,
-        title: l10n.storyEmptyTitle,
-        description: l10n.storyEmptyBody,
-        actionLabel: l10n.storyEmptyAction,
-        onAction: () => HappyToast.info(context, l10n.commonComingSoon),
+    Widget section(List<InspirationPrompt> prompts) => StoryInspirationSection(
+      title: l10n.storyInspirationTitle,
+      shuffleLabel: l10n.storyInspirationShuffle,
+      prompts: prompts,
+      onShuffle: onShuffle,
+      onSelect: onSelect,
+    );
+
+    return switch (state) {
+      AsyncData(:final value) => section(value),
+      AsyncError() => const SizedBox.shrink(),
+      _ => Skeletonizer(child: section(_skeletonPrompts)),
+    };
+  }
+
+  /// 骨架用的占位提示：长度贴近真实句子，骨架条才不会明显短一截。
+  static const List<InspirationPrompt> _skeletonPrompts = <InspirationPrompt>[
+    InspirationPrompt(id: "sk1", text: "一次被当众否定，后来我怎么翻回来的"),
+    InspirationPrompt(id: "sk2", text: "那个看不起我的人，后来求我帮忙"),
+    InspirationPrompt(id: "sk3", text: "我一个人扛下了所有人都说做不到的事"),
+  ];
+}
+
+/// 生成历史的四态。
+class _HistoryBlock extends StatelessWidget {
+  const _HistoryBlock({
+    required this.state,
+    required this.onRetry,
+    required this.onEmptyAction,
+    required this.onOpenStory,
+  });
+
+  final AsyncValue<List<Story>> state;
+  final VoidCallback onRetry;
+  final VoidCallback onEmptyAction;
+  final ValueChanged<Story> onOpenStory;
+
+  /// 首页只露最近几条：这一屏的主角是创作入口，历史是"回头看一眼"。
+  /// 想翻完整清单走「查看全部」进历史页（两处共用同一个 provider，秒开）。
+  static const int _previewCount = 5;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toLanguageTag();
+
+    return switch (state) {
+      AsyncData(:final value) when value.isEmpty => _HistoryEmpty(
+        onAction: onEmptyAction,
+      ),
+      AsyncData(:final value) => Column(
+        children: <Widget>[
+          for (final story in value.take(_previewCount))
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: HappySemanticSpacing.itemGap,
+              ),
+              child: StoryHistoryCard(
+                story: story,
+                timeLabel: DateFormat.MMMd(locale).format(story.createdAt),
+                statusLabel: switch (story.status) {
+                  StoryStatus.generating => l10n.storyStatusGenerating,
+                  StoryStatus.failed => l10n.storyStatusFailed,
+                  StoryStatus.ready => "",
+                },
+                onTap: () => onOpenStory(story),
+              ),
+            ),
+        ],
+      ),
+      AsyncError(:final error) => HappyRetryCard(
+        message: error is Failure
+            ? error.displayMessage
+            : l10n.storyHistoryLoadFailed,
+        retryLabel: l10n.commonRetry,
+        onRetry: onRetry,
+      ),
+      // 骨架：两张卡就够表达"这里将有一个列表"，铺满一屏反而像真内容。
+      _ => Skeletonizer(
+        child: Column(
+          children: <Widget>[
+            for (final story in _skeletonStories)
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: HappySemanticSpacing.itemGap,
+                ),
+                child: StoryHistoryCard(
+                  story: story,
+                  timeLabel: "8月4日",
+                  statusLabel: "",
+                  onTap: _noop,
+                ),
+              ),
+          ],
+        ),
+      ),
+    };
+  }
+
+  static void _noop() {}
+
+  static final List<Story> _skeletonStories = <Story>[
+    Story(
+      id: "sk1",
+      title: "标题占位文字",
+      excerpt: "这里是正文摘要的占位文字，长度和真实内容差不多，骨架条才不会短一截。",
+      createdAt: DateTime(2026, 8, 4),
+    ),
+    Story(
+      id: "sk2",
+      title: "标题占位文字",
+      excerpt: "这里是正文摘要的占位文字，长度和真实内容差不多，骨架条才不会短一截。",
+      createdAt: DateTime(2026, 8, 3),
+    ),
+  ];
+}
+
+/// 历史为空：不是兜底而是引导位——指向上面的灵感区，让用户有个能直接下笔的开头。
+class _HistoryEmpty extends StatelessWidget {
+  const _HistoryEmpty({required this.onAction});
+
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(HappySemanticSpacing.cardPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Icon(
+                  LucideIcons.bookOpen,
+                  size: HappyIconSize.md,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: HappySpacing.s8),
+                Text(
+                  l10n.storyHistoryEmptyTitle,
+                  style: theme.textTheme.titleSmall,
+                ),
+              ],
+            ),
+            const SizedBox(height: HappySpacing.s6),
+            Text(
+              l10n.storyHistoryEmptyBody,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: HappySemanticSpacing.itemGap),
+            HappyButton(
+              label: l10n.storyHistoryEmptyAction,
+              size: HappyButtonSize.small,
+              isFullWidth: false,
+              icon: LucideIcons.lightbulb,
+              onPressed: onAction,
+            ),
+          ],
+        ),
       ),
     );
   }

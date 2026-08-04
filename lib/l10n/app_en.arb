@@ -158,6 +158,129 @@
   "@storyEmptyAction": {
     "description": "Empty-state call to action in the story module"
   },
+
+  "storyGreeting": "What are we writing today?",
+  "@storyGreeting": {
+    "description": "Greeting headline at the top of the story tab"
+  },
+  "storyGreetingBody": "Tell me something that actually happened — it comes back as a story you can't put down.",
+  "@storyGreetingBody": {
+    "description": "Sub-headline under the story tab greeting"
+  },
+  "storyComposerHint": "Write down the moment you want rewritten…",
+  "@storyComposerHint": {
+    "description": "Hint inside the composer text field on the story tab"
+  },
+  "storyComposerSubmit": "Write my story",
+  "@storyComposerSubmit": {
+    "description": "Accessibility label and tooltip of the send button inside the composer"
+  },
+  "storyComposerSubmitHint": "Done? Tap to write it",
+  "@storyComposerSubmitHint": {
+    "description": "Small caption at the bottom-left of the composer, explaining the icon-only send button"
+  },
+  "storyComposerRemaining": "{remaining} characters left",
+  "@storyComposerRemaining": {
+    "description": "Counter under the composer, shown only when close to the length limit",
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "storyVoiceHoldHint": "Hold to talk",
+  "@storyVoiceHoldHint": {
+    "description": "Label under the voice button telling the user to press and hold"
+  },
+  "storyVoiceReleaseHint": "Release to finish",
+  "@storyVoiceReleaseHint": {
+    "description": "Label under the voice button while the user is holding it"
+  },
+  "storyVoiceCancelHint": "Slide up to cancel",
+  "@storyVoiceCancelHint": {
+    "description": "Secondary hint shown while holding the voice button, teaching the slide-up-to-cancel gesture"
+  },
+  "storyVoiceCancelReleaseHint": "Release to cancel",
+  "@storyVoiceCancelReleaseHint": {
+    "description": "Label under the voice button once the finger slid up far enough that releasing cancels"
+  },
+  "storyInspirationTitle": "Need a spark",
+  "@storyInspirationTitle": {
+    "description": "Title of the inspiration prompts section"
+  },
+  "storyInspirationShuffle": "Shuffle",
+  "@storyInspirationShuffle": {
+    "description": "Action that draws a new set of inspiration prompts"
+  },
+  "storyHistoryTitle": "Your stories",
+  "@storyHistoryTitle": {
+    "description": "Title of the generation history section"
+  },
+  "storyHistoryEmptyTitle": "Nothing here yet",
+  "@storyHistoryEmptyTitle": {
+    "description": "Empty-state title of the generation history section"
+  },
+  "storyHistoryEmptyBody": "Finished stories stay here so you can come back and tune them. Picking a spark is the easiest way to start.",
+  "@storyHistoryEmptyBody": {
+    "description": "Empty-state body of the generation history section"
+  },
+  "storyHistoryEmptyAction": "Start from a spark",
+  "@storyHistoryEmptyAction": {
+    "description": "Empty-state call to action of the generation history section"
+  },
+  "storyHistoryEmptyBackAction": "Go write one",
+  "@storyHistoryEmptyBackAction": {
+    "description": "Empty-state call to action on the full history page; goes back to the composer"
+  },
+  "storyHistoryViewAll": "See all",
+  "@storyHistoryViewAll": {
+    "description": "Action next to the history section title that opens the full list"
+  },
+  "storyHistoryLoadFailed": "Couldn't load your stories. Check your connection and retry.",
+  "@storyHistoryLoadFailed": {
+    "description": "Inline error message when the story history request fails"
+  },
+  "storyStatusGenerating": "Writing",
+  "@storyStatusGenerating": {
+    "description": "Status label on a story card that is still being generated"
+  },
+  "storyStatusFailed": "Failed — tap to retry",
+  "@storyStatusFailed": {
+    "description": "Status label on a story card whose generation failed"
+  },
+  "storyChatTitle": "Write with AI",
+  "@storyChatTitle": {
+    "description": "Title of the chat page where stories get written"
+  },
+  "storyChatEmptyTitle": "The chat lands here soon",
+  "@storyChatEmptyTitle": {
+    "description": "Empty-state title of the chat placeholder page"
+  },
+  "storyChatEmptyBodyText": "You'll type what happened and the AI writes as it asks — you can redirect it any time.",
+  "@storyChatEmptyBodyText": {
+    "description": "Empty-state body of the chat placeholder when entered from the text composer"
+  },
+  "storyChatEmptyBodyVoice": "You'll hold to talk, and the AI writes while it listens.",
+  "@storyChatEmptyBodyVoice": {
+    "description": "Empty-state body of the chat placeholder when entered from the voice button"
+  },
+  "storyChatEmptyBodyInspiration": "It'll open with the spark you picked and go straight into the rewrite.",
+  "@storyChatEmptyBodyInspiration": {
+    "description": "Empty-state body of the chat placeholder when entered from an inspiration prompt"
+  },
+  "storyChatEmptyBodySeed": "You wrote: \"{draft}\". The chat lands here soon and will start the rewrite from it.",
+  "@storyChatEmptyBodySeed": {
+    "description": "Empty-state body of the chat placeholder when a draft was carried over from the composer",
+    "placeholders": {
+      "draft": {
+        "type": "String"
+      }
+    }
+  },
+  "storyChatEmptyAction": "Got it",
+  "@storyChatEmptyAction": {
+    "description": "Empty-state call to action on the chat placeholder page"
+  },
   "trackTitle": "Your track",
   "@trackTitle": {
     "description": "App bar title of the track module"

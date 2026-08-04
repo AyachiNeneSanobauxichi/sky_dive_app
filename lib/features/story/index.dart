@@ -5,4 +5,7 @@
 /// 需求文档：`agent/service/story/story.md`（页面）/ `story.api.md`（接口）。
 library;
 
+export "controllers/index.dart";
+export "domain/index.dart";
 export "screens/index.dart";
+export "widgets/index.dart";

@@ -75,6 +75,24 @@ final List<RouteBase> appRoutes = [
   // 分支子路由会渲染在外壳内部、底部 tab 栏照旧显示；而这是一张要独占屏幕的表单页
   // （日后有保存按钮，底部再顶一条导航会抢位置），所以让它盖住整个外壳。
   // 代价：它不在 user 分支的返回栈里，切到别的 tab 再切回来不会停在这一页。
+  // 对话页：同样在 shell 外（聊天要独占屏幕）。`?source=voice` 告诉它从哪个入口
+  // 进来的，开场方式不同；用 query 而不是 `extra`，深链接/刷新后要能恢复。
+  GoRoute(
+    name: RouteName.storyChat,
+    path: RoutePath.storyChat,
+    builder: (context, state) => ChatScreen(
+      source: ChatSource.tryParse(
+        state.uri.queryParameters[RouteQuery.chatSource],
+      ),
+      // 用户在故事页写的草稿。用 query 而不是 `extra`：刷新/深链接后要能恢复。
+      seed: state.uri.queryParameters[RouteQuery.chatSeed],
+    ),
+  ),
+  GoRoute(
+    name: RouteName.storyHistory,
+    path: RoutePath.storyHistory,
+    builder: (context, state) => const StoryHistoryScreen(),
+  ),
   GoRoute(
     name: RouteName.userProfileSettings,
     path: RoutePath.userProfileSettings,
