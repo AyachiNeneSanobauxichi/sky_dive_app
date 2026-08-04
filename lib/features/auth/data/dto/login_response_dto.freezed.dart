@@ -15,7 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LoginResponseDto {
 
- String get accessToken; String get refreshToken; UserDto get user;
+ String get accessToken; String get refreshToken;/// accessToken 有效期（秒）。
+ int get expiresIn; UserDto get userInfo; String? get loginTime;
 /// Create a copy of LoginResponseDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +29,16 @@ $LoginResponseDtoCopyWith<LoginResponseDto> get copyWith => _$LoginResponseDtoCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginResponseDto&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginResponseDto&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.expiresIn, expiresIn) || other.expiresIn == expiresIn)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.loginTime, loginTime) || other.loginTime == loginTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,user);
+int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,expiresIn,userInfo,loginTime);
 
 @override
 String toString() {
-  return 'LoginResponseDto(accessToken: $accessToken, refreshToken: $refreshToken, user: $user)';
+  return 'LoginResponseDto(accessToken: $accessToken, refreshToken: $refreshToken, expiresIn: $expiresIn, userInfo: $userInfo, loginTime: $loginTime)';
 }
 
 
@@ -48,11 +49,11 @@ abstract mixin class $LoginResponseDtoCopyWith<$Res>  {
   factory $LoginResponseDtoCopyWith(LoginResponseDto value, $Res Function(LoginResponseDto) _then) = _$LoginResponseDtoCopyWithImpl;
 @useResult
 $Res call({
- String accessToken, String refreshToken, UserDto user
+ String accessToken, String refreshToken, int expiresIn, UserDto userInfo, String? loginTime
 });
 
 
-$UserDtoCopyWith<$Res> get user;
+$UserDtoCopyWith<$Res> get userInfo;
 
 }
 /// @nodoc
@@ -65,22 +66,24 @@ class _$LoginResponseDtoCopyWithImpl<$Res>
 
 /// Create a copy of LoginResponseDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? accessToken = null,Object? refreshToken = null,Object? user = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? accessToken = null,Object? refreshToken = null,Object? expiresIn = null,Object? userInfo = null,Object? loginTime = freezed,}) {
   return _then(_self.copyWith(
 accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,refreshToken: null == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
-as String,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as UserDto,
+as String,expiresIn: null == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
+as int,userInfo: null == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
+as UserDto,loginTime: freezed == loginTime ? _self.loginTime : loginTime // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of LoginResponseDto
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$UserDtoCopyWith<$Res> get user {
+$UserDtoCopyWith<$Res> get userInfo {
   
-  return $UserDtoCopyWith<$Res>(_self.user, (value) {
-    return _then(_self.copyWith(user: value));
+  return $UserDtoCopyWith<$Res>(_self.userInfo, (value) {
+    return _then(_self.copyWith(userInfo: value));
   });
 }
 }
@@ -164,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String accessToken,  String refreshToken,  UserDto user)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String accessToken,  String refreshToken,  int expiresIn,  UserDto userInfo,  String? loginTime)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginResponseDto() when $default != null:
-return $default(_that.accessToken,_that.refreshToken,_that.user);case _:
+return $default(_that.accessToken,_that.refreshToken,_that.expiresIn,_that.userInfo,_that.loginTime);case _:
   return orElse();
 
 }
@@ -185,10 +188,10 @@ return $default(_that.accessToken,_that.refreshToken,_that.user);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String accessToken,  String refreshToken,  UserDto user)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String accessToken,  String refreshToken,  int expiresIn,  UserDto userInfo,  String? loginTime)  $default,) {final _that = this;
 switch (_that) {
 case _LoginResponseDto():
-return $default(_that.accessToken,_that.refreshToken,_that.user);case _:
+return $default(_that.accessToken,_that.refreshToken,_that.expiresIn,_that.userInfo,_that.loginTime);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -205,10 +208,10 @@ return $default(_that.accessToken,_that.refreshToken,_that.user);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String accessToken,  String refreshToken,  UserDto user)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String accessToken,  String refreshToken,  int expiresIn,  UserDto userInfo,  String? loginTime)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginResponseDto() when $default != null:
-return $default(_that.accessToken,_that.refreshToken,_that.user);case _:
+return $default(_that.accessToken,_that.refreshToken,_that.expiresIn,_that.userInfo,_that.loginTime);case _:
   return null;
 
 }
@@ -220,12 +223,15 @@ return $default(_that.accessToken,_that.refreshToken,_that.user);case _:
 @JsonSerializable()
 
 class _LoginResponseDto extends LoginResponseDto {
-  const _LoginResponseDto({required this.accessToken, required this.refreshToken, required this.user}): super._();
+  const _LoginResponseDto({required this.accessToken, required this.refreshToken, this.expiresIn = 0, required this.userInfo, this.loginTime}): super._();
   factory _LoginResponseDto.fromJson(Map<String, dynamic> json) => _$LoginResponseDtoFromJson(json);
 
 @override final  String accessToken;
 @override final  String refreshToken;
-@override final  UserDto user;
+/// accessToken 有效期（秒）。
+@override@JsonKey() final  int expiresIn;
+@override final  UserDto userInfo;
+@override final  String? loginTime;
 
 /// Create a copy of LoginResponseDto
 /// with the given fields replaced by the non-null parameter values.
@@ -240,16 +246,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginResponseDto&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginResponseDto&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.expiresIn, expiresIn) || other.expiresIn == expiresIn)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.loginTime, loginTime) || other.loginTime == loginTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,user);
+int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,expiresIn,userInfo,loginTime);
 
 @override
 String toString() {
-  return 'LoginResponseDto(accessToken: $accessToken, refreshToken: $refreshToken, user: $user)';
+  return 'LoginResponseDto(accessToken: $accessToken, refreshToken: $refreshToken, expiresIn: $expiresIn, userInfo: $userInfo, loginTime: $loginTime)';
 }
 
 
@@ -260,11 +266,11 @@ abstract mixin class _$LoginResponseDtoCopyWith<$Res> implements $LoginResponseD
   factory _$LoginResponseDtoCopyWith(_LoginResponseDto value, $Res Function(_LoginResponseDto) _then) = __$LoginResponseDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String accessToken, String refreshToken, UserDto user
+ String accessToken, String refreshToken, int expiresIn, UserDto userInfo, String? loginTime
 });
 
 
-@override $UserDtoCopyWith<$Res> get user;
+@override $UserDtoCopyWith<$Res> get userInfo;
 
 }
 /// @nodoc
@@ -277,12 +283,14 @@ class __$LoginResponseDtoCopyWithImpl<$Res>
 
 /// Create a copy of LoginResponseDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? accessToken = null,Object? refreshToken = null,Object? user = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? accessToken = null,Object? refreshToken = null,Object? expiresIn = null,Object? userInfo = null,Object? loginTime = freezed,}) {
   return _then(_LoginResponseDto(
 accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,refreshToken: null == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
-as String,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as UserDto,
+as String,expiresIn: null == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
+as int,userInfo: null == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
+as UserDto,loginTime: freezed == loginTime ? _self.loginTime : loginTime // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -290,10 +298,10 @@ as UserDto,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$UserDtoCopyWith<$Res> get user {
+$UserDtoCopyWith<$Res> get userInfo {
   
-  return $UserDtoCopyWith<$Res>(_self.user, (value) {
-    return _then(_self.copyWith(user: value));
+  return $UserDtoCopyWith<$Res>(_self.userInfo, (value) {
+    return _then(_self.copyWith(userInfo: value));
   });
 }
 }

@@ -14,7 +14,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthTokens {
 
- String get accessToken; String? get refreshToken;
+ String get accessToken; String? get refreshToken;/// accessToken 有效期（v1 登录返回 86400 秒）。
+///
+/// 记着它是为了将来能"到期前主动刷新"：只靠 401 被动刷新，用户每次都要先吃一个
+/// 失败请求的延迟。当前 v2 拦截器仍是被动刷新，此字段暂无消费方。
+ Duration? get expiresIn;
 /// Create a copy of AuthTokens
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +29,16 @@ $AuthTokensCopyWith<AuthTokens> get copyWith => _$AuthTokensCopyWithImpl<AuthTok
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthTokens&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthTokens&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.expiresIn, expiresIn) || other.expiresIn == expiresIn));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,accessToken,refreshToken);
+int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,expiresIn);
 
 @override
 String toString() {
-  return 'AuthTokens(accessToken: $accessToken, refreshToken: $refreshToken)';
+  return 'AuthTokens(accessToken: $accessToken, refreshToken: $refreshToken, expiresIn: $expiresIn)';
 }
 
 
@@ -45,7 +49,7 @@ abstract mixin class $AuthTokensCopyWith<$Res>  {
   factory $AuthTokensCopyWith(AuthTokens value, $Res Function(AuthTokens) _then) = _$AuthTokensCopyWithImpl;
 @useResult
 $Res call({
- String accessToken, String? refreshToken
+ String accessToken, String? refreshToken, Duration? expiresIn
 });
 
 
@@ -62,11 +66,12 @@ class _$AuthTokensCopyWithImpl<$Res>
 
 /// Create a copy of AuthTokens
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? accessToken = null,Object? refreshToken = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? accessToken = null,Object? refreshToken = freezed,Object? expiresIn = freezed,}) {
   return _then(_self.copyWith(
 accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,expiresIn: freezed == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
+as Duration?,
   ));
 }
 
@@ -151,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String accessToken,  String? refreshToken)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String accessToken,  String? refreshToken,  Duration? expiresIn)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthTokens() when $default != null:
-return $default(_that.accessToken,_that.refreshToken);case _:
+return $default(_that.accessToken,_that.refreshToken,_that.expiresIn);case _:
   return orElse();
 
 }
@@ -172,10 +177,10 @@ return $default(_that.accessToken,_that.refreshToken);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String accessToken,  String? refreshToken)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String accessToken,  String? refreshToken,  Duration? expiresIn)  $default,) {final _that = this;
 switch (_that) {
 case _AuthTokens():
-return $default(_that.accessToken,_that.refreshToken);case _:
+return $default(_that.accessToken,_that.refreshToken,_that.expiresIn);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -192,10 +197,10 @@ return $default(_that.accessToken,_that.refreshToken);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String accessToken,  String? refreshToken)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String accessToken,  String? refreshToken,  Duration? expiresIn)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthTokens() when $default != null:
-return $default(_that.accessToken,_that.refreshToken);case _:
+return $default(_that.accessToken,_that.refreshToken,_that.expiresIn);case _:
   return null;
 
 }
@@ -207,11 +212,16 @@ return $default(_that.accessToken,_that.refreshToken);case _:
 
 
 class _AuthTokens implements AuthTokens {
-  const _AuthTokens({required this.accessToken, this.refreshToken});
+  const _AuthTokens({required this.accessToken, this.refreshToken, this.expiresIn});
   
 
 @override final  String accessToken;
 @override final  String? refreshToken;
+/// accessToken 有效期（v1 登录返回 86400 秒）。
+///
+/// 记着它是为了将来能"到期前主动刷新"：只靠 401 被动刷新，用户每次都要先吃一个
+/// 失败请求的延迟。当前 v2 拦截器仍是被动刷新，此字段暂无消费方。
+@override final  Duration? expiresIn;
 
 /// Create a copy of AuthTokens
 /// with the given fields replaced by the non-null parameter values.
@@ -223,16 +233,16 @@ _$AuthTokensCopyWith<_AuthTokens> get copyWith => __$AuthTokensCopyWithImpl<_Aut
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthTokens&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthTokens&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.expiresIn, expiresIn) || other.expiresIn == expiresIn));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,accessToken,refreshToken);
+int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,expiresIn);
 
 @override
 String toString() {
-  return 'AuthTokens(accessToken: $accessToken, refreshToken: $refreshToken)';
+  return 'AuthTokens(accessToken: $accessToken, refreshToken: $refreshToken, expiresIn: $expiresIn)';
 }
 
 
@@ -243,7 +253,7 @@ abstract mixin class _$AuthTokensCopyWith<$Res> implements $AuthTokensCopyWith<$
   factory _$AuthTokensCopyWith(_AuthTokens value, $Res Function(_AuthTokens) _then) = __$AuthTokensCopyWithImpl;
 @override @useResult
 $Res call({
- String accessToken, String? refreshToken
+ String accessToken, String? refreshToken, Duration? expiresIn
 });
 
 
@@ -260,11 +270,12 @@ class __$AuthTokensCopyWithImpl<$Res>
 
 /// Create a copy of AuthTokens
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? accessToken = null,Object? refreshToken = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? accessToken = null,Object? refreshToken = freezed,Object? expiresIn = freezed,}) {
   return _then(_AuthTokens(
 accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,expiresIn: freezed == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
+as Duration?,
   ));
 }
 

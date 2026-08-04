@@ -30,7 +30,7 @@ final class ServerException extends AppException {
   final int? statusCode;
 }
 
-/// 业务错误：HTTP 200 但响应体 `code != 0`。携带后端业务码与后端文案。
+/// 业务错误：HTTP 200 但响应体业务 `code` 非成功码。携带后端业务码与后端文案。
 ///
 /// 例如后端返回 `{"code": 11001, "message": "Invalid token"}`——HTTP 成功，
 /// 但业务失败。由 ResponseInterceptor 解包时抛出。

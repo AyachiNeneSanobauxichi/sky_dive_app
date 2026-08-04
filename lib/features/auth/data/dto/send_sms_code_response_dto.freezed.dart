@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SendSmsCodeResponseDto {
 
- int get resendAfterSeconds;
+/// 服务端回显的验证码（联调期便利，生产应移除）。
+ String? get code;/// 验证码有效期（秒），**不是**重发冷却秒数。
+ int get expiresIn; String? get message;
 /// Create a copy of SendSmsCodeResponseDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +30,16 @@ $SendSmsCodeResponseDtoCopyWith<SendSmsCodeResponseDto> get copyWith => _$SendSm
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SendSmsCodeResponseDto&&(identical(other.resendAfterSeconds, resendAfterSeconds) || other.resendAfterSeconds == resendAfterSeconds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SendSmsCodeResponseDto&&(identical(other.code, code) || other.code == code)&&(identical(other.expiresIn, expiresIn) || other.expiresIn == expiresIn)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,resendAfterSeconds);
+int get hashCode => Object.hash(runtimeType,code,expiresIn,message);
 
 @override
 String toString() {
-  return 'SendSmsCodeResponseDto(resendAfterSeconds: $resendAfterSeconds)';
+  return 'SendSmsCodeResponseDto(code: $code, expiresIn: $expiresIn, message: $message)';
 }
 
 
@@ -48,7 +50,7 @@ abstract mixin class $SendSmsCodeResponseDtoCopyWith<$Res>  {
   factory $SendSmsCodeResponseDtoCopyWith(SendSmsCodeResponseDto value, $Res Function(SendSmsCodeResponseDto) _then) = _$SendSmsCodeResponseDtoCopyWithImpl;
 @useResult
 $Res call({
- int resendAfterSeconds
+ String? code, int expiresIn, String? message
 });
 
 
@@ -65,10 +67,12 @@ class _$SendSmsCodeResponseDtoCopyWithImpl<$Res>
 
 /// Create a copy of SendSmsCodeResponseDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? resendAfterSeconds = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? code = freezed,Object? expiresIn = null,Object? message = freezed,}) {
   return _then(_self.copyWith(
-resendAfterSeconds: null == resendAfterSeconds ? _self.resendAfterSeconds : resendAfterSeconds // ignore: cast_nullable_to_non_nullable
-as int,
+code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String?,expiresIn: null == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
+as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -153,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int resendAfterSeconds)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? code,  int expiresIn,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SendSmsCodeResponseDto() when $default != null:
-return $default(_that.resendAfterSeconds);case _:
+return $default(_that.code,_that.expiresIn,_that.message);case _:
   return orElse();
 
 }
@@ -174,10 +178,10 @@ return $default(_that.resendAfterSeconds);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int resendAfterSeconds)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? code,  int expiresIn,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _SendSmsCodeResponseDto():
-return $default(_that.resendAfterSeconds);case _:
+return $default(_that.code,_that.expiresIn,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +198,10 @@ return $default(_that.resendAfterSeconds);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int resendAfterSeconds)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? code,  int expiresIn,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _SendSmsCodeResponseDto() when $default != null:
-return $default(_that.resendAfterSeconds);case _:
+return $default(_that.code,_that.expiresIn,_that.message);case _:
   return null;
 
 }
@@ -208,11 +212,15 @@ return $default(_that.resendAfterSeconds);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _SendSmsCodeResponseDto implements SendSmsCodeResponseDto {
-  const _SendSmsCodeResponseDto({required this.resendAfterSeconds});
+class _SendSmsCodeResponseDto extends SendSmsCodeResponseDto {
+  const _SendSmsCodeResponseDto({this.code, this.expiresIn = 0, this.message}): super._();
   factory _SendSmsCodeResponseDto.fromJson(Map<String, dynamic> json) => _$SendSmsCodeResponseDtoFromJson(json);
 
-@override final  int resendAfterSeconds;
+/// 服务端回显的验证码（联调期便利，生产应移除）。
+@override final  String? code;
+/// 验证码有效期（秒），**不是**重发冷却秒数。
+@override@JsonKey() final  int expiresIn;
+@override final  String? message;
 
 /// Create a copy of SendSmsCodeResponseDto
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SendSmsCodeResponseDto&&(identical(other.resendAfterSeconds, resendAfterSeconds) || other.resendAfterSeconds == resendAfterSeconds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SendSmsCodeResponseDto&&(identical(other.code, code) || other.code == code)&&(identical(other.expiresIn, expiresIn) || other.expiresIn == expiresIn)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,resendAfterSeconds);
+int get hashCode => Object.hash(runtimeType,code,expiresIn,message);
 
 @override
 String toString() {
-  return 'SendSmsCodeResponseDto(resendAfterSeconds: $resendAfterSeconds)';
+  return 'SendSmsCodeResponseDto(code: $code, expiresIn: $expiresIn, message: $message)';
 }
 
 
@@ -247,7 +255,7 @@ abstract mixin class _$SendSmsCodeResponseDtoCopyWith<$Res> implements $SendSmsC
   factory _$SendSmsCodeResponseDtoCopyWith(_SendSmsCodeResponseDto value, $Res Function(_SendSmsCodeResponseDto) _then) = __$SendSmsCodeResponseDtoCopyWithImpl;
 @override @useResult
 $Res call({
- int resendAfterSeconds
+ String? code, int expiresIn, String? message
 });
 
 
@@ -264,10 +272,12 @@ class __$SendSmsCodeResponseDtoCopyWithImpl<$Res>
 
 /// Create a copy of SendSmsCodeResponseDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? resendAfterSeconds = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? code = freezed,Object? expiresIn = null,Object? message = freezed,}) {
   return _then(_SendSmsCodeResponseDto(
-resendAfterSeconds: null == resendAfterSeconds ? _self.resendAfterSeconds : resendAfterSeconds // ignore: cast_nullable_to_non_nullable
-as int,
+code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String?,expiresIn: null == expiresIn ? _self.expiresIn : expiresIn // ignore: cast_nullable_to_non_nullable
+as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

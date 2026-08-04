@@ -10,12 +10,16 @@ _LoginResponseDto _$LoginResponseDtoFromJson(Map<String, dynamic> json) =>
     _LoginResponseDto(
       accessToken: json['accessToken'] as String,
       refreshToken: json['refreshToken'] as String,
-      user: UserDto.fromJson(json['user'] as Map<String, dynamic>),
+      expiresIn: (json['expiresIn'] as num?)?.toInt() ?? 0,
+      userInfo: UserDto.fromJson(json['userInfo'] as Map<String, dynamic>),
+      loginTime: json['loginTime'] as String?,
     );
 
 Map<String, dynamic> _$LoginResponseDtoToJson(_LoginResponseDto instance) =>
     <String, dynamic>{
       'accessToken': instance.accessToken,
       'refreshToken': instance.refreshToken,
-      'user': instance.user,
+      'expiresIn': instance.expiresIn,
+      'userInfo': instance.userInfo,
+      'loginTime': instance.loginTime,
     };

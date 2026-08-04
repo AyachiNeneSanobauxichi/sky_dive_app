@@ -9,8 +9,8 @@ part of 'login_request_dto.dart';
 _LoginRequestDto _$LoginRequestDtoFromJson(Map<String, dynamic> json) =>
     _LoginRequestDto(
       phone: json['phone'] as String,
-      code: json['code'] as String,
+      smsCode: json['smsCode'] as String,
     );
 
 Map<String, dynamic> _$LoginRequestDtoToJson(_LoginRequestDto instance) =>
-    <String, dynamic>{'phone': instance.phone, 'code': instance.code};
+    <String, dynamic>{'phone': instance.phone, 'smsCode': instance.smsCode};

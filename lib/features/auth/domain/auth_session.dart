@@ -8,6 +8,11 @@ part "auth_session.freezed.dart";
 /// Repository 返回给 controller，由后者持久化令牌并置为已登录态。
 @freezed
 abstract class AuthSession with _$AuthSession {
-  const factory AuthSession({required User user, required AuthTokens tokens}) =
-      _AuthSession;
+  const factory AuthSession({
+    required User user,
+    required AuthTokens tokens,
+
+    /// 服务端记录的本次登录时刻（解析失败则为 null）。
+    DateTime? loginTime,
+  }) = _AuthSession;
 }

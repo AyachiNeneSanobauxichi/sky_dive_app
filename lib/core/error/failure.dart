@@ -16,7 +16,7 @@ sealed class Failure with _$Failure {
   /// 未授权：token 缺失/失效，需重新登录。
   const factory Failure.unauthorized() = UnauthorizedFailure;
 
-  /// 业务错误：HTTP 200 但 `code != 0`。保留后端业务码与文案。
+  /// 业务错误：HTTP 200 但业务 `code` 非成功码。保留后端业务码与文案。
   const factory Failure.business({required int code, String? message}) =
       BusinessFailure;
 

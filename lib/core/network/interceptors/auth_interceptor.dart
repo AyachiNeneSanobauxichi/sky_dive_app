@@ -1,5 +1,6 @@
 import "package:dio/dio.dart";
 import "package:happy_os/core/network/access_token_store.dart";
+import "package:happy_os/core/network/api_response.dart";
 import "package:happy_os/core/network/auth_events.dart";
 import "package:happy_os/core/storage/secure_storage.dart";
 
@@ -101,7 +102,8 @@ class AuthInterceptor extends Interceptor {
       data: {"refreshToken": refreshToken},
     );
     final body = res.data;
-    if (body is! Map<String, dynamic> || (body["code"] as num?)?.toInt() != 0) {
+    if (body is! Map<String, dynamic> ||
+        (body["code"] as num?)?.toInt() != ApiResponse.successCode) {
       throw StateError("refresh rejected");
     }
     final data = body["data"];

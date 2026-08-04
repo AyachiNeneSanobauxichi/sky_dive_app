@@ -11,8 +11,10 @@ part "sms_code_controller.g.dart";
 /// **冷却是乐观起算的**：点下去这一刻就进入倒计时，不等接口回来。
 /// 为什么这么做——等接口回来再起算的话，中间那一两秒按钮既没变化又不能点，
 /// 只能靠转圈来解释，而转圈恰恰是这一版要去掉的东西（点完直接显示「60s 后重发」
-/// 才是用户要的信息）。服务端若下发了更长的冷却，成功后以服务端为准；
-/// 发送失败则立刻解除冷却，不让用户为一条没发出去的短信干等。
+/// 才是用户要的信息）。发送失败则立刻解除冷却，不让用户为一条没发出去的短信干等。
+///
+/// 冷却时长**只有本地这一个来源**：`auth.api.md` v1 的发码接口不下发重发间隔
+/// （`expiresIn` 是验证码有效期，不是冷却）。真正的限频仍由服务端按号码兜。
 ///
 /// autoDispose（默认）：只在登录页存活期间有意义，离开页面即重置。
 @riverpod
@@ -41,15 +43,9 @@ class SmsCodeController extends _$SmsCodeController {
     _startTicker();
 
     try {
-      final cooldown = await ref
-          .read(authRepositoryProvider)
-          .sendSmsCode(phone);
-      if (!ref.mounted) return; // 页面已离开，provider 已销毁，不能再写 state
-      // 服务端要求等更久（风控加严）时才改写，否则保持本地倒计时——
-      // 用服务端值无条件覆盖会让秒数往回跳一下。
-      if (cooldown.inSeconds > state.cooldownSeconds) {
-        state = state.copyWith(cooldownSeconds: cooldown.inSeconds);
-      }
+      // 回执（验证码有效期 / 服务端文案）这里不消费：v1 接口不下发重发冷却，
+      // 冷却完全按本地 [_optimisticCooldown] 走。
+      await ref.read(authRepositoryProvider).sendSmsCode(phone);
     } on Object {
       // 失败必须解除冷却：短信没发出去还罚用户等 60 秒是纯粹的体验事故。
       if (ref.mounted) reset();

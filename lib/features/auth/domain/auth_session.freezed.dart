@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthSession {
 
- User get user; AuthTokens get tokens;
+ User get user; AuthTokens get tokens;/// 服务端记录的本次登录时刻（解析失败则为 null）。
+ DateTime? get loginTime;
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,16 @@ $AuthSessionCopyWith<AuthSession> get copyWith => _$AuthSessionCopyWithImpl<Auth
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthSession&&(identical(other.user, user) || other.user == user)&&(identical(other.tokens, tokens) || other.tokens == tokens));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthSession&&(identical(other.user, user) || other.user == user)&&(identical(other.tokens, tokens) || other.tokens == tokens)&&(identical(other.loginTime, loginTime) || other.loginTime == loginTime));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,user,tokens);
+int get hashCode => Object.hash(runtimeType,user,tokens,loginTime);
 
 @override
 String toString() {
-  return 'AuthSession(user: $user, tokens: $tokens)';
+  return 'AuthSession(user: $user, tokens: $tokens, loginTime: $loginTime)';
 }
 
 
@@ -45,7 +46,7 @@ abstract mixin class $AuthSessionCopyWith<$Res>  {
   factory $AuthSessionCopyWith(AuthSession value, $Res Function(AuthSession) _then) = _$AuthSessionCopyWithImpl;
 @useResult
 $Res call({
- User user, AuthTokens tokens
+ User user, AuthTokens tokens, DateTime? loginTime
 });
 
 
@@ -62,11 +63,12 @@ class _$AuthSessionCopyWithImpl<$Res>
 
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? user = null,Object? tokens = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? user = null,Object? tokens = null,Object? loginTime = freezed,}) {
   return _then(_self.copyWith(
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as User,tokens: null == tokens ? _self.tokens : tokens // ignore: cast_nullable_to_non_nullable
-as AuthTokens,
+as AuthTokens,loginTime: freezed == loginTime ? _self.loginTime : loginTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 /// Create a copy of AuthSession
@@ -169,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( User user,  AuthTokens tokens)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( User user,  AuthTokens tokens,  DateTime? loginTime)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthSession() when $default != null:
-return $default(_that.user,_that.tokens);case _:
+return $default(_that.user,_that.tokens,_that.loginTime);case _:
   return orElse();
 
 }
@@ -190,10 +192,10 @@ return $default(_that.user,_that.tokens);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( User user,  AuthTokens tokens)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( User user,  AuthTokens tokens,  DateTime? loginTime)  $default,) {final _that = this;
 switch (_that) {
 case _AuthSession():
-return $default(_that.user,_that.tokens);case _:
+return $default(_that.user,_that.tokens,_that.loginTime);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -210,10 +212,10 @@ return $default(_that.user,_that.tokens);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( User user,  AuthTokens tokens)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( User user,  AuthTokens tokens,  DateTime? loginTime)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthSession() when $default != null:
-return $default(_that.user,_that.tokens);case _:
+return $default(_that.user,_that.tokens,_that.loginTime);case _:
   return null;
 
 }
@@ -225,11 +227,13 @@ return $default(_that.user,_that.tokens);case _:
 
 
 class _AuthSession implements AuthSession {
-  const _AuthSession({required this.user, required this.tokens});
+  const _AuthSession({required this.user, required this.tokens, this.loginTime});
   
 
 @override final  User user;
 @override final  AuthTokens tokens;
+/// 服务端记录的本次登录时刻（解析失败则为 null）。
+@override final  DateTime? loginTime;
 
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +245,16 @@ _$AuthSessionCopyWith<_AuthSession> get copyWith => __$AuthSessionCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthSession&&(identical(other.user, user) || other.user == user)&&(identical(other.tokens, tokens) || other.tokens == tokens));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthSession&&(identical(other.user, user) || other.user == user)&&(identical(other.tokens, tokens) || other.tokens == tokens)&&(identical(other.loginTime, loginTime) || other.loginTime == loginTime));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,user,tokens);
+int get hashCode => Object.hash(runtimeType,user,tokens,loginTime);
 
 @override
 String toString() {
-  return 'AuthSession(user: $user, tokens: $tokens)';
+  return 'AuthSession(user: $user, tokens: $tokens, loginTime: $loginTime)';
 }
 
 
@@ -261,7 +265,7 @@ abstract mixin class _$AuthSessionCopyWith<$Res> implements $AuthSessionCopyWith
   factory _$AuthSessionCopyWith(_AuthSession value, $Res Function(_AuthSession) _then) = __$AuthSessionCopyWithImpl;
 @override @useResult
 $Res call({
- User user, AuthTokens tokens
+ User user, AuthTokens tokens, DateTime? loginTime
 });
 
 
@@ -278,11 +282,12 @@ class __$AuthSessionCopyWithImpl<$Res>
 
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? user = null,Object? tokens = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? user = null,Object? tokens = null,Object? loginTime = freezed,}) {
   return _then(_AuthSession(
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as User,tokens: null == tokens ? _self.tokens : tokens // ignore: cast_nullable_to_non_nullable
-as AuthTokens,
+as AuthTokens,loginTime: freezed == loginTime ? _self.loginTime : loginTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

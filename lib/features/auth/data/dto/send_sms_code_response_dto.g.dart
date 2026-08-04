@@ -9,9 +9,15 @@ part of 'send_sms_code_response_dto.dart';
 _SendSmsCodeResponseDto _$SendSmsCodeResponseDtoFromJson(
   Map<String, dynamic> json,
 ) => _SendSmsCodeResponseDto(
-  resendAfterSeconds: (json['resendAfterSeconds'] as num).toInt(),
+  code: json['code'] as String?,
+  expiresIn: (json['expiresIn'] as num?)?.toInt() ?? 0,
+  message: json['message'] as String?,
 );
 
 Map<String, dynamic> _$SendSmsCodeResponseDtoToJson(
   _SendSmsCodeResponseDto instance,
-) => <String, dynamic>{'resendAfterSeconds': instance.resendAfterSeconds};
+) => <String, dynamic>{
+  'code': instance.code,
+  'expiresIn': instance.expiresIn,
+  'message': instance.message,
+};

@@ -115,19 +115,48 @@ class AuthController extends _$AuthController {
     await _storage.clear();
   }
 
-  /// 用户快照持久化：User 是纯领域实体（无 JSON 耦合），这里手动序列化最小字段。
-  String _encodeUser(User user) =>
-      jsonEncode({"phone": user.phone, "nickname": user.nickname});
+  /// 用户快照持久化：User 是纯领域实体（无 JSON 耦合），这里手动序列化。
+  ///
+  /// 冷启动只有这份快照能还原「已登录」界面（accessToken 只在内存，重启后拿不回
+  /// 登录响应里的 userInfo），所以实体加字段时这里必须同步补——漏存 memberLevel，
+  /// 重启后会员就被当成免费用户。
+  String _encodeUser(User user) => jsonEncode({
+    "id": user.id,
+    "phone": user.phone,
+    "account": user.account,
+    "username": user.username,
+    "nickname": user.nickname,
+    "status": user.status,
+    "memberLevel": user.memberLevel,
+    "totalDays": user.totalDays,
+    "lastActiveTime": user.lastActiveTime?.toIso8601String(),
+    "createTime": user.createTime?.toIso8601String(),
+  });
 
   Future<User?> _readPersistedUser() async {
     final raw = await _storage.readUser();
     if (raw == null || raw.isEmpty) return null;
     try {
       final map = jsonDecode(raw) as Map<String, dynamic>;
+      final id = map["id"] as String?;
       final phone = map["phone"] as String?;
-      // 手机号是身份锚点，缺了就当快照失效；昵称可空，不参与判断。
-      if (phone == null) return null;
-      return User(phone: phone, nickname: map["nickname"] as String?);
+      // id + 手机号是身份锚点，缺了就当快照失效——旧版本只存 phone/nickname 的快照
+      // 正好在这里被判废，用户重新登录一次即可拿到完整 userInfo，不会带着半个实体跑。
+      if (id == null || phone == null) return null;
+      return User(
+        id: id,
+        phone: phone,
+        account: map["account"] as String?,
+        username: map["username"] as String?,
+        nickname: map["nickname"] as String?,
+        status: (map["status"] as num?)?.toInt(),
+        memberLevel: map["memberLevel"] as String?,
+        totalDays: (map["totalDays"] as num?)?.toInt() ?? 0,
+        lastActiveTime: DateTime.tryParse(
+          map["lastActiveTime"] as String? ?? "",
+        ),
+        createTime: DateTime.tryParse(map["createTime"] as String? ?? ""),
+      );
     } on Object {
       return null;
     }
