@@ -10,6 +10,18 @@
   "@commonComingSoon": {
     "description": "Toast shown when tapping an entry point whose page is not built yet"
   },
+  "commonInDevelopment": "In progress",
+  "@commonInDevelopment": {
+    "description": "Trailing hint on a list entry whose feature is still being built"
+  },
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Generic dialog cancel action"
+  },
+  "commonRetry": "Retry",
+  "@commonRetry": {
+    "description": "Generic retry action for failed requests"
+  },
 
   "authPhoneHint": "Phone number",
   "@authPhoneHint": {
@@ -177,6 +189,185 @@
   "userEmptyAction": "Open settings",
   "@userEmptyAction": {
     "description": "Empty-state call to action in the user module"
+  },
+
+  "userProfileComplete": "Your profile is complete — stories will fit you better",
+  "@userProfileComplete": {
+    "description": "Subtitle under the nickname when every profile field is filled"
+  },
+  "userProfileCompleteness": "Profile {percent}% complete — fill it in for stories that feel yours",
+  "@userProfileCompleteness": {
+    "description": "Subtitle under the nickname showing how much of the profile is filled",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "userProfileLoadFailed": "Couldn't load your profile. Check your connection and retry.",
+  "@userProfileLoadFailed": {
+    "description": "Inline error message when the profile request fails"
+  },
+  "userAwakeningLevel": "Awakening level",
+  "@userAwakeningLevel": {
+    "description": "Label of the awakening level metric card"
+  },
+  "userAwakeningLevelValue": "Lv.{level}",
+  "@userAwakeningLevelValue": {
+    "description": "Formatted awakening level value",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "userAwakeningCaption": "{percent}% to the next level",
+  "@userAwakeningCaption": {
+    "description": "Caption under the awakening level progress bar",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "userStarAffinity": "Star affinity",
+  "@userStarAffinity": {
+    "description": "Label of the star affinity metric card"
+  },
+  "userStarAffinityCaption": "Higher affinity, sharper plot twists",
+  "@userStarAffinityCaption": {
+    "description": "Caption under the star affinity progress bar"
+  },
+  "userMetricExplainHowTitle": "How to raise it",
+  "@userMetricExplainHowTitle": {
+    "description": "Sub-heading in the metric explainer sheet, above the how-to text"
+  },
+  "userAwakeningExplainWhat": "Awakening level tracks how deeply you turn lived moments into stories: the more concrete your tracks and the bolder the rewrite, the higher it goes.",
+  "@userAwakeningExplainWhat": {
+    "description": "Explanation of what the awakening level means"
+  },
+  "userAwakeningExplainHow": "Add a track with real detail, or take another pass at an older story — both push the current level forward.",
+  "@userAwakeningExplainHow": {
+    "description": "Explanation of how to raise the awakening level"
+  },
+  "userStarAffinityExplainWhat": "Affinity measures how well your setup matches the way stories get written: a fuller profile and clearer style preferences tell the AI which direction feels good to you.",
+  "@userStarAffinityExplainWhat": {
+    "description": "Explanation of what star affinity means"
+  },
+  "userStarAffinityExplainHow": "Fill in your profile (zodiac, work and interests especially), then give feedback on a few stories — affinity follows.",
+  "@userStarAffinityExplainHow": {
+    "description": "Explanation of how to raise star affinity"
+  },
+  "userPercentValue": "{percent}%",
+  "@userPercentValue": {
+    "description": "A bare percentage value",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "userProfileSection": "Profile",
+  "@userProfileSection": {
+    "description": "Title of the personal profile card"
+  },
+  "userProfileEdit": "Edit",
+  "@userProfileEdit": {
+    "description": "Action in the profile card header that opens profile settings"
+  },
+  "userFieldEmpty": "Not set",
+  "@userFieldEmpty": {
+    "description": "Placeholder for a profile field the user has not filled in"
+  },
+  "userFieldGender": "Gender",
+  "@userFieldGender": {
+    "description": "Profile field label"
+  },
+  "userFieldAge": "Age",
+  "@userFieldAge": {
+    "description": "Profile field label"
+  },
+  "userAgeValue": "{age}",
+  "@userAgeValue": {
+    "description": "Formatted age value",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "userFieldBirthday": "Birthday",
+  "@userFieldBirthday": {
+    "description": "Profile field label"
+  },
+  "userFieldZodiac": "Zodiac",
+  "@userFieldZodiac": {
+    "description": "Profile field label"
+  },
+  "userFieldCity": "City",
+  "@userFieldCity": {
+    "description": "Profile field label"
+  },
+  "userFieldOccupation": "Occupation",
+  "@userFieldOccupation": {
+    "description": "Profile field label"
+  },
+  "userFieldIndustry": "Industry",
+  "@userFieldIndustry": {
+    "description": "Profile field label"
+  },
+  "userFieldCompany": "Company",
+  "@userFieldCompany": {
+    "description": "Profile field label"
+  },
+  "userFieldHobbies": "Interests",
+  "@userFieldHobbies": {
+    "description": "Profile field label for the hobby chips"
+  },
+  "userActionsSection": "More",
+  "@userActionsSection": {
+    "description": "Section title above the action list in the user page"
+  },
+  "userProfileSettings": "Profile settings",
+  "@userProfileSettings": {
+    "description": "Action that opens the profile settings page; also its page title"
+  },
+  "userProfileSettingsEmptyTitle": "Profile settings are almost here",
+  "@userProfileSettingsEmptyTitle": {
+    "description": "Empty-state title of the profile settings placeholder page"
+  },
+  "userProfileSettingsEmptyBody": "Nickname, avatar, zodiac and work all get filled in here — the more detail, the more the stories sound like you.",
+  "@userProfileSettingsEmptyBody": {
+    "description": "Empty-state body of the profile settings placeholder page"
+  },
+  "userProfileSettingsEmptyBodyForField": "You came to fill in \"{field}\". The form lands here soon — the more detail, the more the stories sound like you.",
+  "@userProfileSettingsEmptyBodyForField": {
+    "description": "Empty-state body when the user tapped a specific profile field to fill in",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "userProfileSettingsEmptyAction": "Got it",
+  "@userProfileSettingsEmptyAction": {
+    "description": "Empty-state call to action on the profile settings placeholder page"
+  },
+  "userSwitchAccount": "Switch account",
+  "@userSwitchAccount": {
+    "description": "Action for switching between multiple accounts"
+  },
+  "userContactDeveloper": "Talk to the developer",
+  "@userContactDeveloper": {
+    "description": "Action that opens a chat with the developer"
+  },
+  "userLogoutConfirmTitle": "Log out?",
+  "@userLogoutConfirmTitle": {
+    "description": "Title of the log out confirmation dialog"
+  },
+  "userLogoutConfirmBody": "You'll need to sign in with your phone number again. Your tracks and stories stay put.",
+  "@userLogoutConfirmBody": {
+    "description": "Body of the log out confirmation dialog"
   },
   "homeLogout": "Log out",
   "@homeLogout": {

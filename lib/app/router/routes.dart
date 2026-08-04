@@ -71,4 +71,19 @@ final List<RouteBase> appRoutes = [
       ),
     ],
   ),
+  // 个人档案设置：刻意放在 shell **外面**（不是 user 分支的子路由）。
+  // 分支子路由会渲染在外壳内部、底部 tab 栏照旧显示；而这是一张要独占屏幕的表单页
+  // （日后有保存按钮，底部再顶一条导航会抢位置），所以让它盖住整个外壳。
+  // 代价：它不在 user 分支的返回栈里，切到别的 tab 再切回来不会停在这一页。
+  GoRoute(
+    name: RouteName.userProfileSettings,
+    path: RoutePath.userProfileSettings,
+    // `?field=company`：从档案卡某一行点进来时告知要定位到哪一项。
+    // 用 query 参数而不是 `extra`：它必须能在深链接/刷新后恢复。
+    builder: (context, state) => ProfileSettingsScreen(
+      targetField: UserProfileFieldKey.tryParse(
+        state.uri.queryParameters[RouteQuery.profileField],
+      ),
+    ),
+  ),
 ];

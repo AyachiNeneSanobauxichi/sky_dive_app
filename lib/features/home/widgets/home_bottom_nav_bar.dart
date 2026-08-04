@@ -321,7 +321,15 @@ class _TabIcon extends StatelessWidget {
   }
 }
 
-/// 凸起的 story 槽位：品牌渐变圆探出胶囊上沿，标签仍与两侧对齐。
+/// 凸起的 story 槽位：圆形入口探出胶囊上沿，标签仍与两侧对齐。
+///
+/// ## 选中/未选中的差别
+/// 早先两态都是满渐变、只差一点缩放与光晕，几乎看不出区别。现在拉开：
+/// - **选中**：品牌渐变填充 + 品牌光晕 + 白色图标，原尺寸；
+/// - **未选中**：中性表面色填充 + 描边 + 弱色图标，缩到 [_unselectedScale]、无光晕。
+///
+/// 保持"凸起的圆"这个形状不变（它是主路径入口，不该在未选中时退化成普通图标），
+/// 但填充从"发光的品牌色"变成"安静的表面色"，一眼就能分辨。
 class _RaisedTabSlot extends StatelessWidget {
   const _RaisedTabSlot({
     required this.icon,
@@ -365,22 +373,37 @@ class _RaisedTabSlot extends StatelessWidget {
               // 角标要贴在圆的右上角外侧。
               clipBehavior: Clip.none,
               children: <Widget>[
-                Container(
+                AnimatedContainer(
+                  duration: HappyMotion.fast,
+                  curve: HappyMotion.standard,
                   width: _size,
                   height: _size,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: HappyGradients.brandFor(theme.brightness),
-                    boxShadow: HappyShadows.glow(
-                      scheme.primary,
-                      intensity: isSelected ? _glowSelected : _glowIdle,
-                    ),
+                    gradient: isSelected
+                        ? HappyGradients.brandFor(theme.brightness)
+                        : null,
+                    color: isSelected ? null : scheme.surfaceContainerHighest,
+                    border: isSelected
+                        ? null
+                        : Border.all(
+                            color: scheme.outline,
+                            width: HappyBorderWidth.hairline,
+                          ),
+                    boxShadow: isSelected
+                        ? HappyShadows.glow(
+                            scheme.primary,
+                            intensity: _glowSelected,
+                          )
+                        : HappyShadows.none,
                   ),
                   child: Icon(
                     icon,
                     size: HappyIconSize.md,
-                    color: scheme.onPrimary,
+                    color: isSelected
+                        ? scheme.onPrimary
+                        : scheme.onSurfaceVariant,
                   ),
                 ),
                 if (badgeCount > 0)
@@ -455,6 +478,5 @@ const double _selectedIconScale = 1.1;
 /// 未选中时凸起圆的缩放比。
 const double _unselectedScale = 0.92;
 
-/// 凸起圆的光晕强度（选中 / 未选中）。
+/// 凸起圆选中时的光晕强度。未选中不发光（用中性表面色 + 描边表达"安静"）。
 const double _glowSelected = 0.45;
-const double _glowIdle = 0.16;

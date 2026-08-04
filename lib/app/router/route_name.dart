@@ -10,6 +10,9 @@ abstract final class RouteName {
   static const story = "story";
   static const track = "track";
   static const user = "user";
+
+  /// 个人档案设置（user tab 下的深入页）。
+  static const userProfileSettings = "userProfileSettings";
 }
 
 abstract final class RoutePath {
@@ -25,7 +28,17 @@ abstract final class RoutePath {
   static const track = "/track";
   static const user = "/user";
 
+  /// 个人档案设置。路径写成 `/user/...` 表达归属，但**注册在 shell 外**，
+  /// push 进去会盖住底部 tab 栏（表单页独占屏幕）。详见 `routes.dart` 的注释。
+  static const userProfileSettings = "/user/profile-settings";
+
   /// 登录后落地的默认 tab（= 第一个分支）。守卫与登录成功跳转都用它，
   /// 这样以后调整"首屏是哪个 tab"只改这一行。
   static const home = story;
+}
+
+/// 查询参数名。和路径一样集中定义，避免调用方与解析方各写一个字符串写错。
+abstract final class RouteQuery {
+  /// 档案设置页要定位到哪个字段（值取 `UserProfileFieldKey.name`）。
+  static const profileField = "field";
 }
