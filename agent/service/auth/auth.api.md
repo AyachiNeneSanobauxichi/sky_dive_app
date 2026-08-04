@@ -58,3 +58,19 @@ const response = {
   timestamp: 1785860967960,
 };
 ```
+
+## v2
+
+- 鉴权约定：登录成功后，后续所有需鉴权接口都要带 accessToken 请求头。
+
+```ts
+const headers = {
+  Authorization: `Bearer ${accessToken}`,
+};
+```
+
+- 未授权处理：接口返回未授权（token 缺失 / 失效 / 无权限）时，客户端清空本地会话并退回登录页。
+
+- 未授权的响应形态待后端确认：是 HTTP 401，还是 HTTP 200 + 信封 `code` 为 401（本项目信封成功码为 200，业务码与 HTTP 码同形）。当前客户端只按 **HTTP 401** 处理。
+
+- 登录成功后获取用户信息：接口见 `agent/service/user/user.api.md` v2 的 `GET /user-profile/me`（需鉴权头）。

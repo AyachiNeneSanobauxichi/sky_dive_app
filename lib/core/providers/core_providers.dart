@@ -54,17 +54,19 @@ Dio dio(Ref ref) {
   // 避免「刷新请求本身又触发刷新」的递归。
   final refreshDio = Dio(_baseOptions());
 
+  final authEvents = ref.watch(authEventsProvider);
   final authInterceptor = AuthInterceptor(
     tokenStore: ref.watch(accessTokenStoreProvider),
     storage: ref.watch(secureStorageProvider),
     refreshDio: refreshDio,
-    events: ref.watch(authEventsProvider),
+    events: authEvents,
   );
 
   final dio = Dio(_baseOptions());
   dio.interceptors.addAll([
     authInterceptor,
-    ResponseInterceptor(),
+    // 解包拦截器也要拿 events：信封形态的未授权（HTTP 200 + code 401）只有它看得到。
+    ResponseInterceptor(events: authEvents),
     ErrorInterceptor(),
     // 仅 debug 且配置开启时打印，避免生产泄露请求/响应体。
     if (kDebugMode && Env.enableLogging)

@@ -42,6 +42,14 @@ final class BusinessException extends AppException {
   final int code;
 }
 
+/// 未授权：token 缺失 / 失效 / 无权限，会话必须重建。
+///
+/// 与 `ServerException(statusCode: 401)` 区分开，是因为后端把未授权也放在 **HTTP 200
+/// 的信封里**（`code: 401`）下发——那种情况 HTTP 层完全正常，只有解包时才看得出来。
+final class UnauthorizedException extends AppException {
+  const UnauthorizedException({String? message}) : super(message ?? "登录状态已失效");
+}
+
 /// 数据解析失败（响应结构与预期不符）。
 final class ParseException extends AppException {
   const ParseException() : super("数据解析失败");

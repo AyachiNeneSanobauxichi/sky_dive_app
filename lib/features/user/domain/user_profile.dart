@@ -36,9 +36,13 @@ enum UserProfileFieldKey {
 ///
 /// **除昵称外全部可空**：验证码登录会为新手机号直接建号，此时档案是空的，
 /// UI 必须能展示"未填写"而不是崩在 null 上。
-// TODO(user): 接口契约未定（agent/service/user/user.api.md 为空），字段名与类型
-//   按 UI 需要先行假设：性别/星座等日后大概率收敛成枚举 + i18n 映射，
-//   [age] 也可能改为从 [birthday] 推导。定稿后回来对齐并删除 data/mock/。
+///
+/// 字段来源（`user.api.md` v2 `GET /user-profile/me`）：[age] 由 `birthday` 派生
+/// （契约无此字段），[occupation] 对应契约的 `profession`。
+// TODO(user): 契约未下发 [avatarUrl] 与三个成长指标（[awakeningLevel] /
+//   [awakeningProgress] / [starAffinity]），真实数据下这三项恒为默认值（等级 1、
+//   进度 0），等级卡形同占位。后端补字段后回来对齐。
+// TODO(user): 性别 / 星座日后大概率收敛成枚举 + i18n 映射，现按后端原样的中文串透传。
 @freezed
 abstract class UserProfile with _$UserProfile {
   const UserProfile._();
@@ -68,11 +72,24 @@ abstract class UserProfile with _$UserProfile {
     String? industry,
     String? company,
     @Default(<String>[]) List<String> hobbies,
+
+    /// MBTI 人格类型（如 `ENFJ`）。
+    String? mbti,
+
+    /// 用户自述的"理想生活"，可含换行。story 生成时最有信息量的一段素材。
+    String? idealLife,
+
+    /// 性格标签（如 理性 / 乐观）。
+    @Default(<String>[]) List<String> personalityTags,
   }) = _UserProfile;
 
   /// 档案填写完成度（0–1）：驱动"完善档案"的引导文案。
   ///
   /// 只统计档案字段，不含昵称/头像与两个成长指标——那两类不是用户手填的。
+  ///
+  /// v2 新增的 [mbti] / [idealLife] / [personalityTags] **不计入**：档案设置页目前没有
+  /// 这三项的入口，计进来会让完成度永远到不了 100%，"完善档案"的引导就成了死循环。
+  // TODO(user): 档案设置页补上这三项入口后，同步计入分母（并改 [_profileFieldCount]）。
   double get profileCompleteness {
     final filled = <bool>[
       gender != null,

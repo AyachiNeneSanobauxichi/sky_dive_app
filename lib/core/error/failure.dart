@@ -34,6 +34,7 @@ extension AppExceptionX on AppException {
       statusCode == 401
           ? const Failure.unauthorized()
           : Failure.server(message: message),
+    UnauthorizedException() => const Failure.unauthorized(),
     // TODO(auth): 后端业务错误码表定稿后，把「token 失效」类 code（如 11001）
     //   映射为 Failure.unauthorized() 以触发重新登录；当前统一归 business。
     BusinessException(:final code, :final message) => Failure.business(

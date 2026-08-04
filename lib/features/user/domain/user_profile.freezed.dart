@@ -19,7 +19,10 @@ mixin _$UserProfile {
  int get awakeningLevel;/// 当前等级内的进度（0–1），用于等级卡的进度条。
  double get awakeningProgress;/// 星厉契合度（0–1）。
  double get starAffinity;// ── 个人档案 ──
- String? get gender; int? get age; DateTime? get birthday; String? get zodiac; String? get city; String? get occupation; String? get industry; String? get company; List<String> get hobbies;
+ String? get gender; int? get age; DateTime? get birthday; String? get zodiac; String? get city; String? get occupation; String? get industry; String? get company; List<String> get hobbies;/// MBTI 人格类型（如 `ENFJ`）。
+ String? get mbti;/// 用户自述的"理想生活"，可含换行。story 生成时最有信息量的一段素材。
+ String? get idealLife;/// 性格标签（如 理性 / 乐观）。
+ List<String> get personalityTags;
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,16 +33,16 @@ $UserProfileCopyWith<UserProfile> get copyWith => _$UserProfileCopyWithImpl<User
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfile&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.awakeningLevel, awakeningLevel) || other.awakeningLevel == awakeningLevel)&&(identical(other.awakeningProgress, awakeningProgress) || other.awakeningProgress == awakeningProgress)&&(identical(other.starAffinity, starAffinity) || other.starAffinity == starAffinity)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.age, age) || other.age == age)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.zodiac, zodiac) || other.zodiac == zodiac)&&(identical(other.city, city) || other.city == city)&&(identical(other.occupation, occupation) || other.occupation == occupation)&&(identical(other.industry, industry) || other.industry == industry)&&(identical(other.company, company) || other.company == company)&&const DeepCollectionEquality().equals(other.hobbies, hobbies));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfile&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.awakeningLevel, awakeningLevel) || other.awakeningLevel == awakeningLevel)&&(identical(other.awakeningProgress, awakeningProgress) || other.awakeningProgress == awakeningProgress)&&(identical(other.starAffinity, starAffinity) || other.starAffinity == starAffinity)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.age, age) || other.age == age)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.zodiac, zodiac) || other.zodiac == zodiac)&&(identical(other.city, city) || other.city == city)&&(identical(other.occupation, occupation) || other.occupation == occupation)&&(identical(other.industry, industry) || other.industry == industry)&&(identical(other.company, company) || other.company == company)&&const DeepCollectionEquality().equals(other.hobbies, hobbies)&&(identical(other.mbti, mbti) || other.mbti == mbti)&&(identical(other.idealLife, idealLife) || other.idealLife == idealLife)&&const DeepCollectionEquality().equals(other.personalityTags, personalityTags));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,nickname,avatarUrl,awakeningLevel,awakeningProgress,starAffinity,gender,age,birthday,zodiac,city,occupation,industry,company,const DeepCollectionEquality().hash(hobbies));
+int get hashCode => Object.hash(runtimeType,nickname,avatarUrl,awakeningLevel,awakeningProgress,starAffinity,gender,age,birthday,zodiac,city,occupation,industry,company,const DeepCollectionEquality().hash(hobbies),mbti,idealLife,const DeepCollectionEquality().hash(personalityTags));
 
 @override
 String toString() {
-  return 'UserProfile(nickname: $nickname, avatarUrl: $avatarUrl, awakeningLevel: $awakeningLevel, awakeningProgress: $awakeningProgress, starAffinity: $starAffinity, gender: $gender, age: $age, birthday: $birthday, zodiac: $zodiac, city: $city, occupation: $occupation, industry: $industry, company: $company, hobbies: $hobbies)';
+  return 'UserProfile(nickname: $nickname, avatarUrl: $avatarUrl, awakeningLevel: $awakeningLevel, awakeningProgress: $awakeningProgress, starAffinity: $starAffinity, gender: $gender, age: $age, birthday: $birthday, zodiac: $zodiac, city: $city, occupation: $occupation, industry: $industry, company: $company, hobbies: $hobbies, mbti: $mbti, idealLife: $idealLife, personalityTags: $personalityTags)';
 }
 
 
@@ -50,7 +53,7 @@ abstract mixin class $UserProfileCopyWith<$Res>  {
   factory $UserProfileCopyWith(UserProfile value, $Res Function(UserProfile) _then) = _$UserProfileCopyWithImpl;
 @useResult
 $Res call({
- String nickname, String? avatarUrl, int awakeningLevel, double awakeningProgress, double starAffinity, String? gender, int? age, DateTime? birthday, String? zodiac, String? city, String? occupation, String? industry, String? company, List<String> hobbies
+ String nickname, String? avatarUrl, int awakeningLevel, double awakeningProgress, double starAffinity, String? gender, int? age, DateTime? birthday, String? zodiac, String? city, String? occupation, String? industry, String? company, List<String> hobbies, String? mbti, String? idealLife, List<String> personalityTags
 });
 
 
@@ -67,7 +70,7 @@ class _$UserProfileCopyWithImpl<$Res>
 
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? nickname = null,Object? avatarUrl = freezed,Object? awakeningLevel = null,Object? awakeningProgress = null,Object? starAffinity = null,Object? gender = freezed,Object? age = freezed,Object? birthday = freezed,Object? zodiac = freezed,Object? city = freezed,Object? occupation = freezed,Object? industry = freezed,Object? company = freezed,Object? hobbies = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? nickname = null,Object? avatarUrl = freezed,Object? awakeningLevel = null,Object? awakeningProgress = null,Object? starAffinity = null,Object? gender = freezed,Object? age = freezed,Object? birthday = freezed,Object? zodiac = freezed,Object? city = freezed,Object? occupation = freezed,Object? industry = freezed,Object? company = freezed,Object? hobbies = null,Object? mbti = freezed,Object? idealLife = freezed,Object? personalityTags = null,}) {
   return _then(_self.copyWith(
 nickname: null == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
 as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
@@ -83,6 +86,9 @@ as String?,occupation: freezed == occupation ? _self.occupation : occupation // 
 as String?,industry: freezed == industry ? _self.industry : industry // ignore: cast_nullable_to_non_nullable
 as String?,company: freezed == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String?,hobbies: null == hobbies ? _self.hobbies : hobbies // ignore: cast_nullable_to_non_nullable
+as List<String>,mbti: freezed == mbti ? _self.mbti : mbti // ignore: cast_nullable_to_non_nullable
+as String?,idealLife: freezed == idealLife ? _self.idealLife : idealLife // ignore: cast_nullable_to_non_nullable
+as String?,personalityTags: null == personalityTags ? _self.personalityTags : personalityTags // ignore: cast_nullable_to_non_nullable
 as List<String>,
   ));
 }
@@ -168,10 +174,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String nickname,  String? avatarUrl,  int awakeningLevel,  double awakeningProgress,  double starAffinity,  String? gender,  int? age,  DateTime? birthday,  String? zodiac,  String? city,  String? occupation,  String? industry,  String? company,  List<String> hobbies)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String nickname,  String? avatarUrl,  int awakeningLevel,  double awakeningProgress,  double starAffinity,  String? gender,  int? age,  DateTime? birthday,  String? zodiac,  String? city,  String? occupation,  String? industry,  String? company,  List<String> hobbies,  String? mbti,  String? idealLife,  List<String> personalityTags)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserProfile() when $default != null:
-return $default(_that.nickname,_that.avatarUrl,_that.awakeningLevel,_that.awakeningProgress,_that.starAffinity,_that.gender,_that.age,_that.birthday,_that.zodiac,_that.city,_that.occupation,_that.industry,_that.company,_that.hobbies);case _:
+return $default(_that.nickname,_that.avatarUrl,_that.awakeningLevel,_that.awakeningProgress,_that.starAffinity,_that.gender,_that.age,_that.birthday,_that.zodiac,_that.city,_that.occupation,_that.industry,_that.company,_that.hobbies,_that.mbti,_that.idealLife,_that.personalityTags);case _:
   return orElse();
 
 }
@@ -189,10 +195,10 @@ return $default(_that.nickname,_that.avatarUrl,_that.awakeningLevel,_that.awaken
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String nickname,  String? avatarUrl,  int awakeningLevel,  double awakeningProgress,  double starAffinity,  String? gender,  int? age,  DateTime? birthday,  String? zodiac,  String? city,  String? occupation,  String? industry,  String? company,  List<String> hobbies)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String nickname,  String? avatarUrl,  int awakeningLevel,  double awakeningProgress,  double starAffinity,  String? gender,  int? age,  DateTime? birthday,  String? zodiac,  String? city,  String? occupation,  String? industry,  String? company,  List<String> hobbies,  String? mbti,  String? idealLife,  List<String> personalityTags)  $default,) {final _that = this;
 switch (_that) {
 case _UserProfile():
-return $default(_that.nickname,_that.avatarUrl,_that.awakeningLevel,_that.awakeningProgress,_that.starAffinity,_that.gender,_that.age,_that.birthday,_that.zodiac,_that.city,_that.occupation,_that.industry,_that.company,_that.hobbies);case _:
+return $default(_that.nickname,_that.avatarUrl,_that.awakeningLevel,_that.awakeningProgress,_that.starAffinity,_that.gender,_that.age,_that.birthday,_that.zodiac,_that.city,_that.occupation,_that.industry,_that.company,_that.hobbies,_that.mbti,_that.idealLife,_that.personalityTags);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +215,10 @@ return $default(_that.nickname,_that.avatarUrl,_that.awakeningLevel,_that.awaken
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String nickname,  String? avatarUrl,  int awakeningLevel,  double awakeningProgress,  double starAffinity,  String? gender,  int? age,  DateTime? birthday,  String? zodiac,  String? city,  String? occupation,  String? industry,  String? company,  List<String> hobbies)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String nickname,  String? avatarUrl,  int awakeningLevel,  double awakeningProgress,  double starAffinity,  String? gender,  int? age,  DateTime? birthday,  String? zodiac,  String? city,  String? occupation,  String? industry,  String? company,  List<String> hobbies,  String? mbti,  String? idealLife,  List<String> personalityTags)?  $default,) {final _that = this;
 switch (_that) {
 case _UserProfile() when $default != null:
-return $default(_that.nickname,_that.avatarUrl,_that.awakeningLevel,_that.awakeningProgress,_that.starAffinity,_that.gender,_that.age,_that.birthday,_that.zodiac,_that.city,_that.occupation,_that.industry,_that.company,_that.hobbies);case _:
+return $default(_that.nickname,_that.avatarUrl,_that.awakeningLevel,_that.awakeningProgress,_that.starAffinity,_that.gender,_that.age,_that.birthday,_that.zodiac,_that.city,_that.occupation,_that.industry,_that.company,_that.hobbies,_that.mbti,_that.idealLife,_that.personalityTags);case _:
   return null;
 
 }
@@ -224,7 +230,7 @@ return $default(_that.nickname,_that.avatarUrl,_that.awakeningLevel,_that.awaken
 
 
 class _UserProfile extends UserProfile {
-  const _UserProfile({required this.nickname, this.avatarUrl, this.awakeningLevel = 1, this.awakeningProgress = 0, this.starAffinity = 0, this.gender, this.age, this.birthday, this.zodiac, this.city, this.occupation, this.industry, this.company, final  List<String> hobbies = const <String>[]}): _hobbies = hobbies,super._();
+  const _UserProfile({required this.nickname, this.avatarUrl, this.awakeningLevel = 1, this.awakeningProgress = 0, this.starAffinity = 0, this.gender, this.age, this.birthday, this.zodiac, this.city, this.occupation, this.industry, this.company, final  List<String> hobbies = const <String>[], this.mbti, this.idealLife, final  List<String> personalityTags = const <String>[]}): _hobbies = hobbies,_personalityTags = personalityTags,super._();
   
 
 @override final  String nickname;
@@ -252,6 +258,19 @@ class _UserProfile extends UserProfile {
   return EqualUnmodifiableListView(_hobbies);
 }
 
+/// MBTI 人格类型（如 `ENFJ`）。
+@override final  String? mbti;
+/// 用户自述的"理想生活"，可含换行。story 生成时最有信息量的一段素材。
+@override final  String? idealLife;
+/// 性格标签（如 理性 / 乐观）。
+ final  List<String> _personalityTags;
+/// 性格标签（如 理性 / 乐观）。
+@override@JsonKey() List<String> get personalityTags {
+  if (_personalityTags is EqualUnmodifiableListView) return _personalityTags;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_personalityTags);
+}
+
 
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
@@ -263,16 +282,16 @@ _$UserProfileCopyWith<_UserProfile> get copyWith => __$UserProfileCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfile&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.awakeningLevel, awakeningLevel) || other.awakeningLevel == awakeningLevel)&&(identical(other.awakeningProgress, awakeningProgress) || other.awakeningProgress == awakeningProgress)&&(identical(other.starAffinity, starAffinity) || other.starAffinity == starAffinity)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.age, age) || other.age == age)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.zodiac, zodiac) || other.zodiac == zodiac)&&(identical(other.city, city) || other.city == city)&&(identical(other.occupation, occupation) || other.occupation == occupation)&&(identical(other.industry, industry) || other.industry == industry)&&(identical(other.company, company) || other.company == company)&&const DeepCollectionEquality().equals(other._hobbies, _hobbies));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfile&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.awakeningLevel, awakeningLevel) || other.awakeningLevel == awakeningLevel)&&(identical(other.awakeningProgress, awakeningProgress) || other.awakeningProgress == awakeningProgress)&&(identical(other.starAffinity, starAffinity) || other.starAffinity == starAffinity)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.age, age) || other.age == age)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.zodiac, zodiac) || other.zodiac == zodiac)&&(identical(other.city, city) || other.city == city)&&(identical(other.occupation, occupation) || other.occupation == occupation)&&(identical(other.industry, industry) || other.industry == industry)&&(identical(other.company, company) || other.company == company)&&const DeepCollectionEquality().equals(other._hobbies, _hobbies)&&(identical(other.mbti, mbti) || other.mbti == mbti)&&(identical(other.idealLife, idealLife) || other.idealLife == idealLife)&&const DeepCollectionEquality().equals(other._personalityTags, _personalityTags));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,nickname,avatarUrl,awakeningLevel,awakeningProgress,starAffinity,gender,age,birthday,zodiac,city,occupation,industry,company,const DeepCollectionEquality().hash(_hobbies));
+int get hashCode => Object.hash(runtimeType,nickname,avatarUrl,awakeningLevel,awakeningProgress,starAffinity,gender,age,birthday,zodiac,city,occupation,industry,company,const DeepCollectionEquality().hash(_hobbies),mbti,idealLife,const DeepCollectionEquality().hash(_personalityTags));
 
 @override
 String toString() {
-  return 'UserProfile(nickname: $nickname, avatarUrl: $avatarUrl, awakeningLevel: $awakeningLevel, awakeningProgress: $awakeningProgress, starAffinity: $starAffinity, gender: $gender, age: $age, birthday: $birthday, zodiac: $zodiac, city: $city, occupation: $occupation, industry: $industry, company: $company, hobbies: $hobbies)';
+  return 'UserProfile(nickname: $nickname, avatarUrl: $avatarUrl, awakeningLevel: $awakeningLevel, awakeningProgress: $awakeningProgress, starAffinity: $starAffinity, gender: $gender, age: $age, birthday: $birthday, zodiac: $zodiac, city: $city, occupation: $occupation, industry: $industry, company: $company, hobbies: $hobbies, mbti: $mbti, idealLife: $idealLife, personalityTags: $personalityTags)';
 }
 
 
@@ -283,7 +302,7 @@ abstract mixin class _$UserProfileCopyWith<$Res> implements $UserProfileCopyWith
   factory _$UserProfileCopyWith(_UserProfile value, $Res Function(_UserProfile) _then) = __$UserProfileCopyWithImpl;
 @override @useResult
 $Res call({
- String nickname, String? avatarUrl, int awakeningLevel, double awakeningProgress, double starAffinity, String? gender, int? age, DateTime? birthday, String? zodiac, String? city, String? occupation, String? industry, String? company, List<String> hobbies
+ String nickname, String? avatarUrl, int awakeningLevel, double awakeningProgress, double starAffinity, String? gender, int? age, DateTime? birthday, String? zodiac, String? city, String? occupation, String? industry, String? company, List<String> hobbies, String? mbti, String? idealLife, List<String> personalityTags
 });
 
 
@@ -300,7 +319,7 @@ class __$UserProfileCopyWithImpl<$Res>
 
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? nickname = null,Object? avatarUrl = freezed,Object? awakeningLevel = null,Object? awakeningProgress = null,Object? starAffinity = null,Object? gender = freezed,Object? age = freezed,Object? birthday = freezed,Object? zodiac = freezed,Object? city = freezed,Object? occupation = freezed,Object? industry = freezed,Object? company = freezed,Object? hobbies = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? nickname = null,Object? avatarUrl = freezed,Object? awakeningLevel = null,Object? awakeningProgress = null,Object? starAffinity = null,Object? gender = freezed,Object? age = freezed,Object? birthday = freezed,Object? zodiac = freezed,Object? city = freezed,Object? occupation = freezed,Object? industry = freezed,Object? company = freezed,Object? hobbies = null,Object? mbti = freezed,Object? idealLife = freezed,Object? personalityTags = null,}) {
   return _then(_UserProfile(
 nickname: null == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
 as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
@@ -316,6 +335,9 @@ as String?,occupation: freezed == occupation ? _self.occupation : occupation // 
 as String?,industry: freezed == industry ? _self.industry : industry // ignore: cast_nullable_to_non_nullable
 as String?,company: freezed == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String?,hobbies: null == hobbies ? _self._hobbies : hobbies // ignore: cast_nullable_to_non_nullable
+as List<String>,mbti: freezed == mbti ? _self.mbti : mbti // ignore: cast_nullable_to_non_nullable
+as String?,idealLife: freezed == idealLife ? _self.idealLife : idealLife // ignore: cast_nullable_to_non_nullable
+as String?,personalityTags: null == personalityTags ? _self._personalityTags : personalityTags // ignore: cast_nullable_to_non_nullable
 as List<String>,
   ));
 }

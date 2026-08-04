@@ -8,33 +8,70 @@ part of 'user_profile_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// User 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+
+@ProviderFor(userRepository)
+final userRepositoryProvider = UserRepositoryProvider._();
+
+/// User 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+
+final class UserRepositoryProvider
+    extends $FunctionalProvider<UserRepository, UserRepository, UserRepository>
+    with $Provider<UserRepository> {
+  /// User 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+  UserRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$userRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<UserRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  UserRepository create(Ref ref) {
+    return userRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UserRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UserRepository>(value),
+    );
+  }
+}
+
+String _$userRepositoryHash() => r'59d3e61569cb500ecba24c2e661855463d91c446';
+
 /// 用户档案控制器（v2）。
 ///
-/// 直接读 mock 数据源而不是经 Repository：接口契约还没定
-/// （`agent/service/user/user.api.md` 为空），此刻造一层 DTO→Entity 的映射等于凭空
-/// 发明契约，定稿后必然重写。等契约落地时在这里换成 `ref.read(userRepositoryProvider)`，
-/// 页面一行都不用改。
-// TODO(user): user.api.md 定稿后改为经 Repository 取数，并删除 data/mock/。
+/// 取数走真实接口 `GET /user-profile/me`（`user.api.md` v2），鉴权头由
+/// `AuthInterceptor` 注入——所以本控制器只在已登录态下才会被页面挂载。
 
 @ProviderFor(UserProfileController)
 final userProfileControllerProvider = UserProfileControllerProvider._();
 
 /// 用户档案控制器（v2）。
 ///
-/// 直接读 mock 数据源而不是经 Repository：接口契约还没定
-/// （`agent/service/user/user.api.md` 为空），此刻造一层 DTO→Entity 的映射等于凭空
-/// 发明契约，定稿后必然重写。等契约落地时在这里换成 `ref.read(userRepositoryProvider)`，
-/// 页面一行都不用改。
-// TODO(user): user.api.md 定稿后改为经 Repository 取数，并删除 data/mock/。
+/// 取数走真实接口 `GET /user-profile/me`（`user.api.md` v2），鉴权头由
+/// `AuthInterceptor` 注入——所以本控制器只在已登录态下才会被页面挂载。
 final class UserProfileControllerProvider
     extends $AsyncNotifierProvider<UserProfileController, UserProfile> {
   /// 用户档案控制器（v2）。
   ///
-  /// 直接读 mock 数据源而不是经 Repository：接口契约还没定
-  /// （`agent/service/user/user.api.md` 为空），此刻造一层 DTO→Entity 的映射等于凭空
-  /// 发明契约，定稿后必然重写。等契约落地时在这里换成 `ref.read(userRepositoryProvider)`，
-  /// 页面一行都不用改。
-  // TODO(user): user.api.md 定稿后改为经 Repository 取数，并删除 data/mock/。
+  /// 取数走真实接口 `GET /user-profile/me`（`user.api.md` v2），鉴权头由
+  /// `AuthInterceptor` 注入——所以本控制器只在已登录态下才会被页面挂载。
   UserProfileControllerProvider._()
     : super(
         from: null,
@@ -55,15 +92,12 @@ final class UserProfileControllerProvider
 }
 
 String _$userProfileControllerHash() =>
-    r'd5bf5913ae330bb5605ec8d11c47106692097c6c';
+    r'72e31e248e62228f763c3637de847f45179291f5';
 
 /// 用户档案控制器（v2）。
 ///
-/// 直接读 mock 数据源而不是经 Repository：接口契约还没定
-/// （`agent/service/user/user.api.md` 为空），此刻造一层 DTO→Entity 的映射等于凭空
-/// 发明契约，定稿后必然重写。等契约落地时在这里换成 `ref.read(userRepositoryProvider)`，
-/// 页面一行都不用改。
-// TODO(user): user.api.md 定稿后改为经 Repository 取数，并删除 data/mock/。
+/// 取数走真实接口 `GET /user-profile/me`（`user.api.md` v2），鉴权头由
+/// `AuthInterceptor` 注入——所以本控制器只在已登录态下才会被页面挂载。
 
 abstract class _$UserProfileController extends $AsyncNotifier<UserProfile> {
   FutureOr<UserProfile> build();

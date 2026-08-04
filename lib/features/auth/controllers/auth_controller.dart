@@ -104,10 +104,22 @@ class AuthController extends _$AuthController {
     state = const AsyncData(AuthState.unauthenticated());
   }
 
-  /// 会话失效（拦截器 refresh 失败后广播）。拦截器已清 token/storage，这里只翻转态。
-  void _onSessionExpired() {
+  /// 会话失效（拦截器广播）：翻转为未登录并补清本地会话。
+  ///
+  /// 先翻转态再清理：翻转即触发路由重定向，用户立刻离开需要登录的页面；
+  /// 清理即使失败也不该把人留在里面。
+  ///
+  /// 为什么自己也清一遍：HTTP 401 那条路径由 `AuthInterceptor` 清过，但**信封形态的
+  /// 401**（HTTP 200 + `code: 401`）是 `ResponseInterceptor` 广播的，它手上没有
+  /// token/storage。清理是幂等的，重复清一次远好过内存里留着死 token 继续发请求。
+  Future<void> _onSessionExpired() async {
     if (state case AsyncData(value: Unauthenticated())) return;
     state = const AsyncData(AuthState.unauthenticated());
+    try {
+      await _clearSession();
+    } on Object {
+      // 安全存储抹除失败不影响"已登出"这个结论，下次登录会覆盖写入。
+    }
   }
 
   Future<void> _clearSession() async {
