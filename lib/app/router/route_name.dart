@@ -14,8 +14,8 @@ abstract final class RouteName {
   /// 个人档案设置（user tab 下的深入页）。
   static const userProfileSettings = "userProfileSettings";
 
-  /// 和 AI 一起写的对话页（story tab 下的深入页）。
-  static const storyChat = "storyChat";
+  /// 爽文生成页（story tab 下的深入页），由 story-generate 模块承载。
+  static const storyGenerate = "storyGenerate";
 
   /// 生成历史全量列表页（story tab 下的深入页）。
   static const storyHistory = "storyHistory";
@@ -38,9 +38,9 @@ abstract final class RoutePath {
   /// push 进去会盖住底部 tab 栏（表单页独占屏幕）。详见 `routes.dart` 的注释。
   static const userProfileSettings = "/user/profile-settings";
 
-  /// 对话页。同样**注册在 shell 外**：聊天页要独占屏幕（输入区在底部，
-  /// 再顶一条 tab 栏会和它抢位置）。
-  static const storyChat = "/story/chat";
+  /// 生成页。同样**注册在 shell 外**：生成过程要独占屏幕（底部有停止/继续等
+  /// 行动条，再顶一条 tab 栏会和它抢位置）。
+  static const storyGenerate = "/story/generate";
 
   /// 生成历史全量列表。首页只露最近 5 条，这里是完整清单。
   static const storyHistory = "/story/history";
@@ -55,9 +55,9 @@ abstract final class RouteQuery {
   /// 档案设置页要定位到哪个字段（值取 `UserProfileFieldKey.name`）。
   static const profileField = "field";
 
-  /// 对话页是从哪个入口进来的（值取 `ChatSource.name`）。
-  static const chatSource = "source";
-
-  /// 带进对话页的草稿（用户在故事页输入框里写的那段话）。
-  static const chatSeed = "seed";
+  /// 带进生成页的心愿文本（用户写的那段话，或选中的那条灵感）。
+  ///
+  /// 有它＝直接开跑，没有＝先在生成页补一句。生成页只关心这一件事，所以不再另传
+  /// 「从哪个入口来的」——那个信息已经由它有没有值表达完了。
+  static const generateSeed = "seed";
 }

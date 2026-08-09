@@ -105,8 +105,10 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                               onShuffle: () => ref
                                   .read(inspirationControllerProvider.notifier)
                                   .shuffle(),
-                              onSelect: (_) =>
-                                  _openChat(context, ChatSource.inspiration),
+                              // 把选中的那句灵感**当心愿带过去**：点了灵感却落到
+                              // 空输入页，等于让人自己再抄一遍。
+                              onSelect: (prompt) =>
+                                  _openGenerate(context, seed: prompt.text),
                             ),
                           ],
                         ),
@@ -122,9 +124,9 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                   submitHint: l10n.storyComposerSubmitHint,
                   remainingLabel: l10n.storyComposerRemaining,
                   onFocusChanged: _onComposerFocusChanged,
-                  onSubmit: (text) =>
-                      _openChat(context, ChatSource.text, seed: text),
-                  onVoiceComplete: () => _openChat(context, ChatSource.voice),
+                  onSubmit: (text) => _openGenerate(context, seed: text),
+                  // 语音入口不带心愿：录音还没接，先让生成页请用户补一句。
+                  onVoiceComplete: () => _openGenerate(context),
                   // 短按不跳页，先把"要按住"这个手势教给用户。
                   onVoiceTapped: () =>
                       HappyToast.info(context, l10n.storyVoiceHoldHint),
@@ -157,9 +159,12 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                   onRetry: () => ref
                       .read(storyHistoryControllerProvider.notifier)
                       .reload(showSkeleton: true),
-                  onEmptyAction: () =>
-                      _openChat(context, ChatSource.inspiration),
-                  onOpenStory: (_) => _openChat(context, ChatSource.text),
+                  onEmptyAction: () => _openGenerate(context),
+                  // 点开一篇已写好的故事该进阅读页，而不是开一次空白生成——
+                  // 阅读页还没做，先明说"即将上线"。
+                  // TODO(story): 阅读页就绪后改成带 story.id 跳过去。
+                  onOpenStory: (_) =>
+                      HappyToast.info(context, l10n.commonComingSoon),
                 ),
               ],
             ),
@@ -169,14 +174,13 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
     );
   }
 
-  /// 进对话页。来源透给聊天页（`?source=voice`），它据此决定开场方式；
-  /// [seed] 是用户已经写好的草稿，一并带过去，对话从这段话开始。
-  void _openChat(BuildContext context, ChatSource source, {String? seed}) {
+  /// 进生成页。[seed] 是心愿文本（用户打的那段话，或选中的那条灵感），带过去就
+  /// 直接开跑；不带（语音入口）则由生成页先请用户补一句。
+  void _openGenerate(BuildContext context, {String? seed}) {
     context.pushNamed(
-      RouteName.storyChat,
+      RouteName.storyGenerate,
       queryParameters: <String, String>{
-        RouteQuery.chatSource: source.name,
-        if (seed != null && seed.isNotEmpty) RouteQuery.chatSeed: seed,
+        if (seed != null && seed.isNotEmpty) RouteQuery.generateSeed: seed,
       },
     );
   }

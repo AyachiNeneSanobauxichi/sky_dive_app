@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
-import "package:happy_os/app/router/index.dart";
 import "package:happy_os/core/error/index.dart";
 import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/story/controllers/index.dart";
@@ -95,13 +94,9 @@ class _List extends StatelessWidget {
             StoryStatus.failed => l10n.storyStatusFailed,
             StoryStatus.ready => "",
           },
-          // 点开先进对话页（阅读/续写页要等 story.api.md 定稿）。
-          onTap: () => context.pushNamed(
-            RouteName.storyChat,
-            queryParameters: <String, String>{
-              RouteQuery.chatSource: ChatSource.text.name,
-            },
-          ),
+          // 点开该进阅读页，而不是开一次空白生成。阅读页还没做，先明说。
+          // TODO(story): 阅读页就绪后改成带 story.id 跳过去。
+          onTap: () => HappyToast.info(context, l10n.commonComingSoon),
         );
       },
     );

@@ -53,22 +53,3 @@ abstract class InspirationPrompt with _$InspirationPrompt {
     String? category,
   }) = _InspirationPrompt;
 }
-
-/// 进入聊天页的来源。决定聊天页开场怎么说话（也方便埋点区分入口效率）。
-enum ChatSource {
-  /// 点了文本输入区。
-  text,
-
-  /// 点了语音输入按钮。
-  voice,
-
-  /// 点了某条灵感提示。
-  inspiration;
-
-  static ChatSource tryParse(String? name) {
-    for (final source in values) {
-      if (source.name == name) return source;
-    }
-    return ChatSource.text;
-  }
-}

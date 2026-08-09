@@ -248,39 +248,130 @@
   "@storyStatusFailed": {
     "description": "Status label on a story card whose generation failed"
   },
-  "storyChatTitle": "Write with AI",
-  "@storyChatTitle": {
-    "description": "Title of the chat page where stories get written"
+
+  "storyGenerateTitle": "Writing your story",
+  "@storyGenerateTitle": {
+    "description": "App bar title of the story generation page while no story title exists yet"
   },
-  "storyChatEmptyTitle": "The chat lands here soon",
-  "@storyChatEmptyTitle": {
-    "description": "Empty-state title of the chat placeholder page"
+  "storyGenerateIdleTitle": "What should we turn into a story?",
+  "@storyGenerateIdleTitle": {
+    "description": "Heading of the empty state shown when the page opens without a wish text"
   },
-  "storyChatEmptyBodyText": "You'll type what happened and the AI writes as it asks — you can redirect it any time.",
-  "@storyChatEmptyBodyText": {
-    "description": "Empty-state body of the chat placeholder when entered from the text composer"
+  "storyGenerateIdleBody": "Tell us something that actually happened. The AI asks a few questions, agrees an outline with you, then writes it up as a story you can read in one sitting.",
+  "@storyGenerateIdleBody": {
+    "description": "Body copy of the empty state explaining the generation flow"
   },
-  "storyChatEmptyBodyVoice": "You'll hold to talk, and the AI writes while it listens.",
-  "@storyChatEmptyBodyVoice": {
-    "description": "Empty-state body of the chat placeholder when entered from the voice button"
+  "storyGenerateComposerHint": "Describe the moment you want rewritten…",
+  "@storyGenerateComposerHint": {
+    "description": "Placeholder inside the wish input on the generation page"
   },
-  "storyChatEmptyBodyInspiration": "It'll open with the spark you picked and go straight into the rewrite.",
-  "@storyChatEmptyBodyInspiration": {
-    "description": "Empty-state body of the chat placeholder when entered from an inspiration prompt"
+  "storyGenerateStart": "Start writing",
+  "@storyGenerateStart": {
+    "description": "Primary action that kicks off generation from the wish input"
   },
-  "storyChatEmptyBodySeed": "You wrote: \"{draft}\". The chat lands here soon and will start the rewrite from it.",
-  "@storyChatEmptyBodySeed": {
-    "description": "Empty-state body of the chat placeholder when a draft was carried over from the composer",
+  "storyGenerateThinking": "Reading what you wrote…",
+  "@storyGenerateThinking": {
+    "description": "Status label shown while waiting for the first streamed token"
+  },
+  "storyGenerateStop": "Stop generating",
+  "@storyGenerateStop": {
+    "description": "Action that aborts the in-flight generation stream"
+  },
+  "storyGenerateContinue": "Keep going",
+  "@storyGenerateContinue": {
+    "description": "Action that resumes generation after the user stopped it manually"
+  },
+  "storyGenerateWishLabel": "Your wish",
+  "@storyGenerateWishLabel": {
+    "description": "Label on the timeline entry holding the user's original wish text"
+  },
+  "storyGenerateNovelLabel": "Your story",
+  "@storyGenerateNovelLabel": {
+    "description": "Label on the timeline entry holding the generated story body"
+  },
+  "storyGenerateClarifySubmit": "Send answer",
+  "@storyGenerateClarifySubmit": {
+    "description": "Submit action on a clarification card"
+  },
+  "storyGenerateClarifyAnswered": "Answered: {answer}",
+  "@storyGenerateClarifyAnswered": {
+    "description": "Collapsed summary of an answered clarification card",
     "placeholders": {
-      "draft": {
+      "answer": {
         "type": "String"
       }
     }
   },
-  "storyChatEmptyAction": "Got it",
-  "@storyChatEmptyAction": {
-    "description": "Empty-state call to action on the chat placeholder page"
+  "storyGenerateClarifyCustomHint": "Add anything else you want…",
+  "@storyGenerateClarifyCustomHint": {
+    "description": "Fallback placeholder for the free-text field on a clarification card"
   },
+  "storyGenerateOutlineTitle": "Story outline",
+  "@storyGenerateOutlineTitle": {
+    "description": "Title of the outline card"
+  },
+  "storyGenerateOutlineEnding": "Ending",
+  "@storyGenerateOutlineEnding": {
+    "description": "Label marking the ending row of the outline"
+  },
+  "storyGenerateOutlineEmpty": "No outline came back this time — you can let the AI start writing anyway.",
+  "@storyGenerateOutlineEmpty": {
+    "description": "Shown when the outline payload has no usable content"
+  },
+  "storyGenerateOutlineConfirm": "Looks good",
+  "@storyGenerateOutlineConfirm": {
+    "description": "Primary action confirming the outline so writing can start"
+  },
+  "storyGenerateOutlineModify": "Change it",
+  "@storyGenerateOutlineModify": {
+    "description": "Secondary action asking the AI to revise the outline"
+  },
+  "storyGenerateOutlineFeedbackHint": "What should change?",
+  "@storyGenerateOutlineFeedbackHint": {
+    "description": "Placeholder of the outline feedback field"
+  },
+  "storyGenerateOutlineConfirmed": "Outline confirmed — writing now",
+  "@storyGenerateOutlineConfirmed": {
+    "description": "Collapsed summary after the outline was confirmed"
+  },
+  "storyGenerateOutlineModified": "Revision requested: {feedback}",
+  "@storyGenerateOutlineModified": {
+    "description": "Collapsed summary after outline feedback was submitted",
+    "placeholders": {
+      "feedback": {
+        "type": "String"
+      }
+    }
+  },
+  "storyGenerateResume": "Pick it back up",
+  "@storyGenerateResume": {
+    "description": "Action shown when the backend reports an unfinished session for today"
+  },
+  "storyGenerateResumeHint": "You already have an unfinished story today — let's finish that one.",
+  "@storyGenerateResumeHint": {
+    "description": "Explanation shown alongside the resume action"
+  },
+  "storyGenerateReadFull": "Read it",
+  "@storyGenerateReadFull": {
+    "description": "Action opening the finished story in the reader"
+  },
+  "storyGenerateWriteAnother": "Write another",
+  "@storyGenerateWriteAnother": {
+    "description": "Action returning to the story page to start a new generation"
+  },
+  "storyGenerateLeaveTitle": "Leave and lose this one?",
+  "@storyGenerateLeaveTitle": {
+    "description": "Title of the confirm dialog shown when leaving mid-generation"
+  },
+  "storyGenerateLeaveBody": "The AI is still writing. Going back now discards this story.",
+  "@storyGenerateLeaveBody": {
+    "description": "Body of the confirm dialog shown when leaving mid-generation"
+  },
+  "storyGenerateLeaveConfirm": "Leave",
+  "@storyGenerateLeaveConfirm": {
+    "description": "Confirm action of the leave-mid-generation dialog"
+  },
+
   "trackTitle": "Your track",
   "@trackTitle": {
     "description": "App bar title of the track module"
