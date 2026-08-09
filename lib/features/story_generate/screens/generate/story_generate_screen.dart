@@ -170,7 +170,10 @@ class _StoryGenerateScreenState extends ConsumerState<StoryGenerateScreen> {
                 : l10n.storyGenerateTitle,
           ),
         ),
-        body: HappyAuroraBackground(
+        // 关掉星野视差：这一页是长文（生成中逐段落地、生成完通读），
+        // 背景跟着滚会一直牵着眼睛走，而读长文要的是静。
+        body: HappyStarfieldBackground(
+          parallax: false,
           child: SafeArea(
             child: Column(
               children: <Widget>[

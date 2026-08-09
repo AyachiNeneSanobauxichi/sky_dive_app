@@ -31,7 +31,7 @@ class ProfileSettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.userProfileSettings)),
-      body: HappyAuroraBackground(
+      body: HappyStarfieldBackground(
         intensity: 0.4,
         child: HappyEmptyState(
           icon: LucideIcons.userPen,

@@ -123,8 +123,10 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
-    // 极光压到 0.4：这三页后面都会变成信息密集列表，氛围光只做底噪。
-    return HappyAuroraBackground(
+    // 星云压到 0.4：这三页后面都会变成信息密集列表，氛围光只做底噪。
+    // 星点不受这个折扣的全额影响（见 HappyStarfieldBackground.intensity），
+    // 否则列表页会把"星空"这层身份整个丢掉。
+    return HappyStarfieldBackground(
       intensity: 0.4,
       child: Scaffold(
         backgroundColor: Colors.transparent,

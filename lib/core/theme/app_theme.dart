@@ -43,7 +43,9 @@ abstract final class HappyTheme {
     surface: HappyColors.darkSurface,
     onSurface: HappyColors.darkTextPrimary,
     onSurfaceVariant: HappyColors.darkTextSecondary,
-    surfaceDim: HappyColors.darkBackground,
+    // surfaceDim 指向天幕最暗端（天顶）：吸顶条这类"要压住内容"的遮罩取它，
+    // 才能比画布更暗、读成刻意的压暗而不是一条色差带。
+    surfaceDim: HappyColors.darkSkyZenith,
     surfaceBright: HappyColors.darkSurfaceHighest,
     surfaceContainerLowest: HappyColors.darkBackground,
     surfaceContainerLow: HappyColors.darkSurface,
@@ -83,7 +85,8 @@ abstract final class HappyTheme {
     surface: HappyColors.surface,
     onSurface: HappyColors.textPrimary,
     onSurfaceVariant: HappyColors.textSecondary,
-    surfaceDim: Color(0xFFEFEAF8),
+    // 与深色同理，取白昼天幕的最深端（晨蓝）。
+    surfaceDim: HappyColors.skyDayTop,
     surfaceBright: HappyColors.surface,
     surfaceContainerLowest: HappyColors.surface,
     surfaceContainerLow: HappyColors.background,

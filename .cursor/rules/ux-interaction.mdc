@@ -108,7 +108,7 @@ HappyButton(
 - **入场动效给"新出现的内容"**，不给每次重建都跑一遍（否则每次 setState 都在闪）。
 - 列表逐项入场用 `HappyMotion.stagger`，且**只给首屏可见项**；长列表滚动时不要每个 item 都动。
 - **绝不阻塞操作**：动效期间界面必须可交互；超过 `HappyMotion.slow`（400ms）的动效只能用于页面级转场或叙事性内容。
-- 尊重系统「减弱动态效果」：环境动效（极光、呼吸光晕）判定 `MediaQuery.disableAnimationsOf(context)`。
+- 尊重系统「减弱动态效果」：环境动效（星野闪烁、星云漂移、呼吸光晕）判定 `MediaQuery.disableAnimationsOf(context)`。
 - 布局变化用 `AnimatedContainer` / `AnimatedSize` / `AnimatedSwitcher` 过渡，不要"跳变"。
 
 ## 🧭 导航与状态保持

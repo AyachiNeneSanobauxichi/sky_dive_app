@@ -259,7 +259,7 @@ class _TabSlot extends StatelessWidget {
                       height: HappySpacing.s32,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: HappyGradients.auroraBlob(
+                        gradient: HappyGradients.nebulaBlob(
                           scheme.primary,
                           intensity: _haloIntensity,
                         ),

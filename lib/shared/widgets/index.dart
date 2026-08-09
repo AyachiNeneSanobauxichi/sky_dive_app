@@ -5,6 +5,6 @@ export "checkbox/happy_checkbox.dart";
 export "checkbox/happy_checkbox_form_field.dart";
 export "input/happy_otp_field.dart";
 export "state/happy_empty_state.dart";
-export "surface/happy_aurora_background.dart";
+export "surface/happy_starfield_background.dart";
 export "surface/happy_glass_card.dart";
 export "toast/happy_toast.dart";

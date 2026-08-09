@@ -9,7 +9,7 @@ import "package:happy_os/core/theme/index.dart";
 /// 背后的极光透过模糊映上来，卡片才不像是硬贴在画布上的一块灰。
 ///
 /// ⚠️ `BackdropFilter` 每帧都要重采样背景，是实打实的开销：
-/// **只用在浮于 [HappyAuroraBackground] 之上的少量元素**（一屏 1–3 个），
+/// **只用在浮于 [HappyStarfieldBackground] 之上的少量元素**（一屏 1–3 个），
 /// 普通内容卡请用 `Card`（已在主题里配好描边与圆角）。
 class HappyGlassCard extends StatelessWidget {
   const HappyGlassCard({

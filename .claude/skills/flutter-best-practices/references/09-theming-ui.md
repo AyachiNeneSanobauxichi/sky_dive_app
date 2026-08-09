@@ -9,7 +9,7 @@
 HappyOS 把用户的真实经历改写成惊险故事，主场景是"夜里读自己的故事"。因此：
 
 - **深色是一等设计目标**，浅色是完整支持的副场。写任何 UI 都要在两套主题下都看一眼。
-- **品牌语言 = 紫罗兰 → 品红的光**。渐变、光晕、极光背景是识别物，不是装饰。
+- **品牌语言 = 紫罗兰 → 品红的光**。渐变、光晕、星空背景是识别物，不是装饰。
 - **标题用衬线体**（Instrument Serif）传递叙事感，界面与正文用 Inter。
 
 ## 🧱 令牌总览
@@ -20,7 +20,7 @@ HappyOS 把用户的真实经历改写成惊险故事，主场景是"夜里读�
 | `app_theme.dart` | `HappyTheme` | `light` / `dark` 两套 `ThemeData` 装配 |
 | `app_text_styles.dart` | `HappyFonts`、`HappyTextStyles` | 字体族与中文回退链、完整 `TextTheme` |
 | `app_spacing.dart` | `HappySpacing`、`HappySemanticSpacing`、`HappyRadius`、`HappyBorderWidth`、`HappyIconSize`、`HappyControlSize` | 间距 / 圆角 / 描边 / 图标 / 控件尺寸 |
-| `app_gradients.dart` | `HappyGradients` | 品牌渐变、极光光斑、玻璃高光、流光 |
+| `app_gradients.dart` | `HappyGradients` | 品牌渐变、天幕、星云光斑、银河带、玻璃高光、流光 |
 | `app_shadows.dart` | `HappyShadows` | 阴影与品牌光晕（按 `Brightness` 分支） |
 | `app_motion.dart` | `HappyMotion` | 动效时长与缓动曲线 |
 
@@ -87,7 +87,7 @@ Text(body, style: theme.textTheme.bodyLarge)
 
 ## 📌 颜色与主题
 
-`HappyTheme` **不用 `ColorScheme.fromSeed`**，而是逐角色显式指定。`fromSeed` 的明度台阶由算法决定，做不出"近黑带紫 + 精确三级表面"这种有个性的深色画布；显式指定后结果可预测、可评审、可校对比度。
+`HappyTheme` **不用 `ColorScheme.fromSeed`**，而是逐角色显式指定。`fromSeed` 的明度台阶由算法决定，做不出"夜空蓝紫 + 精确三级表面"这种有个性的深色画布；显式指定后结果可预测、可评审、可校对比度。
 
 深色三级表面（层级靠色阶而不是阴影表达）：
 
@@ -136,7 +136,7 @@ final shouldAnimate = !MediaQuery.disableAnimationsOf(context);
 | `HappyToast` | 全局轻提示 | 见下 |
 | `HappyEmptyState` | 空态骨架：品牌标记 + 标题 + 说明 + **引导行动** | 行动是一等参数——只写"暂无数据"的空态不合规；功能未上线时按钮给 `HappyToast.info` 而不是静默 |
 | `HappyBrandMark` | 品牌标记（渐变方块 + 图标 + 光晕） | 开屏 / 认证页头 / 空态 |
-| `HappyAuroraBackground` | 品牌极光背景 | **只用在需要氛围的页面**（开屏、认证、阅读、空态）；列表 / 表单等信息密集页别用，或把 `intensity` 压到 0.5 以下 |
+| `HappyStarfieldBackground` | 品牌星空背景（天幕 + 星野 + 星云；浅色自动换白昼版） | **只用在需要氛围的页面**（开屏、认证、首页外壳、阅读、空态）；列表 / 表单等信息密集页把 `intensity` 压到 0.5 以下（星点有亮度下限，不会跟着消失），长文阅读页可另加 `parallax: false` |
 | `HappyGlassCard` | 毛玻璃卡片 | `BackdropFilter` 每帧重采样背景，**一屏 1–3 个封顶**；普通内容卡用 `Card`（主题已配好描边圆角） |
 
 新增全局组件：`Happy` 前缀 + `happy_*.dart` + 放 `lib/shared/widgets/<类别>/` + 更新 barrel。详见 `03-naming-conventions.md`。
@@ -230,7 +230,7 @@ HappyToast.info(context, message);
 - ❌ 硬编码颜色 `Color(0xFF...)`、字号、间距、时长散落各处。
 - ❌ 业务层直接引用 `HappyColors`（应走 `colorScheme`）。
 - ❌ 给 `display*` 衬线体加 `fontWeight`。
-- ❌ 满屏 `HappyGlassCard` / `HappyAuroraBackground`（性能与注意力双输）。
+- ❌ 满屏 `HappyGlassCard` / `HappyStarfieldBackground`（性能与注意力双输）。
 - ❌ 在 `build` 里创建 controller / 大对象（应在 `initState` / provider）。
 - ❌ 用 `Column` + 大量子项代替可滚动懒加载列表。
 - ❌ 业务逻辑写进 Widget。

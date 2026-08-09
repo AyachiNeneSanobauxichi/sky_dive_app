@@ -29,7 +29,7 @@ class StoryHistoryScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.storyHistoryTitle)),
-      body: HappyAuroraBackground(
+      body: HappyStarfieldBackground(
         intensity: 0.4,
         child: RefreshIndicator(
           onRefresh: () =>

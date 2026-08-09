@@ -14,7 +14,9 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: HappyAuroraBackground(
+      // 与登录页同一档星云强度：这两页连着出现，氛围光不该有明暗跳变。
+      body: HappyStarfieldBackground(
+        intensity: _backgroundIntensity,
         child: Center(
           child: const HappyBrandMark(size: 88)
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
@@ -30,3 +32,6 @@ class SplashScreen extends StatelessWidget {
     );
   }
 }
+
+/// 开屏页的星空氛围光强度，与登录页保持一致。
+const double _backgroundIntensity = 0.7;

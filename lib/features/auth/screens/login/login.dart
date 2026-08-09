@@ -183,8 +183,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final smsState = ref.watch(smsCodeControllerProvider);
 
     return Scaffold(
-      // 极光背景让登录页第一眼是品牌，而不是一张空白表单。
-      body: HappyAuroraBackground(
+      // 星空背景让登录页第一眼是品牌，而不是一张空白表单。
+      // 星云压到 0.7：满强度下品红那团会占掉下半屏，把天幕和星野都盖住——
+      // 这一页要的第一眼是"星空"，星云只是里面的光源。
+      body: HappyStarfieldBackground(
+        intensity: _backgroundIntensity,
         child: SafeArea(
           child: SingleChildScrollView(
             // 往下拖就收键盘：输入区在屏幕中部，用户想看下面的协议时不必先找收起按钮。
@@ -292,3 +295,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ).animate().fadeIn(duration: HappyMotion.slow, curve: HappyMotion.standard);
   }
 }
+
+/// 登录页的星空氛围光强度。见 `HappyStarfieldBackground.intensity`。
+const double _backgroundIntensity = 0.7;
