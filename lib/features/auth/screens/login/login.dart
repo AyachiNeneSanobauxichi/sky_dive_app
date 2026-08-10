@@ -38,9 +38,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   /// 用户点了"修改"，从折叠态临时回到手机号编辑态。
   bool _editingPhone = false;
 
-  /// 强制校验手机号。只在"一个字没填就点了发送验证码"后置起
-  /// ——那种情况下 `onUserInteraction` 还没被触发过，字段不会自己报错。
-  bool _forcePhoneValidation = false;
+  /// 是否把手机号的格式错误显示出来。
+  ///
+  /// **输入过程中永远是 false**：号码是逐位敲进去的，敲到第 5 位就红着"格式不正确"
+  /// 是在指责用户"还没输完"。只有到了该判的时刻才置起——① 离开输入框（人已经填完
+  /// 走人了，这时的半截号码就是真错）；② 点了发送验证码。
+  ///
+  /// 置起后传 `AutovalidateMode.always`，用户改对的那一刻红字自己消失；
+  /// 而**重新聚焦回来就复位**——既然又在编辑了，就回到"输入时不判"。
+  ///
+  /// （提交那一刻不用管：登录按钮受 [_canSubmit] 约束，号码不合法压根点不动。）
+  bool _showPhoneError = false;
 
   /// 手机号是否折叠成摘要：发过码且不在编辑态。
   bool get _isPhoneCollapsed => _codeSentTo != null && !_editingPhone;
@@ -62,12 +70,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       AuthRules.isValidSmsCode(_codeController.text);
 
   @override
+  void initState() {
+    super.initState();
+    _phoneFocusNode.addListener(_onPhoneFocusChanged);
+  }
+
+  @override
   void dispose() {
     _phoneController.dispose();
     _codeController.dispose();
+    _phoneFocusNode.removeListener(_onPhoneFocusChanged);
     _phoneFocusNode.dispose();
     _codeFocusNode.dispose();
     super.dispose();
+  }
+
+  /// 手机号输入框的焦点变化，决定要不要显示格式错误（见 [_showPhoneError]）。
+  ///
+  /// 离开时才判，且**空着走开不算错**：没填就走开的人多半只是想先看看下面写了什么，
+  /// 冲他喊"请输入手机号"是无中生有；等他真去点发送验证码或登录时再拦也不迟。
+  void _onPhoneFocusChanged() {
+    final shouldShow = _phoneFocusNode.hasFocus
+        ? false
+        : _phoneController.text.trim().isNotEmpty &&
+              !AuthRules.isValidPhone(_phoneController.text.trim());
+    if (_showPhoneError == shouldShow) return;
+    setState(() => _showPhoneError = shouldShow);
   }
 
   /// 输入变化即重算按钮可用性（依赖 controller 文本，需主动重建）。
@@ -106,7 +134,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // （"请先同意协议"）一起点红——用户此刻只是想发个码，那两件事还没轮到他做，
     // 却先被判了两次错。错误只该出现在它真正成立的时刻。
     if (!AuthRules.isValidPhone(phone)) {
-      setState(() => _forcePhoneValidation = true);
+      setState(() => _showPhoneError = true);
       return;
     }
 
@@ -128,6 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _onSubmit() async {
     // 协议未勾选也在这里被拦下，错误就地显示在勾选框下方。
+    // 手机号不会在这里报错：登录按钮受 [_canSubmit] 约束，号码不合法根本点不动。
     if (!(_formKey.currentState?.validate() ?? false)) {
       // 协议是最常见的卡点，且错误文案在页面下方容易被漏看：再抖一下 + 震一下。
       if (!_agreed) setState(() => _agreementShakeToken++);
@@ -252,9 +281,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             focusNode: _phoneFocusNode,
                             enabled: !_isSubmitting,
                             autofocus: _editingPhone,
-                            autovalidateMode: _forcePhoneValidation
+                            autovalidateMode: _showPhoneError
                                 ? AutovalidateMode.always
-                                : AutovalidateMode.onUserInteraction,
+                                : AutovalidateMode.disabled,
                             onChanged: _onPhoneChanged,
                           ),
                   ),
