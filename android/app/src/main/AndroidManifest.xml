@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 语音输入（speech_to_text）：录音是危险权限，运行时还会再申请一次；
+         这里声明是前提，不声明运行时申请会直接被系统拒掉。 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <application
         android:label="HappyOS"
         android:name="${applicationName}"
@@ -40,6 +43,11 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Android 11+ 的包可见性限制：不声明就查不到系统的语音识别服务，
+             speech_to_text 会一直报「设备不支持语音识别」。 -->
+        <intent>
+            <action android:name="android.speech.RecognitionService"/>
         </intent>
     </queries>
 </manifest>

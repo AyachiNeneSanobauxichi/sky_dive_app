@@ -204,6 +204,30 @@
   "@storyVoiceCancelReleaseHint": {
     "description": "Label under the voice button once the finger slid up far enough that releasing cancels"
   },
+  "storyVoiceListening": "Listening — go ahead…",
+  "@storyVoiceListening": {
+    "description": "Label under the voice button while speech recognition is actively listening"
+  },
+  "storyVoiceNoResult": "Didn't catch that — try again",
+  "@storyVoiceNoResult": {
+    "description": "Toast shown when a voice session ended without recognizing any words"
+  },
+  "speechPermissionDenied": "Microphone and speech recognition aren't allowed yet — turn them on in Settings to talk",
+  "@speechPermissionDenied": {
+    "description": "Toast shown when the user has denied microphone or speech recognition permission"
+  },
+  "speechUnavailable": "This device can't do speech recognition — type it out instead",
+  "@speechUnavailable": {
+    "description": "Toast shown when the device or OS has no speech recognition available"
+  },
+  "speechStart": "Voice input",
+  "@speechStart": {
+    "description": "Accessibility label for the button that starts voice input"
+  },
+  "speechStop": "Stop voice input",
+  "@speechStop": {
+    "description": "Accessibility label for the button that stops voice input"
+  },
   "storyInspirationTitle": "Need a spark",
   "@storyInspirationTitle": {
     "description": "Title of the inspiration prompts section"

@@ -256,3 +256,63 @@ final class DioClientProvider
 }
 
 String _$dioClientHash() => r'59364afefb19d370a6a50d4a6c191be4061ff9a6';
+
+/// 端侧语音识别门面。
+///
+/// keepAlive：初始化要过平台通道、还可能弹权限窗，监听者归零就销毁的话，
+/// 用户每次点麦克风都要重新走一遍初始化（慢，且有机型会重复弹窗）。
+
+@ProviderFor(speechRecognizer)
+final speechRecognizerProvider = SpeechRecognizerProvider._();
+
+/// 端侧语音识别门面。
+///
+/// keepAlive：初始化要过平台通道、还可能弹权限窗，监听者归零就销毁的话，
+/// 用户每次点麦克风都要重新走一遍初始化（慢，且有机型会重复弹窗）。
+
+final class SpeechRecognizerProvider
+    extends
+        $FunctionalProvider<
+          SpeechRecognizer,
+          SpeechRecognizer,
+          SpeechRecognizer
+        >
+    with $Provider<SpeechRecognizer> {
+  /// 端侧语音识别门面。
+  ///
+  /// keepAlive：初始化要过平台通道、还可能弹权限窗，监听者归零就销毁的话，
+  /// 用户每次点麦克风都要重新走一遍初始化（慢，且有机型会重复弹窗）。
+  SpeechRecognizerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'speechRecognizerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$speechRecognizerHash();
+
+  @$internal
+  @override
+  $ProviderElement<SpeechRecognizer> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SpeechRecognizer create(Ref ref) {
+    return speechRecognizer(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SpeechRecognizer value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SpeechRecognizer>(value),
+    );
+  }
+}
+
+String _$speechRecognizerHash() => r'afed48b7bae0a7fbc1183bf0a4f223c2f566f984';

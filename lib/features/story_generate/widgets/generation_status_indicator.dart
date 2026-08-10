@@ -122,6 +122,13 @@ class _GenerationStatusIndicatorState extends State<GenerationStatusIndicator> {
                 duration: HappyMotion.normal,
                 switchInCurve: HappyMotion.entrance,
                 switchOutCurve: HappyMotion.exit,
+                // 默认的 layoutBuilder 是 `Stack(alignment: center)`，会把文案在
+                // Expanded 的整行宽度里居中——句子一长一短就左右横跳。改成靠起始边
+                // 对齐，换句子时只有文字在原地淡入淡出。
+                layoutBuilder: (currentChild, previousChildren) => Stack(
+                  alignment: AlignmentDirectional.centerStart,
+                  children: <Widget>[...previousChildren, ?currentChild],
+                ),
                 // 淡入淡出叠一点上移：换句子是"翻页"不是"闪一下"，
                 // 纯 fade 在流光文字上容易被误读成渲染抖动。
                 transitionBuilder: (child, animation) => FadeTransition(

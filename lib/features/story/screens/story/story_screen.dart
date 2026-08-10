@@ -8,6 +8,7 @@ import "package:happy_os/features/story/controllers/index.dart";
 import "package:happy_os/features/story/domain/index.dart";
 import "package:happy_os/features/story/widgets/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
+import "package:happy_os/shared/utils/index.dart";
 import "package:happy_os/shared/widgets/index.dart";
 import "package:intl/intl.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
@@ -118,16 +119,24 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                   hint: l10n.storyComposerHint,
                   holdHint: l10n.storyVoiceHoldHint,
                   releaseHint: l10n.storyVoiceReleaseHint,
+                  listeningHint: l10n.storyVoiceListening,
                   cancelHint: l10n.storyVoiceCancelHint,
                   cancelReleaseHint: l10n.storyVoiceCancelReleaseHint,
                   submitLabel: l10n.storyComposerSubmit,
                   submitHint: l10n.storyComposerSubmitHint,
                   remainingLabel: l10n.storyComposerRemaining,
+                  localeId: speechLocaleIdOf(context),
                   onFocusChanged: _onComposerFocusChanged,
                   onSubmit: (text) => _openGenerate(context, seed: text),
-                  // 语音入口不带心愿：录音还没接，先让生成页请用户补一句。
-                  onVoiceComplete: () => _openGenerate(context),
-                  // 短按不跳页，先把"要按住"这个手势教给用户。
+                  // 语音说完文字就落在输入框里，不再直接跳页：识别会出错，
+                  // 得让用户先看一眼、能改，再自己点生成。
+                  onSpeechUnavailable: (availability) => HappyToast.error(
+                    context,
+                    speechMessageOf(l10n, availability),
+                  ),
+                  onSpeechEmpty: () =>
+                      HappyToast.info(context, l10n.storyVoiceNoResult),
+                  // 短按不开麦，先把"要按住"这个手势教给用户。
                   onVoiceTapped: () =>
                       HappyToast.info(context, l10n.storyVoiceHoldHint),
                 ),

@@ -7,6 +7,7 @@ import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/story_generate/controllers/index.dart";
 import "package:happy_os/features/story_generate/widgets/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
+import "package:happy_os/shared/utils/index.dart";
 import "package:happy_os/shared/widgets/index.dart";
 import "package:intl/intl.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
@@ -244,6 +245,14 @@ class _IdleView extends StatelessWidget {
             enabled: true,
             initialText: seed,
             onSubmit: onSubmit,
+            localeId: speechLocaleIdOf(context),
+            listeningLabel: l10n.storyVoiceListening,
+            voiceStartLabel: l10n.speechStart,
+            voiceStopLabel: l10n.speechStop,
+            onSpeechUnavailable: (availability) =>
+                HappyToast.error(context, speechMessageOf(l10n, availability)),
+            onSpeechEmpty: () =>
+                HappyToast.info(context, l10n.storyVoiceNoResult),
           ),
         ],
       ),

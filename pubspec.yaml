@@ -34,6 +34,10 @@ dependencies:
   pretty_dio_logger: ^1.4.0
   riverpod_annotation: ^4.0.0
   skeletonizer: ^2.1.3
+  # 端侧语音识别（iOS Speech 框架 / Android SpeechRecognizer），不经后端。
+  # ⚠️ 7.5.0+ 要求 Dart SDK >=3.12.0，当前是 3.10.1——pub 会自行跳过，
+  # 但升 Flutter SDK 前不要手动把它抬上去。
+  speech_to_text: ^7.4.0
   toastification: ^3.2.0
 
 dev_dependencies:
