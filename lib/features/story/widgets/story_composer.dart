@@ -155,13 +155,18 @@ class _StoryComposerState extends ConsumerState<StoryComposer> {
   static const int _maxLength = 500;
   static const int _remainingHintAt = 50;
 
-  /// 语音识别门面。**在 initState 里就取好**而不是每次现读：`dispose` 里也要用它
-  /// 放麦克风，而那时 `ref` 已经不保证还能读（Riverpod 会在 State 销毁前后拆容器）。
-  late final SpeechRecognizer _recognizer = ref.read(speechRecognizerProvider);
+  /// 语音识别门面。
+  ///
+  /// **必须在 [initState] 里真的读一次**，不能写成 `late final _recognizer =
+  /// ref.read(...)` 的字段初始化式——`late` 是惰性的，用户没说过话就直接离开时，
+  /// 第一次访问会落在 [dispose] 里，而那时 `ref` 已经不能读（Riverpod 抛
+  /// "Using ref when a widget is about to or has been unmounted is unsafe"）。
+  late final SpeechRecognizer _recognizer;
 
   @override
   void initState() {
     super.initState();
+    _recognizer = ref.read(speechRecognizerProvider);
     // 监听文本变化：生成按钮的可用性、字数提示都跟着变。
     _controller.addListener(_onTextChanged);
     _focusNode.addListener(_onFocusChanged);

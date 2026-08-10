@@ -76,13 +76,20 @@ class _WishComposerState extends ConsumerState<WishComposer> {
   /// 这次开口之前输入框里的内容。识别结果接在它后面，出错或取消时退回到它。
   String _baseText = "";
 
-  /// 语音识别门面。**开场就取好**而不是每次现读：`dispose` 里也要用它放麦克风，
-  /// 而那时 `ref` 已经不保证还能读（Riverpod 会在 State 销毁前后拆容器）。
-  late final SpeechRecognizer _recognizer = ref.read(speechRecognizerProvider);
+  /// 语音识别门面。
+  ///
+  /// **必须在 [initState] 里真的读一次**，不能写成 `late final _recognizer =
+  /// ref.read(...)` 的字段初始化式——`late` 是惰性的，用户没说过话就直接返回时，
+  /// 第一次访问会落在 [dispose] 里，而那时 `ref` 已经不能读（Riverpod 抛
+  /// "Using ref when a widget is about to or has been unmounted is unsafe"）。
+  /// 这个异常会把 unmount 打断在半路，紧接着整棵树就崩成红屏
+  /// （`_elements.contains(element)` 断言失败）。
+  late final SpeechRecognizer _recognizer;
 
   @override
   void initState() {
     super.initState();
+    _recognizer = ref.read(speechRecognizerProvider);
     // 提交按钮的可用性跟着文本走：空文本时禁用，而不是点了没反应。
     _controller.addListener(_onTextChanged);
   }

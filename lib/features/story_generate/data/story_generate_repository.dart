@@ -24,7 +24,10 @@ class StoryGenerateRepository {
   Stream<GenerationEvent> start({
     required String query,
     CancelToken? cancelToken,
-  }) => _decode(_remote.stream(query: query, cancelToken: cancelToken));
+  }) => _decode(
+    _remote.stream(query: query, cancelToken: cancelToken),
+    cancelToken: cancelToken,
+  );
 
   /// 推进会话。
   Stream<GenerationEvent> followup({
@@ -41,6 +44,7 @@ class StoryGenerateRepository {
       text: text,
       cancelToken: cancelToken,
     ),
+    cancelToken: cancelToken,
   );
 
   /// SSE 帧 → 领域事件。
@@ -52,7 +56,10 @@ class StoryGenerateRepository {
   ///    而不是在这里抛异常。
   ///
   /// 真正会中断的只有连接级异常（[AppException]），转成 [Failure] 抛给 controller。
-  Stream<GenerationEvent> _decode(Stream<SseEvent> source) async* {
+  Stream<GenerationEvent> _decode(
+    Stream<SseEvent> source, {
+    CancelToken? cancelToken,
+  }) async* {
     // 只为排障：分清「服务端根本没按 SSE 回」和「回了 SSE 但内容我们不认」。
     // 前者帧数为 0（响应体里没有一行 `data:`，解码器全丢了），后者帧数 > 0。
     // 两种情况在 UI 上都是一句"服务开小差了"，但修法完全不同。
@@ -71,7 +78,10 @@ class StoryGenerateRepository {
       AppLogger.e("[story-generate] 事件流出现非预期错误", e, stackTrace);
       rethrow;
     }
-    if (frameCount == 0) {
+    // 用户中途离开 / 点了停止时，一帧未收到是**预期内**的：请求刚发出去就被
+    // 主动取消了。这时再喊一句"去核对端点与鉴权"是把排障往错误方向带
+    // （日志里看着像后端配错，实际什么事都没有）。
+    if (frameCount == 0 && !(cancelToken?.isCancelled ?? false)) {
       AppLogger.w(
         "[story-generate] SSE 流已结束但一帧未收到："
         "响应大概率不是 text/event-stream（例如后端回了普通 JSON 错误体）。"
