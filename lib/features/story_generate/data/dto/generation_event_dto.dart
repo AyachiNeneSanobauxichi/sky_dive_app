@@ -81,7 +81,11 @@ abstract class GenerationEventDto with _$GenerationEventDto {
       ),
       typeNovelDone => GenerationEvent.done(
         sessionId: id,
-        fullText: _string("full_text"),
+        // 全文字段两种键名都认：契约写的是 `full_text`，线上实际下发的是
+        // `content`。只认一个的后果是静默的——两者一致时看不出问题，一旦有
+        // 一帧 delta 被跳过（脏帧策略允许），用户拿到的就是残篇，而后端明明
+        // 落库了完整版。
+        fullText: _string("full_text") ?? _string("content"),
         title: _string("title"),
         scriptId: _string("scriptId"),
         conversationId: _string("conversationId"),

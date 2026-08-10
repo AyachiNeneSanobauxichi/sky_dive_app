@@ -45,15 +45,28 @@ abstract class ClarificationCardDto with _$ClarificationCardDto {
         .map((option) => option.toEntity())
         .toList(),
     allowCustom: allowCustom,
-    inputPlaceholder: inputPlaceholder,
-    // 契约缺省 1；上游给 0 或负数时也拉回 1，否则"一个都不选"就能提交。
-    minSelections: (minSelections ?? 1) < 1 ? 1 : minSelections!,
+    // 空串归一成 null：UI 用 `?? 兜底提示` 取默认值，只挡 null 挡不住空串，
+    // 上游给个空 placeholder 就会渲染出一个没有任何提示文字的输入框。
+    inputPlaceholder: (inputPlaceholder?.isEmpty ?? true)
+        ? null
+        : inputPlaceholder,
+    minSelections: _validMinSelections(),
     maxSelections: maxSelections,
     // 轮次只在两个字段都合法（≥1 且 round ≤ maxRounds）时才透传。
     // 半套数据比没有更糟：UI 会显示出「第 0/3 轮」这种读起来像 bug 的进度。
     round: _validRound(),
     maxRounds: _validMaxRounds(),
   );
+
+  /// 契约缺省 1；上游给 0 或负数时也拉回 1，否则"一个都不选"就能提交。
+  ///
+  /// 字段缺席（null）必须走缺省而不是崩溃：`text_input` 卡片本来就不带
+  /// `min_selections`，而这里一旦抛异常，整条 SSE 流会被判为失败，用户看到的
+  /// 是"生成失败"而不是那张输入卡。
+  int _validMinSelections() {
+    final min = minSelections ?? 1;
+    return min < 1 ? 1 : min;
+  }
 
   int? _validRound() {
     final current = round;
