@@ -6,6 +6,7 @@ import "package:happy_os/core/providers/index.dart";
 import "package:happy_os/features/story_generate/controllers/story_generate_state.dart";
 import "package:happy_os/features/story_generate/data/index.dart";
 import "package:happy_os/features/story_generate/domain/index.dart";
+import "package:happy_os/features/story_history/controllers/index.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
 part "story_generate_controller.g.dart";
@@ -304,6 +305,11 @@ class StoryGenerateController extends _$StoryGenerateController {
         currentVersionMessageId: event.currentVersionMessageId,
       ),
     );
+
+    // 这一刻服务端已经落库了一篇新剧本，缓存着的历史第一页因此过期。
+    // 不作废的话，用户写完顺手点右上角的历史图标（或退回首页），看到的是一份
+    // **没有自己刚写那篇**的列表——比列表慢一点更让人怀疑"是不是没保存上"。
+    ref.invalidate(storyHistoryControllerProvider);
   }
 
   void _onError(Object error, StackTrace stackTrace) {

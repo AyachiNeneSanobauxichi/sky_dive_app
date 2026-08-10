@@ -2,6 +2,8 @@ import "dart:async";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:go_router/go_router.dart";
+import "package:happy_os/app/router/index.dart";
 import "package:happy_os/core/error/index.dart";
 import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/story_generate/controllers/index.dart";
@@ -171,6 +173,18 @@ class _StoryGenerateScreenState extends ConsumerState<StoryGenerateScreen> {
                 ? state.result!.title!
                 : l10n.storyGenerateTitle,
           ),
+          actions: <Widget>[
+            // 刚写完一篇的那一刻正是最想回头看看写过什么的时候，让人退回首页
+            // 再找一次是多余的一步。
+            //
+            // 生成中也放着不禁用：push 一页不会打断生成（控制器在 provider 里），
+            // 返回时这一页还停在原处。
+            IconButton(
+              tooltip: l10n.storyHistoryOpenAction,
+              icon: const Icon(LucideIcons.libraryBig),
+              onPressed: () => context.pushNamed(RouteName.storyHistory),
+            ),
+          ],
         ),
         // 关掉星野视差：这一页是长文（生成中逐段落地、生成完通读），
         // 背景跟着滚会一直牵着眼睛走，而读长文要的是静。

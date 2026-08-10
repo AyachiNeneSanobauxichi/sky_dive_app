@@ -5,6 +5,7 @@ import "package:happy_os/features/auth/index.dart";
 import "package:happy_os/features/home/index.dart";
 import "package:happy_os/features/story/index.dart";
 import "package:happy_os/features/story_generate/index.dart";
+import "package:happy_os/features/story_history/index.dart";
 import "package:happy_os/features/track/index.dart";
 import "package:happy_os/features/user/index.dart";
 
@@ -85,6 +86,8 @@ final List<RouteBase> appRoutes = [
       seed: state.uri.queryParameters[RouteQuery.generateSeed],
     ),
   ),
+  // 已生成故事的全量列表。同样在 shell 外：翻长列表时底部再顶一条 tab 栏是浪费高度，
+  // 而且它是从首页 / 生成页**深入**进来的一页，不是同层 tab。
   GoRoute(
     name: RouteName.storyHistory,
     path: RoutePath.storyHistory,

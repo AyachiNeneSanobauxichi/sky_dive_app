@@ -7,6 +7,7 @@ import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/story/controllers/index.dart";
 import "package:happy_os/features/story/domain/index.dart";
 import "package:happy_os/features/story/widgets/index.dart";
+import "package:happy_os/features/story_history/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
 import "package:happy_os/shared/utils/index.dart";
 import "package:happy_os/shared/widgets/index.dart";
@@ -21,8 +22,9 @@ import "package:skeletonizer/skeletonizer.dart";
 ///    真正的门槛——先让人看到能直接下笔的开头，再把输入入口递过去；
 /// 2. **创作入口**（[StoryComposer]）：居中突出的语音圆钮（按住说话）+ 文本入口，
 ///    两条路径都通向对话页。挨着灵感放，挑中一条的下一秒就能开口；
-/// 3. **生成历史**：只露最近 5 条 + 「查看全部」进全量页。这一屏的主角是创作，
-///    历史是"回头看一眼"；铺满一屏会把创作入口挤到屏幕外。
+/// 3. **生成历史**：只露最近几条 + 「查看全部」进全量页。这一屏的主角是创作，
+///    历史是"回头看一眼"；铺满一屏会把创作入口挤到屏幕外。数据来自
+///    `features/story_history`（全应用唯一的历史数据源）。
 ///
 /// 没有 AppBar：第一屏留给"今天想写什么"这句招呼，再顶一行"我的故事"是重复信息。
 ///
@@ -171,9 +173,10 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                   onEmptyAction: () => _openGenerate(context),
                   // 点开一篇已写好的故事该进阅读页，而不是开一次空白生成——
                   // 阅读页还没做，先明说"即将上线"。
-                  // TODO(story): 阅读页就绪后改成带 story.id 跳过去。
+                  // TODO(story): 阅读页就绪后改成带 script.id 跳过去。
                   onOpenStory: (_) =>
                       HappyToast.info(context, l10n.commonComingSoon),
+                  onToggleFavorite: _toggleFavorite,
                 ),
               ],
             ),
@@ -181,6 +184,23 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
         ),
       ),
     );
+  }
+
+  /// 收藏 / 取消收藏。乐观更新在控制器里做，这里只负责把失败讲给用户听——
+  /// 星标已经被回滚了，不给提示的话用户只会看到它自己弹回去。
+  Future<void> _toggleFavorite(StoryScript script) async {
+    final l10n = AppLocalizations.of(context);
+    try {
+      await ref
+          .read(storyHistoryControllerProvider.notifier)
+          .toggleFavorite(script.id);
+    } on Object catch (e) {
+      if (!mounted) return;
+      HappyToast.error(
+        context,
+        e is Failure ? e.displayMessage : l10n.storyHistoryLoadFailed,
+      );
+    }
   }
 
   /// 进生成页。[seed] 是心愿文本（用户打的那段话，或选中的那条灵感），带过去就
@@ -238,52 +258,62 @@ class _InspirationBlock extends StatelessWidget {
 }
 
 /// 生成历史的四态。
+///
+/// 数据来自 `features/story_history`，和历史全量页**共用同一个控制器**：这里点星标
+/// 收藏，进去看到的也是收藏的；从这里点进去还是秒开，不会再转一次圈。
 class _HistoryBlock extends StatelessWidget {
   const _HistoryBlock({
     required this.state,
     required this.onRetry,
     required this.onEmptyAction,
     required this.onOpenStory,
+    required this.onToggleFavorite,
   });
 
-  final AsyncValue<List<Story>> state;
+  final AsyncValue<StoryScriptPage> state;
   final VoidCallback onRetry;
   final VoidCallback onEmptyAction;
-  final ValueChanged<Story> onOpenStory;
-
-  /// 首页只露最近几条：这一屏的主角是创作入口，历史是"回头看一眼"。
-  /// 想翻完整清单走「查看全部」进历史页（两处共用同一个 provider，秒开）。
-  static const int _previewCount = 5;
+  final ValueChanged<StoryScript> onOpenStory;
+  final ValueChanged<StoryScript> onToggleFavorite;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
+    final dateFormat = DateFormat.MMMd(locale);
+
+    Widget list(List<StoryScript> scripts, {bool isSkeleton = false}) => Column(
+      children: <Widget>[
+        // 首页只露最近几条：这一屏的主角是创作入口，历史是"回头看一眼"。
+        // 想翻完整清单走「查看全部」进历史页。
+        for (final script in scripts.take(homePreviewCount))
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: HappySemanticSpacing.itemGap,
+            ),
+            child: StoryScriptCard(
+              script: script,
+              timeLabel: dateFormat.format(script.createdAt),
+              emptyTitleLabel: l10n.storyHistoryUntitled,
+              favoriteLabel: script.isFavorited
+                  ? l10n.storyHistoryUnfavorite
+                  : l10n.storyHistoryFavorite,
+              // 骨架上的按钮点了没有意义，但也不能真的可点——骨架期用户看到的是
+              // 假数据，点中"某一篇"会收藏到一个不存在的 id 上。
+              onTap: isSkeleton ? _noop : () => onOpenStory(script),
+              onToggleFavorite: isSkeleton
+                  ? _noop
+                  : () => onToggleFavorite(script),
+            ),
+          ),
+      ],
+    );
 
     return switch (state) {
-      AsyncData(:final value) when value.isEmpty => _HistoryEmpty(
+      AsyncData(:final value) when value.scripts.isEmpty => _HistoryEmpty(
         onAction: onEmptyAction,
       ),
-      AsyncData(:final value) => Column(
-        children: <Widget>[
-          for (final story in value.take(_previewCount))
-            Padding(
-              padding: const EdgeInsets.only(
-                bottom: HappySemanticSpacing.itemGap,
-              ),
-              child: StoryHistoryCard(
-                story: story,
-                timeLabel: DateFormat.MMMd(locale).format(story.createdAt),
-                statusLabel: switch (story.status) {
-                  StoryStatus.generating => l10n.storyStatusGenerating,
-                  StoryStatus.failed => l10n.storyStatusFailed,
-                  StoryStatus.ready => "",
-                },
-                onTap: () => onOpenStory(story),
-              ),
-            ),
-        ],
-      ),
+      AsyncData(:final value) => list(value.scripts),
       AsyncError(:final error) => HappyRetryCard(
         message: error is Failure
             ? error.displayMessage
@@ -292,40 +322,23 @@ class _HistoryBlock extends StatelessWidget {
         onRetry: onRetry,
       ),
       // 骨架：两张卡就够表达"这里将有一个列表"，铺满一屏反而像真内容。
-      _ => Skeletonizer(
-        child: Column(
-          children: <Widget>[
-            for (final story in _skeletonStories)
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: HappySemanticSpacing.itemGap,
-                ),
-                child: StoryHistoryCard(
-                  story: story,
-                  timeLabel: "8月4日",
-                  statusLabel: "",
-                  onTap: _noop,
-                ),
-              ),
-          ],
-        ),
-      ),
+      _ => Skeletonizer(child: list(_skeletonScripts, isSkeleton: true)),
     };
   }
 
   static void _noop() {}
 
-  static final List<Story> _skeletonStories = <Story>[
-    Story(
+  static final List<StoryScript> _skeletonScripts = <StoryScript>[
+    StoryScript(
       id: "sk1",
       title: "标题占位文字",
-      excerpt: "这里是正文摘要的占位文字，长度和真实内容差不多，骨架条才不会短一截。",
+      summary: "这里是正文摘要的占位文字，长度和真实内容差不多，骨架条才不会短一截。",
       createdAt: DateTime(2026, 8, 4),
     ),
-    Story(
+    StoryScript(
       id: "sk2",
       title: "标题占位文字",
-      excerpt: "这里是正文摘要的占位文字，长度和真实内容差不多，骨架条才不会短一截。",
+      summary: "这里是正文摘要的占位文字，长度和真实内容差不多，骨架条才不会短一截。",
       createdAt: DateTime(2026, 8, 3),
     ),
   ];

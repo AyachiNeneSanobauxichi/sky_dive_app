@@ -1,1 +1,1 @@
-export "story.dart";
+export "inspiration_prompt.dart";

@@ -6,8 +6,8 @@ import "package:happy_os/features/story/domain/index.dart";
 /// Story 仓库：负责 DTO→Entity 映射，并把底层 [AppException] 统一转成面向 UI 的
 /// [Failure] 抛出。controller 只依赖本类，不接触 DataSource / DTO / Dio。
 ///
-// TODO(story): 生成历史（`fetchHistory`）契约仍未在 story.api.md 定义，暂留在
-//   `data/mock/story_mock.dart`；定稿后搬到本类并删除 mock。
+/// 已生成故事的列表 / 收藏 / 删除**不在这里**，归 `features/story_history/`
+/// （全应用只有那一份历史数据源）。
 class StoryRepository {
   const StoryRepository(this._remote);
 

@@ -264,13 +264,41 @@
   "@storyHistoryLoadFailed": {
     "description": "Inline error message when the story history request fails"
   },
-  "storyStatusGenerating": "Writing",
-  "@storyStatusGenerating": {
-    "description": "Status label on a story card that is still being generated"
+  "storyHistoryLoadingMore": "Fetching older stories…",
+  "@storyHistoryLoadingMore": {
+    "description": "Status line at the bottom of the history list while the next page loads"
   },
-  "storyStatusFailed": "Failed — tap to retry",
-  "@storyStatusFailed": {
-    "description": "Status label on a story card whose generation failed"
+  "storyHistoryUntitled": "Untitled story",
+  "@storyHistoryUntitled": {
+    "description": "Fallback title on a history card when the story has neither a title nor a theme"
+  },
+  "storyHistoryFavorite": "Add to favourites",
+  "@storyHistoryFavorite": {
+    "description": "Accessibility label on the star button when the story is not favourited yet"
+  },
+  "storyHistoryUnfavorite": "Remove from favourites",
+  "@storyHistoryUnfavorite": {
+    "description": "Accessibility label on the star button when the story is already favourited"
+  },
+  "storyHistoryDeleteTitle": "Delete this story?",
+  "@storyHistoryDeleteTitle": {
+    "description": "Title of the confirm dialog before deleting a story from history"
+  },
+  "storyHistoryDeleteBody": "Once it's gone there's no getting it back.",
+  "@storyHistoryDeleteBody": {
+    "description": "Body of the confirm dialog before deleting a story; states that deletion is irreversible"
+  },
+  "storyHistoryDeleteConfirm": "Delete",
+  "@storyHistoryDeleteConfirm": {
+    "description": "Destructive action that deletes a story, also used as the swipe-to-delete label"
+  },
+  "storyHistoryDeleted": "Deleted",
+  "@storyHistoryDeleted": {
+    "description": "Toast shown after a story was deleted successfully"
+  },
+  "storyHistoryOpenAction": "See what you've written",
+  "@storyHistoryOpenAction": {
+    "description": "Tooltip on the generate screen's toolbar icon that opens the story history"
   },
 
   "storyGenerateTitle": "Writing your story",
