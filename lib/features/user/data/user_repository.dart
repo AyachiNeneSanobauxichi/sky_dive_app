@@ -16,6 +16,16 @@ class UserRepository {
     return UserProfileDto.fromJson(json).toEntity();
   });
 
+  /// 保存档案，返回**服务端回写后的**档案。
+  ///
+  /// 用响应体而不是本地那份去更新状态：后端会补 `updateTime`、可能对字段做规整，
+  /// 拿本地的当结果会让页面显示的和库里存的悄悄分叉。
+  Future<UserProfile> updateProfile(UserProfile profile) => _guard(() async {
+    final body = UpdateUserProfileRequestDto.fromEntity(profile).toJson();
+    final json = await _remote.updateProfile(body);
+    return UserProfileDto.fromJson(json).toEntity();
+  });
+
   /// 统一异常收敛：底层抛的 [AppException] 转成 [Failure] 再抛出，controller 用
   /// `AsyncValue.guard` 即可拿到 Failure 渲染文案（解析异常等非 AppException 原样上抛）。
   Future<T> _guard<T>(Future<T> Function() run) async {

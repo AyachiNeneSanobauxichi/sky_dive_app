@@ -3,7 +3,10 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:flutter_secure_storage/flutter_secure_storage.dart";
 import "package:happy_os/app/app.dart";
+import "package:happy_os/core/settings/index.dart";
+import "package:happy_os/core/storage/index.dart";
 import "package:happy_os/shared/utils/index.dart";
 
 Future<void> main() async {
@@ -26,6 +29,21 @@ Future<void> main() async {
     return true;
   };
 
+  // 深浅色与语言必须在**第一帧之前**就位：晚一帧拿到，用户会看见默认的深色闪一下
+  // 再切成他选的浅色。读不出来时 loadAppSettings 自己回落默认，不会卡启动。
+  const storage = SecureStorage(FlutterSecureStorage());
+  var settings = const AppSettings();
+  try {
+    settings = await loadAppSettings(storage);
+  } catch (e) {
+    AppLogger.w("读取应用偏好失败，使用默认值：$e");
+  }
+
   // ProviderScope：Riverpod 根容器，为 controller/provider 提供作用域。
-  runApp(const ProviderScope(child: HappyApp()));
+  runApp(
+    ProviderScope(
+      overrides: [initialAppSettingsProvider.overrideWithValue(settings)],
+      child: const HappyApp(),
+    ),
+  );
 }

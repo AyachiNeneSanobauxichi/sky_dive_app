@@ -13,6 +13,7 @@ class UserActionTile extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.trailingHint,
+    this.trailingValue,
     this.isDestructive = false,
     this.showChevron = true,
   });
@@ -21,8 +22,14 @@ class UserActionTile extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  /// 右侧的状态提示（如"开发中"），有值时不显示箭头。
+  /// 右侧的状态提示（如"开发中"），有值时不显示箭头——那种项点了也去不了别处。
   final String? trailingHint;
+
+  /// 右侧的当前取值（如语言选的是"简体中文"），**箭头照常显示**。
+  ///
+  /// 和 [trailingHint] 分开是因为两者说的是不同的事：hint 说"这项还没做"，
+  /// value 说"这项现在是什么，点进去能改"。共用一个参数会让设置项看起来像是禁用的。
+  final String? trailingValue;
 
   final bool isDestructive;
   final bool showChevron;
@@ -49,16 +56,40 @@ class UserActionTile extends StatelessWidget {
                 color: scheme.onSurfaceVariant,
               ),
             )
-          : (showChevron
-                ? Icon(
-                    LucideIcons.chevronRight,
-                    size: HappyIconSize.md,
-                    color: scheme.onSurfaceVariant,
-                  )
-                : null),
+          : _buildTrailing(theme, scheme),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(HappyRadius.md),
       ),
+    );
+  }
+
+  /// 尾部：当前取值（可有可无）+ 箭头。
+  ///
+  /// 取值用 `mainAxisSize.min` 的 Row 而不是塞进 title 那一侧：设置项的值靠右、
+  /// 紧贴箭头，扫一列设置时所有的值对齐在同一条竖线上。
+  Widget? _buildTrailing(ThemeData theme, ColorScheme scheme) {
+    final value = trailingValue;
+    final chevron = showChevron
+        ? Icon(
+            LucideIcons.chevronRight,
+            size: HappyIconSize.md,
+            color: scheme.onSurfaceVariant,
+          )
+        : null;
+    if (value == null) return chevron;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      spacing: HappySpacing.s4,
+      children: <Widget>[
+        Text(
+          value,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+        ?chevron,
+      ],
     );
   }
 }

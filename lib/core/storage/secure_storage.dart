@@ -17,6 +17,10 @@ class SecureStorage {
   static const String _kRefreshToken = "refresh_token";
   static const String _kUser = "auth_user";
 
+  // 应用偏好（非敏感，只是**没必要为两个字符串再引一个存储库**）。
+  static const String _kThemeMode = "app_theme_mode";
+  static const String _kLocale = "app_locale";
+
   /// 读取刷新令牌；无持久会话时返回 null。
   Future<String?> readRefreshToken() => _storage.read(key: _kRefreshToken);
 
@@ -31,6 +35,28 @@ class SecureStorage {
   Future<void> writeUser(String json) =>
       _storage.write(key: _kUser, value: json);
 
+  /// 读取深浅色偏好；没选过时返回 null（由调用方回落默认）。
+  Future<String?> readThemeMode() => _storage.read(key: _kThemeMode);
+
+  Future<void> writeThemeMode(String value) =>
+      _storage.write(key: _kThemeMode, value: value);
+
+  /// 读取界面语言码；返回 null 表示跟随系统。
+  Future<String?> readLocale() => _storage.read(key: _kLocale);
+
+  /// 写入界面语言码。传 null＝改回跟随系统，此时**删除**而不是写空串——
+  /// "没有这一项"和"这一项是空的"必须是同一种状态，否则读回来还得再判一次空。
+  Future<void> writeLocale(String? value) => value == null
+      ? _storage.delete(key: _kLocale)
+      : _storage.write(key: _kLocale, value: value);
+
   /// 清空所有敏感项（登出 / 会话失效时调用）。
-  Future<void> clear() => _storage.deleteAll();
+  ///
+  /// ⚠️ 逐项删而不是 `deleteAll()`：主题与语言也存在这里，但它们**不是会话数据**。
+  /// 一登出就把用户挑的浅色主题和语言一起抹掉，下次登录界面全变回默认，
+  /// 用户只会觉得 app 在抽风。
+  Future<void> clear() async {
+    await _storage.delete(key: _kRefreshToken);
+    await _storage.delete(key: _kUser);
+  }
 }

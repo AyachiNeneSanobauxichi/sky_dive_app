@@ -679,26 +679,134 @@
   "@userProfileSettings": {
     "description": "Action that opens the profile settings page; also its page title"
   },
-  "userProfileSettingsEmptyTitle": "Profile settings are almost here",
-  "@userProfileSettingsEmptyTitle": {
-    "description": "Empty-state title of the profile settings placeholder page"
+  "userFieldMbti": "MBTI",
+  "@userFieldMbti": {
+    "description": "Profile field label for the MBTI personality type"
   },
-  "userProfileSettingsEmptyBody": "Nickname, avatar, zodiac and work all get filled in here — the more detail, the more the stories sound like you.",
-  "@userProfileSettingsEmptyBody": {
-    "description": "Empty-state body of the profile settings placeholder page"
+  "userFieldPersonalityTags": "Personality tags",
+  "@userFieldPersonalityTags": {
+    "description": "Profile field label for the user's personality tags"
   },
-  "userProfileSettingsEmptyBodyForField": "You came to fill in \"{field}\". The form lands here soon — the more detail, the more the stories sound like you.",
-  "@userProfileSettingsEmptyBodyForField": {
-    "description": "Empty-state body when the user tapped a specific profile field to fill in",
+  "userFieldIdealLife": "Ideal life",
+  "@userFieldIdealLife": {
+    "description": "Profile field label for the user's free-text description of the life they want"
+  },
+  "userFieldNickname": "Nickname",
+  "@userFieldNickname": {
+    "description": "Profile field label for the display name"
+  },
+  "userPreferencesSection": "Preferences",
+  "@userPreferencesSection": {
+    "description": "Section header above the language and appearance settings"
+  },
+  "userSettingLanguage": "Language",
+  "@userSettingLanguage": {
+    "description": "Settings row that opens the interface language picker"
+  },
+  "userSettingTheme": "Appearance",
+  "@userSettingTheme": {
+    "description": "Settings row that opens the light/dark theme picker"
+  },
+  "userLanguageSystem": "System default",
+  "@userLanguageSystem": {
+    "description": "Language option meaning follow the phone's system language"
+  },
+  "userLanguageZh": "简体中文",
+  "@userLanguageZh": {
+    "description": "Language option for Simplified Chinese, always written in its own language"
+  },
+  "userLanguageEn": "English",
+  "@userLanguageEn": {
+    "description": "Language option for English, always written in its own language"
+  },
+  "userThemeDark": "Dark",
+  "@userThemeDark": {
+    "description": "Appearance option for the dark theme"
+  },
+  "userThemeLight": "Light",
+  "@userThemeLight": {
+    "description": "Appearance option for the light theme"
+  },
+  "userProfileEditIntro": "The more you fill in, the more the stories sound like they were written for you.",
+  "@userProfileEditIntro": {
+    "description": "Intro line at the top of the profile edit form"
+  },
+  "userProfileEditSave": "Save",
+  "@userProfileEditSave": {
+    "description": "Primary action that submits the profile edit form"
+  },
+  "userProfileEditSaved": "Profile updated",
+  "@userProfileEditSaved": {
+    "description": "Toast shown after the profile was saved successfully"
+  },
+  "userProfileEditNicknameRequired": "Pick a nickname first",
+  "@userProfileEditNicknameRequired": {
+    "description": "Validation error when the nickname field is left empty"
+  },
+  "userProfileEditBirthdayUnset": "Pick a date",
+  "@userProfileEditBirthdayUnset": {
+    "description": "Placeholder on the birthday row when no date has been chosen"
+  },
+  "userProfileEditBirthdayDerived": "{age} yrs · {zodiac}",
+  "@userProfileEditBirthdayDerived": {
+    "description": "Read-only hint under the birthday row showing the age and zodiac derived from it",
     "placeholders": {
-      "field": {
+      "age": {
+        "type": "int"
+      },
+      "zodiac": {
         "type": "String"
       }
     }
   },
-  "userProfileSettingsEmptyAction": "Got it",
-  "@userProfileSettingsEmptyAction": {
-    "description": "Empty-state call to action on the profile settings placeholder page"
+  "userProfileEditTagHint": "Type one, press enter to add",
+  "@userProfileEditTagHint": {
+    "description": "Hint inside the tag input for hobbies and personality tags"
+  },
+  "userProfileEditTagRemove": "Remove {tag}",
+  "@userProfileEditTagRemove": {
+    "description": "Accessibility label on a tag chip's delete button",
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "userProfileEditIdealLifeHint": "What does the life you want look like? Tell the AI in a few lines.",
+  "@userProfileEditIdealLifeHint": {
+    "description": "Hint inside the free-text ideal life field"
+  },
+  "userProfileEditMbtiUnset": "Not set",
+  "@userProfileEditMbtiUnset": {
+    "description": "Placeholder on the MBTI picker when nothing is selected"
+  },
+  "userProfileEditNoProfile": "This account has no profile yet, so it can't be saved",
+  "@userProfileEditNoProfile": {
+    "description": "Message shown when the profile has no backend id and therefore cannot be updated"
+  },
+  "userProfileEditLeaveTitle": "Discard your changes?",
+  "@userProfileEditLeaveTitle": {
+    "description": "Title of the confirm dialog shown when leaving the profile form with unsaved edits"
+  },
+  "userProfileEditLeaveBody": "You've changed a few things but haven't saved. Going back now loses them.",
+  "@userProfileEditLeaveBody": {
+    "description": "Body of the confirm dialog shown when leaving the profile form with unsaved edits"
+  },
+  "userProfileEditLeaveConfirm": "Discard",
+  "@userProfileEditLeaveConfirm": {
+    "description": "Destructive action that leaves the profile form and drops unsaved edits"
+  },
+  "userGenderMale": "Male",
+  "@userGenderMale": {
+    "description": "Gender option"
+  },
+  "userGenderFemale": "Female",
+  "@userGenderFemale": {
+    "description": "Gender option"
+  },
+  "userGenderOther": "Other",
+  "@userGenderOther": {
+    "description": "Gender option for anything outside male/female"
   },
   "userSwitchAccount": "Switch account",
   "@userSwitchAccount": {

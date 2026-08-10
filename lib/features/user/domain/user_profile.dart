@@ -50,6 +50,13 @@ abstract class UserProfile with _$UserProfile {
   const factory UserProfile({
     required String nickname,
 
+    /// 档案 id（不是用户 id）。
+    ///
+    /// `PUT /user-profile/update` **必传**它，所以实体必须带着走——只在 UI 层留一份
+    /// 展示数据，保存时就没有 id 可回传了。新建号且从未建档时为 null，
+    /// 此时保存要走 `create` 而不是 `update`。
+    String? id,
+
     /// 头像地址。为空时 UI 退化成"昵称首字 + 品牌渐变"的字母头像。
     String? avatarUrl,
 
@@ -83,29 +90,32 @@ abstract class UserProfile with _$UserProfile {
     @Default(<String>[]) List<String> personalityTags,
   }) = _UserProfile;
 
-  /// 档案填写完成度（0–1）：驱动"完善档案"的引导文案。
+  /// 档案填写完成度（0–1）：驱动"完善档案"的引导文案与星厉契合度。
   ///
-  /// 只统计档案字段，不含昵称/头像与两个成长指标——那两类不是用户手填的。
+  /// 只统计**用户能在档案表单里亲手填的项**，不含昵称/头像与两个成长指标。
   ///
-  /// v2 新增的 [mbti] / [idealLife] / [personalityTags] **不计入**：档案设置页目前没有
-  /// 这三项的入口，计进来会让完成度永远到不了 100%，"完善档案"的引导就成了死循环。
-  // TODO(user): 档案设置页补上这三项入口后，同步计入分母（并改 [_profileFieldCount]）。
+  /// [age] 与 [zodiac] 刻意**不计入**：两者都由 [birthday] 推导（见档案表单），
+  /// 计进去等于让生日一项顶三项，完成度会虚高。
+  ///
+  /// v4 起 [mbti] / [idealLife] / [personalityTags] 计入——档案表单已经有这三项的
+  /// 入口了，不计入的话完成度永远差一截而用户找不到还能填什么。
   double get profileCompleteness {
     final filled = <bool>[
       gender != null,
-      age != null,
       birthday != null,
-      zodiac != null,
       city != null,
       occupation != null,
       industry != null,
       company != null,
       hobbies.isNotEmpty,
+      mbti != null,
+      idealLife != null,
+      personalityTags.isNotEmpty,
     ].where((isFilled) => isFilled).length;
     return filled / _profileFieldCount;
   }
 
   bool get isProfileComplete => profileCompleteness >= 1;
 
-  static const int _profileFieldCount = 9;
+  static const int _profileFieldCount = 10;
 }

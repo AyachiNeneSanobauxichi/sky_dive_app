@@ -57,6 +57,8 @@ abstract class UserProfileDto with _$UserProfileDto {
     return UserProfile(
       // 昵称是实体的必填展示锚点；后端没给就退化成空串，UI 已有"首字母兜底"处理。
       nickname: nickname ?? "",
+      // 档案 id 必须带进领域层：保存时 `PUT /update` 要回传它。
+      id: id,
       gender: gender,
       // 契约没有 age 字段，由生日派生一次，避免各处 UI 各算一套。
       age: _ageOf(birth),
@@ -91,16 +93,8 @@ abstract class UserProfileDto with _$UserProfileDto {
   static DateTime? _parseTime(String? raw) =>
       (raw == null || raw.isEmpty) ? null : DateTime.tryParse(raw);
 
-  /// 由生日推算周岁（今年生日未到则减一岁）。
-  static int? _ageOf(DateTime? birthday) {
-    if (birthday == null) return null;
-    final now = DateTime.now();
-    final hadBirthdayThisYear =
-        now.month > birthday.month ||
-        (now.month == birthday.month && now.day >= birthday.day);
-    final age = now.year - birthday.year - (hadBirthdayThisYear ? 0 : 1);
-    // 生日填成未来日期（后端样例里就有 2017 年这种明显不对的数据）时不展示年龄，
-    // 免得档案上出现"-3 岁"。
-    return age < 0 ? null : age;
-  }
+  /// 由生日推算周岁。算法收在 `profile_derivations.dart`——档案表单也要用同一套，
+  /// 两处各算一份迟早会不一致（生日填成未来日期时返回 null，档案上不出现"-3 岁"）。
+  static int? _ageOf(DateTime? birthday) =>
+      birthday == null ? null : ageFromBirthday(birthday);
 }

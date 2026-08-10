@@ -29,4 +29,16 @@ class UserProfileController extends _$UserProfileController {
     if (showSkeleton) state = const AsyncLoading<UserProfile>();
     state = await AsyncValue.guard(_repo.fetchMyProfile);
   }
+
+  /// 保存档案（`PUT /user-profile/update`）。
+  ///
+  /// **不把 state 置成 loading**：保存中整页塌成骨架，用户会以为自己填的东西没了。
+  /// 进行态由表单页的按钮自己表达，这里只在成功后把服务端回写的那份换上去。
+  ///
+  /// 失败时**保持旧 state 不变**并把 [Failure] 抛回给调用方——表单页要靠它弹错误、
+  /// 且必须让用户填的内容原样留在输入框里，不能因为一次网络抖动就清空重填。
+  Future<void> save(UserProfile profile) async {
+    final saved = await _repo.updateProfile(profile);
+    state = AsyncData<UserProfile>(saved);
+  }
 }

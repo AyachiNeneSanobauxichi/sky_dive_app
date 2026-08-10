@@ -4,6 +4,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
 import "package:happy_os/app/router/index.dart";
 import "package:happy_os/core/error/index.dart";
+import "package:happy_os/core/settings/index.dart";
 import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/auth/index.dart";
 import "package:happy_os/features/user/controllers/index.dart";
@@ -36,6 +37,9 @@ class UserScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final profile = ref.watch(userProfileControllerProvider);
+    // 偏好设置和档案不是一回事：档案要拉接口、有加载/错误态，偏好是本地的、永远有值。
+    // 所以它不参与下面那个 switch，骨架态里也照常可用。
+    final settings = ref.watch(appSettingsControllerProvider);
 
     return Scaffold(
       // 透明底：让外层首页的极光背景透上来。
@@ -55,6 +59,10 @@ class UserScreen extends ConsumerWidget {
               onSwitchAccount: () => _comingSoon(context),
               onContactDeveloper: () => _comingSoon(context),
               onLogout: () => _confirmLogout(context, ref),
+              languageLabel: _languageLabel(l10n, settings.locale),
+              themeLabel: _themeLabel(l10n, settings.themeMode),
+              onPickLanguage: () => _pickLanguage(context, ref, settings),
+              onPickTheme: () => _pickTheme(context, ref, settings),
             ).animate().fadeIn(
               duration: HappyMotion.normal,
               curve: HappyMotion.standard,
@@ -76,9 +84,78 @@ class UserScreen extends ConsumerWidget {
               onSwitchAccount: _noop,
               onContactDeveloper: _noop,
               onLogout: _noop,
+              languageLabel: _languageLabel(l10n, settings.locale),
+              themeLabel: _themeLabel(l10n, settings.themeMode),
+              onPickLanguage: _noop,
+              onPickTheme: _noop,
             ),
           ),
         },
+      ),
+    );
+  }
+
+  /// 语言的展示文案。`null` = 跟随系统，这一档必须单独说清——显示成"简体中文"的话，
+  /// 用户换了手机系统语言发现 app 跟着变了，会以为是 bug。
+  String _languageLabel(AppLocalizations l10n, Locale? locale) =>
+      switch (locale?.languageCode) {
+        _languageZh => l10n.userLanguageZh,
+        _languageEn => l10n.userLanguageEn,
+        _ => l10n.userLanguageSystem,
+      };
+
+  String _themeLabel(AppLocalizations l10n, ThemeMode mode) =>
+      mode == ThemeMode.light ? l10n.userThemeLight : l10n.userThemeDark;
+
+  Future<void> _pickLanguage(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
+    final l10n = AppLocalizations.of(context);
+    return showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => UserOptionsSheet<String?>(
+        title: l10n.userSettingLanguage,
+        // 用 languageCode 而不是 Locale 当选项值：Locale 的相等比较还看
+        // countryCode/scriptCode，`Locale("zh")` 和系统给的 `zh_Hans_CN` 不相等，
+        // 打勾会落不到任何一项上。
+        selected: settings.locale?.languageCode,
+        options: <UserOption<String?>>[
+          UserOption<String?>(value: null, label: l10n.userLanguageSystem),
+          UserOption<String?>(value: _languageZh, label: l10n.userLanguageZh),
+          UserOption<String?>(value: _languageEn, label: l10n.userLanguageEn),
+        ],
+        onSelected: (code) => ref
+            .read(appSettingsControllerProvider.notifier)
+            .setLocale(code == null ? null : Locale(code)),
+      ),
+    );
+  }
+
+  Future<void> _pickTheme(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
+    final l10n = AppLocalizations.of(context);
+    return showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => UserOptionsSheet<ThemeMode>(
+        title: l10n.userSettingTheme,
+        selected: settings.themeMode,
+        options: <UserOption<ThemeMode>>[
+          UserOption<ThemeMode>(
+            value: ThemeMode.dark,
+            label: l10n.userThemeDark,
+          ),
+          UserOption<ThemeMode>(
+            value: ThemeMode.light,
+            label: l10n.userThemeLight,
+          ),
+        ],
+        onSelected: (mode) =>
+            ref.read(appSettingsControllerProvider.notifier).setThemeMode(mode),
       ),
     );
   }
@@ -189,6 +266,11 @@ class UserScreen extends ConsumerWidget {
 /// 两个成长指标，用来区分点开哪一张说明卡。
 enum _Metric { awakening, starAffinity }
 
+/// 可选语言的 languageCode。和 `AppLocalizations.supportedLocales` 一一对应，
+/// 新增语言时两处都要加。
+const String _languageZh = "zh";
+const String _languageEn = "en";
+
 /// 页面主体：**固定的身份区** + 可滚动的其余内容。
 class _UserBody extends StatelessWidget {
   const _UserBody({
@@ -200,6 +282,10 @@ class _UserBody extends StatelessWidget {
     required this.onSwitchAccount,
     required this.onContactDeveloper,
     required this.onLogout,
+    required this.languageLabel,
+    required this.themeLabel,
+    required this.onPickLanguage,
+    required this.onPickTheme,
   });
 
   final UserProfile profile;
@@ -210,6 +296,14 @@ class _UserBody extends StatelessWidget {
   final VoidCallback onSwitchAccount;
   final VoidCallback onContactDeveloper;
   final VoidCallback onLogout;
+
+  /// 当前语言 / 深浅色的展示文案。设置项右侧要直接看得见现在是什么，
+  /// 而不是点进去才知道。
+  final String languageLabel;
+  final String themeLabel;
+
+  final VoidCallback onPickLanguage;
+  final VoidCallback onPickTheme;
 
   @override
   Widget build(BuildContext context) {
@@ -348,6 +442,34 @@ class _UserBody extends StatelessWidget {
                       value: profile.company,
                     ),
                   ],
+                ),
+                const SizedBox(height: HappySemanticSpacing.sectionGap),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: HappySpacing.s8),
+                  child: Text(
+                    l10n.userPreferencesSection,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+                // 偏好和功能分成两张卡：语言/深浅色是"设成什么就一直是什么"，
+                // 而功能区是"点一下做一件事"，混在一起会让退出登录挨着语言设置。
+                Card(
+                  child: Column(
+                    children: <Widget>[
+                      UserActionTile(
+                        icon: LucideIcons.languages,
+                        label: l10n.userSettingLanguage,
+                        trailingValue: languageLabel,
+                        onTap: onPickLanguage,
+                      ),
+                      UserActionTile(
+                        icon: LucideIcons.palette,
+                        label: l10n.userSettingTheme,
+                        trailingValue: themeLabel,
+                        onTap: onPickTheme,
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: HappySemanticSpacing.sectionGap),
                 Padding(

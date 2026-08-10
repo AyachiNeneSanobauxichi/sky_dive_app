@@ -92,7 +92,7 @@ final class UserProfileControllerProvider
 }
 
 String _$userProfileControllerHash() =>
-    r'72e31e248e62228f763c3637de847f45179291f5';
+    r'68cbc96df16ee0e3e93f7cd96c83c0805ded61be';
 
 /// 用户档案控制器（v2）。
 ///
