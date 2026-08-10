@@ -128,7 +128,7 @@ final class StoryGenerateControllerProvider
 }
 
 String _$storyGenerateControllerHash() =>
-    r'db2940f53e4ec31a031b0d5c79f0f3e345a77c88';
+    r'b84cc3f3cdf47a760efbce2b5f46d70b7279c053';
 
 /// 生成会话编排器：把多轮 SSE 拼成一条时间线。
 ///

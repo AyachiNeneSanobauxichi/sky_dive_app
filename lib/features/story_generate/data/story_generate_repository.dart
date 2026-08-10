@@ -65,6 +65,11 @@ class StoryGenerateRepository {
       }
     } on AppException catch (e) {
       throw e.toFailure();
+    } on Object catch (e, stackTrace) {
+      // 既不是连接级异常也不是脏帧——只可能是我们自己的解码/映射有问题。
+      // 记下来再抛：否则它一路变成 UI 上一句"出错了"，现场信息全丢。
+      AppLogger.e("[story-generate] 事件流出现非预期错误", e, stackTrace);
+      rethrow;
     }
     if (frameCount == 0) {
       AppLogger.w(

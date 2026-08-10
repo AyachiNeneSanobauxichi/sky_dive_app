@@ -16,9 +16,17 @@ import "sse_event.dart";
 abstract final class SseDecoder {
   /// 把原始字节流解码为 SSE 事件流。
   static Stream<SseEvent> decode(Stream<List<int>> bytes) {
-    return bytes
-        // 有状态解码：跨 chunk 的半个汉字会被正确缓存到下一块
-        .transform(utf8.decoder)
+    // 有状态解码：跨 chunk 的半个汉字会被正确缓存到下一块。
+    //
+    // ⚠️ 必须用 `utf8.decoder.bind(bytes)`，**不能**写成 `bytes.transform(utf8.decoder)`。
+    // 参数声明是 `Stream<List<int>>`，但 Dio 实际给的是 `Stream<Uint8List>`；而
+    // `Stream<T>.transform` 会按**运行时**的 T 去要求 `StreamTransformer<Uint8List, String>`，
+    // `utf8.decoder` 只是 `StreamTransformer<List<int>, String>`——泛型协变下不满足，
+    // 于是在**第一次订阅时**就抛 TypeError（"Utf8Decoder is not a subtype of…"）。
+    // 静态分析完全看不出来，表现是「连接 200、一帧都解不出来」。
+    // `bind` 的入参是 `Stream<List<int>>`，`Stream<Uint8List>` 是它的子类型，天然安全。
+    return utf8.decoder
+        .bind(bytes)
         // 同时兼容 \n、\r\n、\r 三种换行
         .transform(const LineSplitter())
         .transform(

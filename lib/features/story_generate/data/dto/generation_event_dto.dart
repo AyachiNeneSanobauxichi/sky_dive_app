@@ -6,7 +6,10 @@ import "package:happy_os/features/story_generate/domain/index.dart";
 part "generation_event_dto.freezed.dart";
 part "generation_event_dto.g.dart";
 
-/// SSE 帧里 `data:` 的那个 JSON 对象（`story-generate.api.md` v1 的公共外壳）。
+/// SSE 帧里 `data:` 的那个 JSON 对象（事件的公共外壳）。
+///
+/// 契约来源：`story-generate.api.md` v1（type / session_id / payload）
+/// + `sory-generate-new.api.md` v1（新增同级的 `timestamp`）。
 ///
 /// 所有字段都可空：这是外部服务下发的数据，任何一个字段缺失都不该让整条生成断掉。
 @freezed
@@ -20,10 +23,27 @@ abstract class GenerationEventDto with _$GenerationEventDto {
     @JsonKey(name: "session_id") String? sessionId,
 
     @Default(<String, dynamic>{}) Map<String, dynamic> payload,
+
+    /// 服务端事件时间（RFC3339，纳秒精度，如 `2026-08-10T13:12:58.675533211Z`）。
+    ///
+    /// 刻意存**原始字符串**而不是让 json_serializable 直接反序列化成 `DateTime`：
+    /// 后者遇到一个格式不对的时间戳会抛 `FormatException`，而仓库层正是靠捕获
+    /// 这个异常来跳过脏帧的——于是一个坏时间戳会让一整帧好事件被丢掉。
+    /// 解析交给 [occurredAt]，失败就只是没有时间，事件本身照样送到。
+    String? timestamp,
   }) = _GenerationEventDto;
 
   factory GenerationEventDto.fromJson(Map<String, dynamic> json) =>
       _$GenerationEventDtoFromJson(json);
+
+  /// 解析后的事件时间；缺失或格式不对时为 null。
+  ///
+  /// Dart 的 `DateTime.tryParse` 接受纳秒并自行截断到微秒，够用。
+  DateTime? get occurredAt {
+    final raw = timestamp;
+    if (raw == null || raw.isEmpty) return null;
+    return DateTime.tryParse(raw);
+  }
 
   /// 事件类型的 wire 值。集中在这里，避免各处散落字符串字面量。
   static const String typeStatus = "status";

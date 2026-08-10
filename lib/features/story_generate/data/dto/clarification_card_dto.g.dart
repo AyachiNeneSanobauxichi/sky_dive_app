@@ -23,6 +23,8 @@ _ClarificationCardDto _$ClarificationCardDtoFromJson(
   inputPlaceholder: json['input_placeholder'] as String?,
   minSelections: (json['min_selections'] as num?)?.toInt(),
   maxSelections: (json['max_selections'] as num?)?.toInt(),
+  round: (json['round'] as num?)?.toInt(),
+  maxRounds: (json['max_rounds'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$ClarificationCardDtoToJson(
@@ -36,6 +38,8 @@ Map<String, dynamic> _$ClarificationCardDtoToJson(
   'input_placeholder': instance.inputPlaceholder,
   'min_selections': instance.minSelections,
   'max_selections': instance.maxSelections,
+  'round': instance.round,
+  'max_rounds': instance.maxRounds,
 };
 
 _ClarificationOptionDto _$ClarificationOptionDtoFromJson(

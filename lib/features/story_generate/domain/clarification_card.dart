@@ -2,7 +2,9 @@ import "package:freezed_annotation/freezed_annotation.dart";
 
 part "clarification_card.freezed.dart";
 
-/// 澄清卡：生成过程中 AI 的一次反问（`story-generate.api.md` v1）。
+/// 澄清卡：生成过程中 AI 的一次反问。
+///
+/// 契约来源：`story-generate.api.md` v1 + `sory-generate-new.api.md` v1（轮次字段）。
 @freezed
 abstract class ClarificationCard with _$ClarificationCard {
   const ClarificationCard._();
@@ -26,7 +28,26 @@ abstract class ClarificationCard with _$ClarificationCard {
 
     /// 最多能选几项。为 null 表示不限。
     int? maxSelections,
+
+    /// 当前是第几轮澄清（从 1 起）。上游没给或给了不自洽的值时为 null。
+    int? round,
+
+    /// 一共最多问几轮。与 [round] 同生同灭，见 [hasRoundProgress]。
+    int? maxRounds,
   }) = _ClarificationCard;
+
+  /// 是否拿到了完整可用的轮次信息。
+  ///
+  /// 两个字段在 DTO 层被校验成"要么都有且自洽、要么都为 null"，所以这里只判一个
+  /// 就够——UI 靠它决定要不要显示「第 1/3 问」这类进度，避免把半套数据渲染出来。
+  bool get hasRoundProgress => round != null && maxRounds != null;
+
+  /// 是否已经是最后一轮澄清。
+  ///
+  /// 有它 UI 才能把最后一轮的措辞换成"回答完就开始写"——多轮问答里用户最烦的是
+  /// 不知道还要答几次，这个信号比进度数字本身更值钱。轮次信息缺失时返回 false
+  /// （宁可不承诺，也不要承诺错）。
+  bool get isLastRound => hasRoundProgress && round! >= maxRounds!;
 
   /// 是否收自由文本：纯文本卡，或允许自定义的选项卡。
   bool get acceptsCustomText =>

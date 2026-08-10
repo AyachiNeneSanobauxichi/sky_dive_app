@@ -87,8 +87,14 @@ class DioClient {
       throw err is AppException ? err : const UnknownException();
     } on AppException {
       rethrow;
+    } on Error {
+      // `Error` 是**代码缺陷**（类型错误、断言失败…），不是网络故障。翻译成
+      // NetworkException 会让用户白折腾 WiFi，也会让排查从第一步就走错方向
+      // ——真实踩过：SSE 解码器的一个泛型类型错误被这里吞成"网络不可用"，
+      // 从日志上完全看不出问题出在客户端。原样抛出，保留类型与堆栈。
+      rethrow;
     } on Object catch (_) {
-      // 已建连后 socket 断开 / 解码失败等：Dio 不再包装成 DioException
+      // 已建连后 socket 断开等真正的传输失败：Dio 不再包装成 DioException。
       throw const NetworkException();
     }
   }

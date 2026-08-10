@@ -16,7 +16,13 @@ T _$identity<T>(T value) => value;
 mixin _$GenerationEventDto {
 
  String get type;/// 注意是 snake_case，且与 `type` **同级**、不在 payload 内。
-@JsonKey(name: "session_id") String? get sessionId; Map<String, dynamic> get payload;
+@JsonKey(name: "session_id") String? get sessionId; Map<String, dynamic> get payload;/// 服务端事件时间（RFC3339，纳秒精度，如 `2026-08-10T13:12:58.675533211Z`）。
+///
+/// 刻意存**原始字符串**而不是让 json_serializable 直接反序列化成 `DateTime`：
+/// 后者遇到一个格式不对的时间戳会抛 `FormatException`，而仓库层正是靠捕获
+/// 这个异常来跳过脏帧的——于是一个坏时间戳会让一整帧好事件被丢掉。
+/// 解析交给 [occurredAt]，失败就只是没有时间，事件本身照样送到。
+ String? get timestamp;
 /// Create a copy of GenerationEventDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +35,16 @@ $GenerationEventDtoCopyWith<GenerationEventDto> get copyWith => _$GenerationEven
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationEventDto&&(identical(other.type, type) || other.type == type)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&const DeepCollectionEquality().equals(other.payload, payload));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationEventDto&&(identical(other.type, type) || other.type == type)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&const DeepCollectionEquality().equals(other.payload, payload)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,sessionId,const DeepCollectionEquality().hash(payload));
+int get hashCode => Object.hash(runtimeType,type,sessionId,const DeepCollectionEquality().hash(payload),timestamp);
 
 @override
 String toString() {
-  return 'GenerationEventDto(type: $type, sessionId: $sessionId, payload: $payload)';
+  return 'GenerationEventDto(type: $type, sessionId: $sessionId, payload: $payload, timestamp: $timestamp)';
 }
 
 
@@ -49,7 +55,7 @@ abstract mixin class $GenerationEventDtoCopyWith<$Res>  {
   factory $GenerationEventDtoCopyWith(GenerationEventDto value, $Res Function(GenerationEventDto) _then) = _$GenerationEventDtoCopyWithImpl;
 @useResult
 $Res call({
- String type,@JsonKey(name: "session_id") String? sessionId, Map<String, dynamic> payload
+ String type,@JsonKey(name: "session_id") String? sessionId, Map<String, dynamic> payload, String? timestamp
 });
 
 
@@ -66,12 +72,13 @@ class _$GenerationEventDtoCopyWithImpl<$Res>
 
 /// Create a copy of GenerationEventDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? sessionId = freezed,Object? payload = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? sessionId = freezed,Object? payload = null,Object? timestamp = freezed,}) {
   return _then(_self.copyWith(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,sessionId: freezed == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
 as String?,payload: null == payload ? _self.payload : payload // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,
+as Map<String, dynamic>,timestamp: freezed == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -156,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String type, @JsonKey(name: "session_id")  String? sessionId,  Map<String, dynamic> payload)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String type, @JsonKey(name: "session_id")  String? sessionId,  Map<String, dynamic> payload,  String? timestamp)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GenerationEventDto() when $default != null:
-return $default(_that.type,_that.sessionId,_that.payload);case _:
+return $default(_that.type,_that.sessionId,_that.payload,_that.timestamp);case _:
   return orElse();
 
 }
@@ -177,10 +184,10 @@ return $default(_that.type,_that.sessionId,_that.payload);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String type, @JsonKey(name: "session_id")  String? sessionId,  Map<String, dynamic> payload)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String type, @JsonKey(name: "session_id")  String? sessionId,  Map<String, dynamic> payload,  String? timestamp)  $default,) {final _that = this;
 switch (_that) {
 case _GenerationEventDto():
-return $default(_that.type,_that.sessionId,_that.payload);case _:
+return $default(_that.type,_that.sessionId,_that.payload,_that.timestamp);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +204,10 @@ return $default(_that.type,_that.sessionId,_that.payload);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String type, @JsonKey(name: "session_id")  String? sessionId,  Map<String, dynamic> payload)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String type, @JsonKey(name: "session_id")  String? sessionId,  Map<String, dynamic> payload,  String? timestamp)?  $default,) {final _that = this;
 switch (_that) {
 case _GenerationEventDto() when $default != null:
-return $default(_that.type,_that.sessionId,_that.payload);case _:
+return $default(_that.type,_that.sessionId,_that.payload,_that.timestamp);case _:
   return null;
 
 }
@@ -212,7 +219,7 @@ return $default(_that.type,_that.sessionId,_that.payload);case _:
 @JsonSerializable()
 
 class _GenerationEventDto extends GenerationEventDto {
-  const _GenerationEventDto({this.type = "", @JsonKey(name: "session_id") this.sessionId, final  Map<String, dynamic> payload = const <String, dynamic>{}}): _payload = payload,super._();
+  const _GenerationEventDto({this.type = "", @JsonKey(name: "session_id") this.sessionId, final  Map<String, dynamic> payload = const <String, dynamic>{}, this.timestamp}): _payload = payload,super._();
   factory _GenerationEventDto.fromJson(Map<String, dynamic> json) => _$GenerationEventDtoFromJson(json);
 
 @override@JsonKey() final  String type;
@@ -225,6 +232,13 @@ class _GenerationEventDto extends GenerationEventDto {
   return EqualUnmodifiableMapView(_payload);
 }
 
+/// 服务端事件时间（RFC3339，纳秒精度，如 `2026-08-10T13:12:58.675533211Z`）。
+///
+/// 刻意存**原始字符串**而不是让 json_serializable 直接反序列化成 `DateTime`：
+/// 后者遇到一个格式不对的时间戳会抛 `FormatException`，而仓库层正是靠捕获
+/// 这个异常来跳过脏帧的——于是一个坏时间戳会让一整帧好事件被丢掉。
+/// 解析交给 [occurredAt]，失败就只是没有时间，事件本身照样送到。
+@override final  String? timestamp;
 
 /// Create a copy of GenerationEventDto
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +253,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GenerationEventDto&&(identical(other.type, type) || other.type == type)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&const DeepCollectionEquality().equals(other._payload, _payload));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GenerationEventDto&&(identical(other.type, type) || other.type == type)&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&const DeepCollectionEquality().equals(other._payload, _payload)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,sessionId,const DeepCollectionEquality().hash(_payload));
+int get hashCode => Object.hash(runtimeType,type,sessionId,const DeepCollectionEquality().hash(_payload),timestamp);
 
 @override
 String toString() {
-  return 'GenerationEventDto(type: $type, sessionId: $sessionId, payload: $payload)';
+  return 'GenerationEventDto(type: $type, sessionId: $sessionId, payload: $payload, timestamp: $timestamp)';
 }
 
 
@@ -259,7 +273,7 @@ abstract mixin class _$GenerationEventDtoCopyWith<$Res> implements $GenerationEv
   factory _$GenerationEventDtoCopyWith(_GenerationEventDto value, $Res Function(_GenerationEventDto) _then) = __$GenerationEventDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String type,@JsonKey(name: "session_id") String? sessionId, Map<String, dynamic> payload
+ String type,@JsonKey(name: "session_id") String? sessionId, Map<String, dynamic> payload, String? timestamp
 });
 
 
@@ -276,12 +290,13 @@ class __$GenerationEventDtoCopyWithImpl<$Res>
 
 /// Create a copy of GenerationEventDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? sessionId = freezed,Object? payload = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? sessionId = freezed,Object? payload = null,Object? timestamp = freezed,}) {
   return _then(_GenerationEventDto(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,sessionId: freezed == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
 as String?,payload: null == payload ? _self._payload : payload // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,
+as Map<String, dynamic>,timestamp: freezed == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

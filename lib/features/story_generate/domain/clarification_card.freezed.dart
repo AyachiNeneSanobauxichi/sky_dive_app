@@ -18,7 +18,9 @@ mixin _$ClarificationCard {
  ClarificationCardType get type; List<ClarificationOption> get options;/// 允许在选项之外补一段自由文本。
  bool get allowCustom; String? get inputPlaceholder;/// 至少要选几项。契约缺省为 1。
  int get minSelections;/// 最多能选几项。为 null 表示不限。
- int? get maxSelections;
+ int? get maxSelections;/// 当前是第几轮澄清（从 1 起）。上游没给或给了不自洽的值时为 null。
+ int? get round;/// 一共最多问几轮。与 [round] 同生同灭，见 [hasRoundProgress]。
+ int? get maxRounds;
 /// Create a copy of ClarificationCard
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +31,16 @@ $ClarificationCardCopyWith<ClarificationCard> get copyWith => _$ClarificationCar
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClarificationCard&&(identical(other.question, question) || other.question == question)&&(identical(other.description, description) || other.description == description)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.allowCustom, allowCustom) || other.allowCustom == allowCustom)&&(identical(other.inputPlaceholder, inputPlaceholder) || other.inputPlaceholder == inputPlaceholder)&&(identical(other.minSelections, minSelections) || other.minSelections == minSelections)&&(identical(other.maxSelections, maxSelections) || other.maxSelections == maxSelections));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClarificationCard&&(identical(other.question, question) || other.question == question)&&(identical(other.description, description) || other.description == description)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.allowCustom, allowCustom) || other.allowCustom == allowCustom)&&(identical(other.inputPlaceholder, inputPlaceholder) || other.inputPlaceholder == inputPlaceholder)&&(identical(other.minSelections, minSelections) || other.minSelections == minSelections)&&(identical(other.maxSelections, maxSelections) || other.maxSelections == maxSelections)&&(identical(other.round, round) || other.round == round)&&(identical(other.maxRounds, maxRounds) || other.maxRounds == maxRounds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,question,description,type,const DeepCollectionEquality().hash(options),allowCustom,inputPlaceholder,minSelections,maxSelections);
+int get hashCode => Object.hash(runtimeType,question,description,type,const DeepCollectionEquality().hash(options),allowCustom,inputPlaceholder,minSelections,maxSelections,round,maxRounds);
 
 @override
 String toString() {
-  return 'ClarificationCard(question: $question, description: $description, type: $type, options: $options, allowCustom: $allowCustom, inputPlaceholder: $inputPlaceholder, minSelections: $minSelections, maxSelections: $maxSelections)';
+  return 'ClarificationCard(question: $question, description: $description, type: $type, options: $options, allowCustom: $allowCustom, inputPlaceholder: $inputPlaceholder, minSelections: $minSelections, maxSelections: $maxSelections, round: $round, maxRounds: $maxRounds)';
 }
 
 
@@ -49,7 +51,7 @@ abstract mixin class $ClarificationCardCopyWith<$Res>  {
   factory $ClarificationCardCopyWith(ClarificationCard value, $Res Function(ClarificationCard) _then) = _$ClarificationCardCopyWithImpl;
 @useResult
 $Res call({
- String question, String? description, ClarificationCardType type, List<ClarificationOption> options, bool allowCustom, String? inputPlaceholder, int minSelections, int? maxSelections
+ String question, String? description, ClarificationCardType type, List<ClarificationOption> options, bool allowCustom, String? inputPlaceholder, int minSelections, int? maxSelections, int? round, int? maxRounds
 });
 
 
@@ -66,7 +68,7 @@ class _$ClarificationCardCopyWithImpl<$Res>
 
 /// Create a copy of ClarificationCard
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? question = null,Object? description = freezed,Object? type = null,Object? options = null,Object? allowCustom = null,Object? inputPlaceholder = freezed,Object? minSelections = null,Object? maxSelections = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? question = null,Object? description = freezed,Object? type = null,Object? options = null,Object? allowCustom = null,Object? inputPlaceholder = freezed,Object? minSelections = null,Object? maxSelections = freezed,Object? round = freezed,Object? maxRounds = freezed,}) {
   return _then(_self.copyWith(
 question: null == question ? _self.question : question // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -76,6 +78,8 @@ as List<ClarificationOption>,allowCustom: null == allowCustom ? _self.allowCusto
 as bool,inputPlaceholder: freezed == inputPlaceholder ? _self.inputPlaceholder : inputPlaceholder // ignore: cast_nullable_to_non_nullable
 as String?,minSelections: null == minSelections ? _self.minSelections : minSelections // ignore: cast_nullable_to_non_nullable
 as int,maxSelections: freezed == maxSelections ? _self.maxSelections : maxSelections // ignore: cast_nullable_to_non_nullable
+as int?,round: freezed == round ? _self.round : round // ignore: cast_nullable_to_non_nullable
+as int?,maxRounds: freezed == maxRounds ? _self.maxRounds : maxRounds // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -161,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String question,  String? description,  ClarificationCardType type,  List<ClarificationOption> options,  bool allowCustom,  String? inputPlaceholder,  int minSelections,  int? maxSelections)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String question,  String? description,  ClarificationCardType type,  List<ClarificationOption> options,  bool allowCustom,  String? inputPlaceholder,  int minSelections,  int? maxSelections,  int? round,  int? maxRounds)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClarificationCard() when $default != null:
-return $default(_that.question,_that.description,_that.type,_that.options,_that.allowCustom,_that.inputPlaceholder,_that.minSelections,_that.maxSelections);case _:
+return $default(_that.question,_that.description,_that.type,_that.options,_that.allowCustom,_that.inputPlaceholder,_that.minSelections,_that.maxSelections,_that.round,_that.maxRounds);case _:
   return orElse();
 
 }
@@ -182,10 +186,10 @@ return $default(_that.question,_that.description,_that.type,_that.options,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String question,  String? description,  ClarificationCardType type,  List<ClarificationOption> options,  bool allowCustom,  String? inputPlaceholder,  int minSelections,  int? maxSelections)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String question,  String? description,  ClarificationCardType type,  List<ClarificationOption> options,  bool allowCustom,  String? inputPlaceholder,  int minSelections,  int? maxSelections,  int? round,  int? maxRounds)  $default,) {final _that = this;
 switch (_that) {
 case _ClarificationCard():
-return $default(_that.question,_that.description,_that.type,_that.options,_that.allowCustom,_that.inputPlaceholder,_that.minSelections,_that.maxSelections);case _:
+return $default(_that.question,_that.description,_that.type,_that.options,_that.allowCustom,_that.inputPlaceholder,_that.minSelections,_that.maxSelections,_that.round,_that.maxRounds);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +206,10 @@ return $default(_that.question,_that.description,_that.type,_that.options,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String question,  String? description,  ClarificationCardType type,  List<ClarificationOption> options,  bool allowCustom,  String? inputPlaceholder,  int minSelections,  int? maxSelections)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String question,  String? description,  ClarificationCardType type,  List<ClarificationOption> options,  bool allowCustom,  String? inputPlaceholder,  int minSelections,  int? maxSelections,  int? round,  int? maxRounds)?  $default,) {final _that = this;
 switch (_that) {
 case _ClarificationCard() when $default != null:
-return $default(_that.question,_that.description,_that.type,_that.options,_that.allowCustom,_that.inputPlaceholder,_that.minSelections,_that.maxSelections);case _:
+return $default(_that.question,_that.description,_that.type,_that.options,_that.allowCustom,_that.inputPlaceholder,_that.minSelections,_that.maxSelections,_that.round,_that.maxRounds);case _:
   return null;
 
 }
@@ -217,7 +221,7 @@ return $default(_that.question,_that.description,_that.type,_that.options,_that.
 
 
 class _ClarificationCard extends ClarificationCard {
-  const _ClarificationCard({required this.question, this.description, this.type = ClarificationCardType.singleSelect, final  List<ClarificationOption> options = const <ClarificationOption>[], this.allowCustom = false, this.inputPlaceholder, this.minSelections = 1, this.maxSelections}): _options = options,super._();
+  const _ClarificationCard({required this.question, this.description, this.type = ClarificationCardType.singleSelect, final  List<ClarificationOption> options = const <ClarificationOption>[], this.allowCustom = false, this.inputPlaceholder, this.minSelections = 1, this.maxSelections, this.round, this.maxRounds}): _options = options,super._();
   
 
 @override final  String question;
@@ -238,6 +242,10 @@ class _ClarificationCard extends ClarificationCard {
 @override@JsonKey() final  int minSelections;
 /// 最多能选几项。为 null 表示不限。
 @override final  int? maxSelections;
+/// 当前是第几轮澄清（从 1 起）。上游没给或给了不自洽的值时为 null。
+@override final  int? round;
+/// 一共最多问几轮。与 [round] 同生同灭，见 [hasRoundProgress]。
+@override final  int? maxRounds;
 
 /// Create a copy of ClarificationCard
 /// with the given fields replaced by the non-null parameter values.
@@ -249,16 +257,16 @@ _$ClarificationCardCopyWith<_ClarificationCard> get copyWith => __$Clarification
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClarificationCard&&(identical(other.question, question) || other.question == question)&&(identical(other.description, description) || other.description == description)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._options, _options)&&(identical(other.allowCustom, allowCustom) || other.allowCustom == allowCustom)&&(identical(other.inputPlaceholder, inputPlaceholder) || other.inputPlaceholder == inputPlaceholder)&&(identical(other.minSelections, minSelections) || other.minSelections == minSelections)&&(identical(other.maxSelections, maxSelections) || other.maxSelections == maxSelections));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClarificationCard&&(identical(other.question, question) || other.question == question)&&(identical(other.description, description) || other.description == description)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._options, _options)&&(identical(other.allowCustom, allowCustom) || other.allowCustom == allowCustom)&&(identical(other.inputPlaceholder, inputPlaceholder) || other.inputPlaceholder == inputPlaceholder)&&(identical(other.minSelections, minSelections) || other.minSelections == minSelections)&&(identical(other.maxSelections, maxSelections) || other.maxSelections == maxSelections)&&(identical(other.round, round) || other.round == round)&&(identical(other.maxRounds, maxRounds) || other.maxRounds == maxRounds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,question,description,type,const DeepCollectionEquality().hash(_options),allowCustom,inputPlaceholder,minSelections,maxSelections);
+int get hashCode => Object.hash(runtimeType,question,description,type,const DeepCollectionEquality().hash(_options),allowCustom,inputPlaceholder,minSelections,maxSelections,round,maxRounds);
 
 @override
 String toString() {
-  return 'ClarificationCard(question: $question, description: $description, type: $type, options: $options, allowCustom: $allowCustom, inputPlaceholder: $inputPlaceholder, minSelections: $minSelections, maxSelections: $maxSelections)';
+  return 'ClarificationCard(question: $question, description: $description, type: $type, options: $options, allowCustom: $allowCustom, inputPlaceholder: $inputPlaceholder, minSelections: $minSelections, maxSelections: $maxSelections, round: $round, maxRounds: $maxRounds)';
 }
 
 
@@ -269,7 +277,7 @@ abstract mixin class _$ClarificationCardCopyWith<$Res> implements $Clarification
   factory _$ClarificationCardCopyWith(_ClarificationCard value, $Res Function(_ClarificationCard) _then) = __$ClarificationCardCopyWithImpl;
 @override @useResult
 $Res call({
- String question, String? description, ClarificationCardType type, List<ClarificationOption> options, bool allowCustom, String? inputPlaceholder, int minSelections, int? maxSelections
+ String question, String? description, ClarificationCardType type, List<ClarificationOption> options, bool allowCustom, String? inputPlaceholder, int minSelections, int? maxSelections, int? round, int? maxRounds
 });
 
 
@@ -286,7 +294,7 @@ class __$ClarificationCardCopyWithImpl<$Res>
 
 /// Create a copy of ClarificationCard
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? question = null,Object? description = freezed,Object? type = null,Object? options = null,Object? allowCustom = null,Object? inputPlaceholder = freezed,Object? minSelections = null,Object? maxSelections = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? question = null,Object? description = freezed,Object? type = null,Object? options = null,Object? allowCustom = null,Object? inputPlaceholder = freezed,Object? minSelections = null,Object? maxSelections = freezed,Object? round = freezed,Object? maxRounds = freezed,}) {
   return _then(_ClarificationCard(
 question: null == question ? _self.question : question // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -296,6 +304,8 @@ as List<ClarificationOption>,allowCustom: null == allowCustom ? _self.allowCusto
 as bool,inputPlaceholder: freezed == inputPlaceholder ? _self.inputPlaceholder : inputPlaceholder // ignore: cast_nullable_to_non_nullable
 as String?,minSelections: null == minSelections ? _self.minSelections : minSelections // ignore: cast_nullable_to_non_nullable
 as int,maxSelections: freezed == maxSelections ? _self.maxSelections : maxSelections // ignore: cast_nullable_to_non_nullable
+as int?,round: freezed == round ? _self.round : round // ignore: cast_nullable_to_non_nullable
+as int?,maxRounds: freezed == maxRounds ? _self.maxRounds : maxRounds // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }

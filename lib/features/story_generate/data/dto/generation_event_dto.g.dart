@@ -12,6 +12,7 @@ _GenerationEventDto _$GenerationEventDtoFromJson(Map<String, dynamic> json) =>
       sessionId: json['session_id'] as String?,
       payload:
           json['payload'] as Map<String, dynamic>? ?? const <String, dynamic>{},
+      timestamp: json['timestamp'] as String?,
     );
 
 Map<String, dynamic> _$GenerationEventDtoToJson(_GenerationEventDto instance) =>
@@ -19,4 +20,5 @@ Map<String, dynamic> _$GenerationEventDtoToJson(_GenerationEventDto instance) =>
       'type': instance.type,
       'session_id': instance.sessionId,
       'payload': instance.payload,
+      'timestamp': instance.timestamp,
     };

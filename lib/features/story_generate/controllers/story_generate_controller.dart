@@ -57,9 +57,9 @@ class StoryGenerateController extends _$StoryGenerateController {
     );
 
     _listen(
-      ref
+      (cancelToken) => ref
           .read(storyGenerateRepositoryProvider)
-          .start(query: text, cancelToken: _newCancelToken()),
+          .start(query: text, cancelToken: cancelToken),
     );
   }
 
@@ -143,11 +143,6 @@ class StoryGenerateController extends _$StoryGenerateController {
 
   // ───────────────────────── 流的生命周期 ─────────────────────────
 
-  CancelToken _newCancelToken() {
-    _cancelToken = CancelToken();
-    return _cancelToken!;
-  }
-
   void _sendFollowup(FollowupAction action, {String? text}) {
     final sessionId = state.sessionId;
     // 没有 sessionId 就没法推进会话——这是内部状态错误，不该发出去被后端拒。
@@ -160,7 +155,7 @@ class StoryGenerateController extends _$StoryGenerateController {
     }
 
     _listen(
-      ref
+      (cancelToken) => ref
           .read(storyGenerateRepositoryProvider)
           .followup(
             sessionId: sessionId!,
@@ -168,15 +163,24 @@ class StoryGenerateController extends _$StoryGenerateController {
             // 后端靠它在 novel_done 时落库，每轮都要带。
             originalQuery: state.originalQuery ?? "",
             text: text,
-            cancelToken: _newCancelToken(),
+            cancelToken: cancelToken,
           ),
     );
   }
 
-  void _listen(Stream<GenerationEvent> source) {
+  /// 起一轮新流。
+  ///
+  /// 参数是**构建流的函数**而不是流本身：本方法第一件事就是 [_disposeStream]（会
+  /// `cancel` 当前 token），若调用方先把新 token 建好再传进来，那个还没用过的新
+  /// token 会被这里连带取消掉——Dio 拿到已取消的 token 会直接抛 cancel、请求根本
+  /// 不发出去，而 `postSse` 把主动取消当正常收流，最终表现为「流秒结束、一帧没有」。
+  /// 让 token 在断旧流之后才诞生，才能杜绝这种自己取消自己的顺序陷阱。
+  void _listen(Stream<GenerationEvent> Function(CancelToken) buildStream) {
     _disposeStream();
     _receivedAnyEvent = false;
-    _subscription = source.listen(
+    final cancelToken = CancelToken();
+    _cancelToken = cancelToken;
+    _subscription = buildStream(cancelToken).listen(
       _onEvent,
       onError: _onError,
       onDone: _finishRound,

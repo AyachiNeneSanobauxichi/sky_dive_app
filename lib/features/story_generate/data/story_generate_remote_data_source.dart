@@ -4,13 +4,18 @@ import "package:happy_os/features/story_generate/domain/index.dart";
 
 /// story-generate 远程数据源：只负责建 SSE 连接、吐协议层事件帧，**不做领域映射**。
 ///
-/// 端点对齐 `agent/service/story-generate/story-generate.api.md` v1。
+/// 端点对齐 `agent/service/story-generate/sory-generate-new.api.md` v1
+/// （stream 端点与事件外壳）+ `story-generate.api.md` v1（followup 端点）。
 class StoryGenerateRemoteDataSource {
   const StoryGenerateRemoteDataSource(this._client);
 
   final DioClient _client;
 
   /// 发起生成（开新会话）。
+  ///
+  /// 路径是**相对**的：拼上 `DioClient` 的 baseUrl（`Env.baseUrl + Env.apiPrefix`）后
+  /// 即新文档里的 `https://lifescript.happylifeos.com/api/shortNovel/stream`。
+  /// 这里刻意不写死绝对地址——环境切换（本地 / 预发 / 线上）靠 `.env` 而不是改代码。
   static const String _streamPath = "/shortNovel/stream";
 
   /// 推进已有会话（回答澄清 / 确认大纲 / 修改大纲 / 恢复）。
