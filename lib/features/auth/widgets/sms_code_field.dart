@@ -65,6 +65,10 @@ class SmsCodeField extends StatelessWidget {
           length: AuthRules.smsCodeLength,
           onChanged: onChanged,
           onCompleted: onCompleted,
+          // 输入过程中不校验：验证码是逐位敲进去的，边敲边校验等于从第 1 位起
+          // 整排红到第 6 位——用户没做错任何事，只是还没输完。校验留给提交那一刻
+          // （`Form.validate()`），而真正的"码不对"由后端返回后就地反馈。
+          autovalidateMode: AutovalidateMode.disabled,
           validator: FormBuilderValidators.compose(<FormFieldValidator<String>>[
             FormBuilderValidators.required(errorText: l10n.authCodeRequired),
             FormBuilderValidators.match(

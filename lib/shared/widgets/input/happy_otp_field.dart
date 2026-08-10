@@ -16,7 +16,8 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 /// 交互约定：
 /// - **活动格**（下一个待输入位置）加品牌描边 + 光晕 + 闪烁光标，"焦点在这儿"不用猜；
 /// - **填满即完成**：触发 [onCompleted] 并给一次轻触感，供调用方自动提交，省掉一次点击；
-/// - 校验错误就地显示在格子下方（本组件是 `FormField`，直接参与 `Form.validate`）。
+/// - **输入过程中不报错**（见 [autovalidateMode]），校验错误就地显示在格子下方
+///   （本组件是 `FormField`，直接参与 `Form.validate`）。
 class HappyOtpField extends StatefulWidget {
   const HappyOtpField({
     super.key,
@@ -29,6 +30,7 @@ class HappyOtpField extends StatefulWidget {
     this.enabled = true,
     this.autofocus = false,
     this.isSuccess = false,
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
   });
 
   final TextEditingController controller;
@@ -54,6 +56,17 @@ class HappyOtpField extends StatefulWidget {
   /// 给调用方一个"成功了"的落点——校验通过往往紧接着换页，没有这一下确认，
   /// 用户刚填完最后一位就被弹走，不知道自己填对没填对。
   final bool isSuccess;
+
+  /// 何时自动校验。
+  ///
+  /// ⚠️ 定长 OTP 配"必须 N 位"的校验规则时，**应当传 [AutovalidateMode.disabled]**：
+  /// 边输边校验意味着从敲下第 1 位起整排就一直红着，直到最后一位落位才变回正常
+  /// ——用户什么都没做错，只是还没输完，却全程被当成填错了。红色在这里是噪音，
+  /// 不是信息。校验交给它真正成立的时刻：提交时的 `Form.validate()`。
+  ///
+  /// 默认值保持 [AutovalidateMode.onUserInteraction] 只是为了不改变既有调用方的
+  /// 行为；新接入的调用方按上面的理由自行选择。
+  final AutovalidateMode autovalidateMode;
 
   @override
   State<HappyOtpField> createState() => _HappyOtpFieldState();
@@ -153,7 +166,7 @@ class _HappyOtpFieldState extends State<HappyOtpField> {
     return FormField<String>(
       initialValue: widget.controller.text,
       validator: widget.validator,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: widget.autovalidateMode,
       builder: (field) {
         _field = field;
         return Column(

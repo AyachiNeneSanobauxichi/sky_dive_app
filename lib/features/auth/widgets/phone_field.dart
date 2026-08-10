@@ -21,6 +21,7 @@ class PhoneField extends StatelessWidget {
     this.onChanged,
     this.enabled = true,
     this.autofocus = false,
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
   });
 
   final TextEditingController controller;
@@ -32,6 +33,13 @@ class PhoneField extends StatelessWidget {
 
   /// 从折叠态点"修改"回来时自动聚焦，省一次点击。
   final bool autofocus;
+
+  /// 何时自动校验。默认交互后才校验（一个字没输过就不该红）。
+  ///
+  /// 调用方在"一个字都没填就点了发送验证码"时改传 [AutovalidateMode.always]，
+  /// 把这个字段单独点亮——比走整表单 `validate()` 精准，后者会连带把验证码格子
+  /// 和协议勾选一起报错，而那两件事此刻还没轮到用户做。
+  final AutovalidateMode autovalidateMode;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +54,7 @@ class PhoneField extends StatelessWidget {
       keyboardType: TextInputType.phone,
       textInputAction: TextInputAction.next,
       autofillHints: const <String>[AutofillHints.telephoneNumber],
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: autovalidateMode,
       inputFormatters: <TextInputFormatter>[
         FilteringTextInputFormatter.digitsOnly,
         LengthLimitingTextInputFormatter(AuthRules.phoneLength),

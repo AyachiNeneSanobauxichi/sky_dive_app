@@ -38,6 +38,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   /// 用户点了"修改"，从折叠态临时回到手机号编辑态。
   bool _editingPhone = false;
 
+  /// 强制校验手机号。只在"一个字没填就点了发送验证码"后置起
+  /// ——那种情况下 `onUserInteraction` 还没被触发过，字段不会自己报错。
+  bool _forcePhoneValidation = false;
+
   /// 手机号是否折叠成摘要：发过码且不在编辑态。
   bool get _isPhoneCollapsed => _codeSentTo != null && !_editingPhone;
 
@@ -96,9 +100,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final l10n = AppLocalizations.of(context);
     final phone = _phoneController.text.trim();
 
-    // 手机号没填对就不发码：就地触发字段校验（错误显示在输入框下方），不弹 toast。
+    // 手机号没填对就不发码：就地点亮**这一个字段**（错误显示在输入框下方），不弹 toast。
+    //
+    // 刻意不走整表单 `validate()`：那会把验证码格子（"请输入验证码"）和协议勾选
+    // （"请先同意协议"）一起点红——用户此刻只是想发个码，那两件事还没轮到他做，
+    // 却先被判了两次错。错误只该出现在它真正成立的时刻。
     if (!AuthRules.isValidPhone(phone)) {
-      _formKey.currentState?.validate();
+      setState(() => _forcePhoneValidation = true);
       return;
     }
 
@@ -244,6 +252,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             focusNode: _phoneFocusNode,
                             enabled: !_isSubmitting,
                             autofocus: _editingPhone,
+                            autovalidateMode: _forcePhoneValidation
+                                ? AutovalidateMode.always
+                                : AutovalidateMode.onUserInteraction,
                             onChanged: _onPhoneChanged,
                           ),
                   ),
