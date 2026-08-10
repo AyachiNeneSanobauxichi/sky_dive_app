@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/story_generate/domain/index.dart";
+import "package:happy_os/features/story_generate/widgets/timeline_entry_header.dart";
 import "package:happy_os/shared/widgets/index.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
@@ -20,12 +21,20 @@ class ClarificationCardView extends StatefulWidget {
     required this.answer,
     required this.enabled,
     required this.onSubmit,
+    required this.label,
+    required this.timeLabel,
     required this.submitLabel,
     required this.answeredLabel,
     required this.customHint,
   });
 
   final ClarificationCard card;
+
+  /// 「AI 想确认一下」这类归属标签。
+  final String label;
+
+  /// 已格式化的提问时间（如 `14:32`）。
+  final String timeLabel;
 
   /// 已提交的回答。非空即收起为摘要。
   final String? answer;
@@ -120,23 +129,15 @@ class _ClarificationCardViewState extends State<ClarificationCardView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: HappySemanticSpacing.itemGap,
           children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: HappySemanticSpacing.labelGap,
-              children: <Widget>[
-                Icon(
-                  LucideIcons.messageCircleQuestion,
-                  size: HappyIconSize.md,
-                  color: scheme.primary,
-                ),
-                Expanded(
-                  child: Text(
-                    widget.card.question,
-                    style: theme.textTheme.titleSmall,
-                  ),
-                ),
-              ],
+            // 头部只放归属 + 时间，问题另起一行占满宽度：问题常常是两三行，
+            // 跟图标挤在一行时右侧的时间会被顶到问题中段，扫读时对不齐。
+            TimelineEntryHeader(
+              icon: LucideIcons.messageCircleQuestion,
+              iconColor: scheme.primary,
+              label: widget.label,
+              timeLabel: widget.timeLabel,
             ),
+            Text(widget.card.question, style: theme.textTheme.titleSmall),
             if (widget.card.description case final String desc
                 when desc.isNotEmpty)
               Text(

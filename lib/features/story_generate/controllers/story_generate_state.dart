@@ -54,6 +54,30 @@ abstract class StoryGenerateState with _$StoryGenerateState {
   bool get hasNovelContent => timeline.any(
     (entry) => entry is GenerationNovelEntry && entry.content.isNotEmpty,
   );
+
+  /// 当前这段等待处在创作的哪一步，用来选加载文案。
+  ///
+  /// 靠**时间线最后一条**推断，而不是等后端的 `stage`：后端 stage 的取值还没定
+  /// （见 `story-generate.api.md`），但"上一条是什么"本身就足以说明下一步在干嘛
+  /// ——刚提交心愿 → 在理解；答完澄清 → 在搭大纲；定完大纲 → 在动笔。
+  GenerationWaitStage get waitStage => switch (timeline.lastOrNull) {
+    GenerationOutlineEntry() ||
+    GenerationNovelEntry() => GenerationWaitStage.writing,
+    GenerationClarificationEntry() => GenerationWaitStage.outlining,
+    _ => GenerationWaitStage.understanding,
+  };
+}
+
+/// 等待中的创作步骤。只影响加载文案，不参与业务判断。
+enum GenerationWaitStage {
+  /// 在读懂用户这句话。
+  understanding,
+
+  /// 在搭故事骨架。
+  outlining,
+
+  /// 在写正文。
+  writing,
 }
 
 /// 生成阶段。
@@ -81,21 +105,29 @@ enum GenerationPhase {
 ///
 /// 用 sealed union 而不是「一个带 kind 字段的结构体」：UI 要对每种条目渲染完全不同的
 /// 组件，穷尽匹配能保证新增类型时不会漏掉渲染分支。
+///
+/// 每条都带 [GenerationEntry.createdAt]（条目**诞生**的时刻，不是更新时刻）：
+/// 时间戳一旦生成就不再变，正文条目在流式追加时靠 `copyWith` 原样带着它，
+/// 所以显示的是"这段是几点开始写的"，不会每来一个 delta 就跳一次表。
 @freezed
 sealed class GenerationEntry with _$GenerationEntry {
   /// 用户的心愿，时间线第一条。
-  const factory GenerationEntry.wish({required String text}) =
-      GenerationWishEntry;
+  const factory GenerationEntry.wish({
+    required String text,
+    required DateTime createdAt,
+  }) = GenerationWishEntry;
 
   /// 澄清卡。[answer] 非空表示已作答、卡片收起为摘要。
   const factory GenerationEntry.clarification({
     required ClarificationCard card,
+    required DateTime createdAt,
     String? answer,
   }) = GenerationClarificationEntry;
 
   /// 大纲卡。[resolution] 非空表示已决定（确认或提了修改意见）。
   const factory GenerationEntry.outline({
     required StoryOutline outline,
+    required DateTime createdAt,
     OutlineResolution? resolution,
 
     /// 用户填的修改意见（[resolution] 为 [OutlineResolution.modified] 时有值）。
@@ -105,6 +137,7 @@ sealed class GenerationEntry with _$GenerationEntry {
   /// 正文。生成中 [isStreaming] 为 true，末尾显示光标。
   const factory GenerationEntry.novel({
     required String content,
+    required DateTime createdAt,
     @Default(true) bool isStreaming,
   }) = GenerationNovelEntry;
 }

@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/story_generate/controllers/index.dart";
 import "package:happy_os/features/story_generate/domain/index.dart";
+import "package:happy_os/features/story_generate/widgets/timeline_entry_header.dart";
 import "package:happy_os/shared/widgets/index.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
@@ -22,6 +23,7 @@ class OutlineCardView extends StatefulWidget {
     required this.onConfirm,
     required this.onModify,
     required this.title,
+    required this.timeLabel,
     required this.endingLabel,
     required this.emptyLabel,
     required this.confirmLabel,
@@ -46,6 +48,10 @@ class OutlineCardView extends StatefulWidget {
   final ValueChanged<String> onModify;
 
   final String title;
+
+  /// 已格式化的出稿时间（如 `14:32`）。
+  final String timeLabel;
+
   final String endingLabel;
 
   /// 大纲为空壳时的说明文案。
@@ -109,16 +115,11 @@ class _OutlineCardViewState extends State<OutlineCardView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: HappySemanticSpacing.itemGap,
           children: <Widget>[
-            Row(
-              spacing: HappySemanticSpacing.labelGap,
-              children: <Widget>[
-                Icon(
-                  LucideIcons.listTree,
-                  size: HappyIconSize.md,
-                  color: scheme.tertiary,
-                ),
-                Text(widget.title, style: theme.textTheme.titleSmall),
-              ],
+            TimelineEntryHeader(
+              icon: LucideIcons.listTree,
+              iconColor: scheme.tertiary,
+              label: widget.title,
+              timeLabel: widget.timeLabel,
             ),
 
             if (outline.isEmpty)

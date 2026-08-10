@@ -8,6 +8,7 @@ import "package:happy_os/features/story_generate/controllers/index.dart";
 import "package:happy_os/features/story_generate/widgets/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
 import "package:happy_os/shared/widgets/index.dart";
+import "package:intl/intl.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
 /// 生成页：把一句心愿变成一篇成稿的完整过程（`agent/service/story-generate/`）。
@@ -17,8 +18,8 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 /// 左右气泡表达"谁说的"，时间线表达"到哪一步了"——后者才是用户在这一页真正关心的。
 ///
 /// ## 四态
-/// - 加载：首帧未到 → [HappyThinkingIndicator] + 阶段文案（这段窗口可能好几秒，
-///   没有明确进行态用户就会反复触发）；
+/// - 加载：首帧未到 → [GenerationStatusIndicator]（轮播阶段文案 + 已等待秒数，
+///   这段窗口可能好几秒，没有明确且**在变化**的进行态用户就会反复触发）；
 /// - 空：没带心愿进来（语音入口）→ 心愿输入引导；
 /// - 错误：内联 [HappyRetryCard]，**已生成的内容保留在上方不清屏**；
 /// - 有数据：时间线。
@@ -189,6 +190,11 @@ class _StoryGenerateScreenState extends ConsumerState<StoryGenerateScreen> {
                           controller: controller,
                           scrollController: _scrollController,
                           l10n: l10n,
+                          // 时间格式跟着 locale 走：中文 24 小时制、英文按系统习惯，
+                          // 硬编码 "HH:mm" 在部分英文区会显得别扭。
+                          timeFormat: DateFormat.Hm(
+                            Localizations.localeOf(context).toLanguageTag(),
+                          ),
                         ),
                 ),
                 _BottomBar(state: state, controller: controller, l10n: l10n),
@@ -252,12 +258,17 @@ class _Timeline extends StatelessWidget {
     required this.controller,
     required this.scrollController,
     required this.l10n,
+    required this.timeFormat,
   });
 
   final StoryGenerateState state;
   final StoryGenerateController controller;
   final ScrollController scrollController;
   final AppLocalizations l10n;
+
+  /// 条目时间戳的格式化器。在页面层按 locale 建一次，不要每条目各建一个
+  /// ——`DateFormat` 的构造要读 locale 数据，不便宜。
+  final DateFormat timeFormat;
 
   @override
   Widget build(BuildContext context) {
@@ -277,9 +288,10 @@ class _Timeline extends StatelessWidget {
           // 进行态与失败卡各自带**固定 key**：两者在同一个位置交替出现，没有 key
           // 时 Flutter 会试图就地更新，带 ticker 的子树最容易在这一步出问题。
           if (state.phase == GenerationPhase.connecting)
-            HappyThinkingIndicator(
+            GenerationStatusIndicator(
               key: const ValueKey<String>("status-thinking"),
-              label: l10n.storyGenerateThinking,
+              phrases: waitingPhrasesFor(l10n, state.waitStage),
+              elapsedLabel: l10n.storyGenerateElapsed,
             ),
           if (state.failure case final Failure failure)
             HappyRetryCard(
@@ -299,14 +311,21 @@ class _Timeline extends StatelessWidget {
   }
 
   Widget _entryView(GenerationEntry entry) => switch (entry) {
-    GenerationWishEntry(:final text) => WishEntryView(
+    GenerationWishEntry(:final text, :final createdAt) => WishEntryView(
       text: text,
       label: l10n.storyGenerateWishLabel,
+      timeLabel: timeFormat.format(createdAt),
     ),
-    GenerationClarificationEntry(:final card, :final answer) =>
+    GenerationClarificationEntry(
+      :final card,
+      :final answer,
+      :final createdAt,
+    ) =>
       ClarificationCardView(
         card: card,
         answer: answer,
+        label: l10n.storyGenerateClarifyLabel,
+        timeLabel: timeFormat.format(createdAt),
         // 只有"轮到用户作答"时才可交互：上一轮还在跑时禁用，防重复提交。
         enabled: state.isAwaitingUser,
         onSubmit: controller.answerClarification,
@@ -318,11 +337,13 @@ class _Timeline extends StatelessWidget {
       :final outline,
       :final resolution,
       :final feedback,
+      :final createdAt,
     ) =>
       OutlineCardView(
         outline: outline,
         resolution: resolution,
         feedback: feedback,
+        timeLabel: timeFormat.format(createdAt),
         enabled: state.isAwaitingUser,
         onConfirm: controller.confirmOutline,
         onModify: controller.modifyOutline,
@@ -335,11 +356,17 @@ class _Timeline extends StatelessWidget {
         confirmedLabel: l10n.storyGenerateOutlineConfirmed,
         modifiedLabel: l10n.storyGenerateOutlineModified,
       ),
-    GenerationNovelEntry(:final content, :final isStreaming) => NovelEntryView(
-      content: content,
-      isStreaming: isStreaming,
-      label: l10n.storyGenerateNovelLabel,
-    ),
+    GenerationNovelEntry(
+      :final content,
+      :final isStreaming,
+      :final createdAt,
+    ) =>
+      NovelEntryView(
+        content: content,
+        isStreaming: isStreaming,
+        label: l10n.storyGenerateNovelLabel,
+        timeLabel: timeFormat.format(createdAt),
+      ),
   };
 }
 

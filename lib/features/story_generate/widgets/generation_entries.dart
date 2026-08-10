@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:happy_os/core/theme/index.dart";
+import "package:happy_os/features/story_generate/widgets/timeline_entry_header.dart";
 import "package:happy_os/shared/widgets/index.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
@@ -8,12 +9,20 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 /// 用玻璃卡而不是普通卡：它是**这场生成的由头**，整页只有它一张玻璃，
 /// 视觉上自然成为起点（`HappyGlassCard` 的注释也要求一屏 1–3 张封顶）。
 class WishEntryView extends StatelessWidget {
-  const WishEntryView({super.key, required this.text, required this.label});
+  const WishEntryView({
+    super.key,
+    required this.text,
+    required this.label,
+    required this.timeLabel,
+  });
 
   final String text;
 
   /// 「你的心愿」这类标签。
   final String label;
+
+  /// 已格式化的发生时间（如 `14:32`）。
+  final String timeLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +34,11 @@ class WishEntryView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: HappySemanticSpacing.labelGap,
         children: <Widget>[
-          Row(
-            spacing: HappySemanticSpacing.labelGap,
-            children: <Widget>[
-              Icon(
-                LucideIcons.quote,
-                size: HappyIconSize.sm,
-                color: scheme.primary,
-              ),
-              Text(
-                label,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            ],
+          TimelineEntryHeader(
+            icon: LucideIcons.quote,
+            iconColor: scheme.primary,
+            label: label,
+            timeLabel: timeLabel,
           ),
           Text(text, style: theme.textTheme.bodyLarge),
         ],
@@ -59,6 +58,7 @@ class NovelEntryView extends StatelessWidget {
     required this.content,
     required this.isStreaming,
     required this.label,
+    required this.timeLabel,
   });
 
   final String content;
@@ -66,6 +66,9 @@ class NovelEntryView extends StatelessWidget {
 
   /// 「你的爽文」这类标签。
   final String label;
+
+  /// 已格式化的**开写**时间。流式追加不会改它——这一条是几点开始写的，就一直是几点。
+  final String timeLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -79,21 +82,11 @@ class NovelEntryView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: HappySemanticSpacing.itemGap,
           children: <Widget>[
-            Row(
-              spacing: HappySemanticSpacing.labelGap,
-              children: <Widget>[
-                Icon(
-                  LucideIcons.bookOpen,
-                  size: HappyIconSize.sm,
-                  color: scheme.tertiary,
-                ),
-                Text(
-                  label,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
+            TimelineEntryHeader(
+              icon: LucideIcons.bookOpen,
+              iconColor: scheme.tertiary,
+              label: label,
+              timeLabel: timeLabel,
             ),
             if (isStreaming)
               HappyStreamingText(text: content, isStreaming: true)

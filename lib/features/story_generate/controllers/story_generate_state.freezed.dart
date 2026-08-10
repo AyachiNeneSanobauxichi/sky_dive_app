@@ -361,30 +361,61 @@ $GeneratedStoryCopyWith<$Res>? get result {
 /// @nodoc
 mixin _$GenerationEntry {
 
-
+ DateTime get createdAt;
+/// Create a copy of GenerationEntry
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GenerationEntryCopyWith<GenerationEntry> get copyWith => _$GenerationEntryCopyWithImpl<GenerationEntry>(this as GenerationEntry, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationEntry);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationEntry&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,createdAt);
 
 @override
 String toString() {
-  return 'GenerationEntry()';
+  return 'GenerationEntry(createdAt: $createdAt)';
 }
 
 
 }
 
 /// @nodoc
-class $GenerationEntryCopyWith<$Res>  {
-$GenerationEntryCopyWith(GenerationEntry _, $Res Function(GenerationEntry) __);
+abstract mixin class $GenerationEntryCopyWith<$Res>  {
+  factory $GenerationEntryCopyWith(GenerationEntry value, $Res Function(GenerationEntry) _then) = _$GenerationEntryCopyWithImpl;
+@useResult
+$Res call({
+ DateTime createdAt
+});
+
+
+
+
+}
+/// @nodoc
+class _$GenerationEntryCopyWithImpl<$Res>
+    implements $GenerationEntryCopyWith<$Res> {
+  _$GenerationEntryCopyWithImpl(this._self, this._then);
+
+  final GenerationEntry _self;
+  final $Res Function(GenerationEntry) _then;
+
+/// Create a copy of GenerationEntry
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? createdAt = null,}) {
+  return _then(_self.copyWith(
+createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,
+  ));
+}
+
 }
 
 
@@ -472,13 +503,13 @@ return novel(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String text)?  wish,TResult Function( ClarificationCard card,  String? answer)?  clarification,TResult Function( StoryOutline outline,  OutlineResolution? resolution,  String? feedback)?  outline,TResult Function( String content,  bool isStreaming)?  novel,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String text,  DateTime createdAt)?  wish,TResult Function( ClarificationCard card,  DateTime createdAt,  String? answer)?  clarification,TResult Function( StoryOutline outline,  DateTime createdAt,  OutlineResolution? resolution,  String? feedback)?  outline,TResult Function( String content,  DateTime createdAt,  bool isStreaming)?  novel,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case GenerationWishEntry() when wish != null:
-return wish(_that.text);case GenerationClarificationEntry() when clarification != null:
-return clarification(_that.card,_that.answer);case GenerationOutlineEntry() when outline != null:
-return outline(_that.outline,_that.resolution,_that.feedback);case GenerationNovelEntry() when novel != null:
-return novel(_that.content,_that.isStreaming);case _:
+return wish(_that.text,_that.createdAt);case GenerationClarificationEntry() when clarification != null:
+return clarification(_that.card,_that.createdAt,_that.answer);case GenerationOutlineEntry() when outline != null:
+return outline(_that.outline,_that.createdAt,_that.resolution,_that.feedback);case GenerationNovelEntry() when novel != null:
+return novel(_that.content,_that.createdAt,_that.isStreaming);case _:
   return orElse();
 
 }
@@ -496,13 +527,13 @@ return novel(_that.content,_that.isStreaming);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String text)  wish,required TResult Function( ClarificationCard card,  String? answer)  clarification,required TResult Function( StoryOutline outline,  OutlineResolution? resolution,  String? feedback)  outline,required TResult Function( String content,  bool isStreaming)  novel,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String text,  DateTime createdAt)  wish,required TResult Function( ClarificationCard card,  DateTime createdAt,  String? answer)  clarification,required TResult Function( StoryOutline outline,  DateTime createdAt,  OutlineResolution? resolution,  String? feedback)  outline,required TResult Function( String content,  DateTime createdAt,  bool isStreaming)  novel,}) {final _that = this;
 switch (_that) {
 case GenerationWishEntry():
-return wish(_that.text);case GenerationClarificationEntry():
-return clarification(_that.card,_that.answer);case GenerationOutlineEntry():
-return outline(_that.outline,_that.resolution,_that.feedback);case GenerationNovelEntry():
-return novel(_that.content,_that.isStreaming);}
+return wish(_that.text,_that.createdAt);case GenerationClarificationEntry():
+return clarification(_that.card,_that.createdAt,_that.answer);case GenerationOutlineEntry():
+return outline(_that.outline,_that.createdAt,_that.resolution,_that.feedback);case GenerationNovelEntry():
+return novel(_that.content,_that.createdAt,_that.isStreaming);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -516,13 +547,13 @@ return novel(_that.content,_that.isStreaming);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String text)?  wish,TResult? Function( ClarificationCard card,  String? answer)?  clarification,TResult? Function( StoryOutline outline,  OutlineResolution? resolution,  String? feedback)?  outline,TResult? Function( String content,  bool isStreaming)?  novel,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String text,  DateTime createdAt)?  wish,TResult? Function( ClarificationCard card,  DateTime createdAt,  String? answer)?  clarification,TResult? Function( StoryOutline outline,  DateTime createdAt,  OutlineResolution? resolution,  String? feedback)?  outline,TResult? Function( String content,  DateTime createdAt,  bool isStreaming)?  novel,}) {final _that = this;
 switch (_that) {
 case GenerationWishEntry() when wish != null:
-return wish(_that.text);case GenerationClarificationEntry() when clarification != null:
-return clarification(_that.card,_that.answer);case GenerationOutlineEntry() when outline != null:
-return outline(_that.outline,_that.resolution,_that.feedback);case GenerationNovelEntry() when novel != null:
-return novel(_that.content,_that.isStreaming);case _:
+return wish(_that.text,_that.createdAt);case GenerationClarificationEntry() when clarification != null:
+return clarification(_that.card,_that.createdAt,_that.answer);case GenerationOutlineEntry() when outline != null:
+return outline(_that.outline,_that.createdAt,_that.resolution,_that.feedback);case GenerationNovelEntry() when novel != null:
+return novel(_that.content,_that.createdAt,_that.isStreaming);case _:
   return null;
 
 }
@@ -534,14 +565,15 @@ return novel(_that.content,_that.isStreaming);case _:
 
 
 class GenerationWishEntry implements GenerationEntry {
-  const GenerationWishEntry({required this.text});
+  const GenerationWishEntry({required this.text, required this.createdAt});
   
 
  final  String text;
+@override final  DateTime createdAt;
 
 /// Create a copy of GenerationEntry
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $GenerationWishEntryCopyWith<GenerationWishEntry> get copyWith => _$GenerationWishEntryCopyWithImpl<GenerationWishEntry>(this, _$identity);
 
@@ -549,16 +581,16 @@ $GenerationWishEntryCopyWith<GenerationWishEntry> get copyWith => _$GenerationWi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationWishEntry&&(identical(other.text, text) || other.text == text));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationWishEntry&&(identical(other.text, text) || other.text == text)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,text);
+int get hashCode => Object.hash(runtimeType,text,createdAt);
 
 @override
 String toString() {
-  return 'GenerationEntry.wish(text: $text)';
+  return 'GenerationEntry.wish(text: $text, createdAt: $createdAt)';
 }
 
 
@@ -567,9 +599,9 @@ String toString() {
 /// @nodoc
 abstract mixin class $GenerationWishEntryCopyWith<$Res> implements $GenerationEntryCopyWith<$Res> {
   factory $GenerationWishEntryCopyWith(GenerationWishEntry value, $Res Function(GenerationWishEntry) _then) = _$GenerationWishEntryCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
- String text
+ String text, DateTime createdAt
 });
 
 
@@ -586,10 +618,11 @@ class _$GenerationWishEntryCopyWithImpl<$Res>
 
 /// Create a copy of GenerationEntry
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? text = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? text = null,Object? createdAt = null,}) {
   return _then(GenerationWishEntry(
 text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
-as String,
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,
   ));
 }
 
@@ -600,15 +633,16 @@ as String,
 
 
 class GenerationClarificationEntry implements GenerationEntry {
-  const GenerationClarificationEntry({required this.card, this.answer});
+  const GenerationClarificationEntry({required this.card, required this.createdAt, this.answer});
   
 
  final  ClarificationCard card;
+@override final  DateTime createdAt;
  final  String? answer;
 
 /// Create a copy of GenerationEntry
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $GenerationClarificationEntryCopyWith<GenerationClarificationEntry> get copyWith => _$GenerationClarificationEntryCopyWithImpl<GenerationClarificationEntry>(this, _$identity);
 
@@ -616,16 +650,16 @@ $GenerationClarificationEntryCopyWith<GenerationClarificationEntry> get copyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationClarificationEntry&&(identical(other.card, card) || other.card == card)&&(identical(other.answer, answer) || other.answer == answer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationClarificationEntry&&(identical(other.card, card) || other.card == card)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.answer, answer) || other.answer == answer));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,card,answer);
+int get hashCode => Object.hash(runtimeType,card,createdAt,answer);
 
 @override
 String toString() {
-  return 'GenerationEntry.clarification(card: $card, answer: $answer)';
+  return 'GenerationEntry.clarification(card: $card, createdAt: $createdAt, answer: $answer)';
 }
 
 
@@ -634,9 +668,9 @@ String toString() {
 /// @nodoc
 abstract mixin class $GenerationClarificationEntryCopyWith<$Res> implements $GenerationEntryCopyWith<$Res> {
   factory $GenerationClarificationEntryCopyWith(GenerationClarificationEntry value, $Res Function(GenerationClarificationEntry) _then) = _$GenerationClarificationEntryCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
- ClarificationCard card, String? answer
+ ClarificationCard card, DateTime createdAt, String? answer
 });
 
 
@@ -653,10 +687,11 @@ class _$GenerationClarificationEntryCopyWithImpl<$Res>
 
 /// Create a copy of GenerationEntry
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? card = null,Object? answer = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? card = null,Object? createdAt = null,Object? answer = freezed,}) {
   return _then(GenerationClarificationEntry(
 card: null == card ? _self.card : card // ignore: cast_nullable_to_non_nullable
-as ClarificationCard,answer: freezed == answer ? _self.answer : answer // ignore: cast_nullable_to_non_nullable
+as ClarificationCard,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,answer: freezed == answer ? _self.answer : answer // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -677,17 +712,18 @@ $ClarificationCardCopyWith<$Res> get card {
 
 
 class GenerationOutlineEntry implements GenerationEntry {
-  const GenerationOutlineEntry({required this.outline, this.resolution, this.feedback});
+  const GenerationOutlineEntry({required this.outline, required this.createdAt, this.resolution, this.feedback});
   
 
  final  StoryOutline outline;
+@override final  DateTime createdAt;
  final  OutlineResolution? resolution;
 /// 用户填的修改意见（[resolution] 为 [OutlineResolution.modified] 时有值）。
  final  String? feedback;
 
 /// Create a copy of GenerationEntry
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $GenerationOutlineEntryCopyWith<GenerationOutlineEntry> get copyWith => _$GenerationOutlineEntryCopyWithImpl<GenerationOutlineEntry>(this, _$identity);
 
@@ -695,16 +731,16 @@ $GenerationOutlineEntryCopyWith<GenerationOutlineEntry> get copyWith => _$Genera
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationOutlineEntry&&(identical(other.outline, outline) || other.outline == outline)&&(identical(other.resolution, resolution) || other.resolution == resolution)&&(identical(other.feedback, feedback) || other.feedback == feedback));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationOutlineEntry&&(identical(other.outline, outline) || other.outline == outline)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.resolution, resolution) || other.resolution == resolution)&&(identical(other.feedback, feedback) || other.feedback == feedback));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,outline,resolution,feedback);
+int get hashCode => Object.hash(runtimeType,outline,createdAt,resolution,feedback);
 
 @override
 String toString() {
-  return 'GenerationEntry.outline(outline: $outline, resolution: $resolution, feedback: $feedback)';
+  return 'GenerationEntry.outline(outline: $outline, createdAt: $createdAt, resolution: $resolution, feedback: $feedback)';
 }
 
 
@@ -713,9 +749,9 @@ String toString() {
 /// @nodoc
 abstract mixin class $GenerationOutlineEntryCopyWith<$Res> implements $GenerationEntryCopyWith<$Res> {
   factory $GenerationOutlineEntryCopyWith(GenerationOutlineEntry value, $Res Function(GenerationOutlineEntry) _then) = _$GenerationOutlineEntryCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
- StoryOutline outline, OutlineResolution? resolution, String? feedback
+ StoryOutline outline, DateTime createdAt, OutlineResolution? resolution, String? feedback
 });
 
 
@@ -732,10 +768,11 @@ class _$GenerationOutlineEntryCopyWithImpl<$Res>
 
 /// Create a copy of GenerationEntry
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? outline = null,Object? resolution = freezed,Object? feedback = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? outline = null,Object? createdAt = null,Object? resolution = freezed,Object? feedback = freezed,}) {
   return _then(GenerationOutlineEntry(
 outline: null == outline ? _self.outline : outline // ignore: cast_nullable_to_non_nullable
-as StoryOutline,resolution: freezed == resolution ? _self.resolution : resolution // ignore: cast_nullable_to_non_nullable
+as StoryOutline,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,resolution: freezed == resolution ? _self.resolution : resolution // ignore: cast_nullable_to_non_nullable
 as OutlineResolution?,feedback: freezed == feedback ? _self.feedback : feedback // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -757,15 +794,16 @@ $StoryOutlineCopyWith<$Res> get outline {
 
 
 class GenerationNovelEntry implements GenerationEntry {
-  const GenerationNovelEntry({required this.content, this.isStreaming = true});
+  const GenerationNovelEntry({required this.content, required this.createdAt, this.isStreaming = true});
   
 
  final  String content;
+@override final  DateTime createdAt;
 @JsonKey() final  bool isStreaming;
 
 /// Create a copy of GenerationEntry
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $GenerationNovelEntryCopyWith<GenerationNovelEntry> get copyWith => _$GenerationNovelEntryCopyWithImpl<GenerationNovelEntry>(this, _$identity);
 
@@ -773,16 +811,16 @@ $GenerationNovelEntryCopyWith<GenerationNovelEntry> get copyWith => _$Generation
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationNovelEntry&&(identical(other.content, content) || other.content == content)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenerationNovelEntry&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,content,isStreaming);
+int get hashCode => Object.hash(runtimeType,content,createdAt,isStreaming);
 
 @override
 String toString() {
-  return 'GenerationEntry.novel(content: $content, isStreaming: $isStreaming)';
+  return 'GenerationEntry.novel(content: $content, createdAt: $createdAt, isStreaming: $isStreaming)';
 }
 
 
@@ -791,9 +829,9 @@ String toString() {
 /// @nodoc
 abstract mixin class $GenerationNovelEntryCopyWith<$Res> implements $GenerationEntryCopyWith<$Res> {
   factory $GenerationNovelEntryCopyWith(GenerationNovelEntry value, $Res Function(GenerationNovelEntry) _then) = _$GenerationNovelEntryCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
- String content, bool isStreaming
+ String content, DateTime createdAt, bool isStreaming
 });
 
 
@@ -810,10 +848,11 @@ class _$GenerationNovelEntryCopyWithImpl<$Res>
 
 /// Create a copy of GenerationEntry
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? content = null,Object? isStreaming = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? content = null,Object? createdAt = null,Object? isStreaming = null,}) {
   return _then(GenerationNovelEntry(
 content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
-as String,isStreaming: null == isStreaming ? _self.isStreaming : isStreaming // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,isStreaming: null == isStreaming ? _self.isStreaming : isStreaming // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

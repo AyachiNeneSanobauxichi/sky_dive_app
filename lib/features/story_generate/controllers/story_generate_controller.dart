@@ -51,7 +51,9 @@ class StoryGenerateController extends _$StoryGenerateController {
     if (text.isEmpty || state.isBusy) return;
 
     state = StoryGenerateState(
-      timeline: <GenerationEntry>[GenerationEntry.wish(text: text)],
+      timeline: <GenerationEntry>[
+        GenerationEntry.wish(text: text, createdAt: DateTime.now()),
+      ],
       phase: GenerationPhase.connecting,
       originalQuery: text,
     );
@@ -212,7 +214,10 @@ class StoryGenerateController extends _$StoryGenerateController {
           sessionId: sessionId,
           timeline: <GenerationEntry>[
             ...state.timeline,
-            GenerationEntry.clarification(card: card),
+            GenerationEntry.clarification(
+              card: card,
+              createdAt: DateTime.now(),
+            ),
           ],
           phase: GenerationPhase.awaitingUser,
           stage: null,
@@ -223,7 +228,10 @@ class StoryGenerateController extends _$StoryGenerateController {
           sessionId: sessionId,
           timeline: <GenerationEntry>[
             ...state.timeline,
-            GenerationEntry.outline(outline: outline),
+            GenerationEntry.outline(
+              outline: outline,
+              createdAt: DateTime.now(),
+            ),
           ],
           phase: GenerationPhase.awaitingUser,
           stage: null,
@@ -234,7 +242,7 @@ class StoryGenerateController extends _$StoryGenerateController {
           sessionId: sessionId,
           timeline: <GenerationEntry>[
             ...state.timeline,
-            const GenerationEntry.novel(content: ""),
+            GenerationEntry.novel(content: "", createdAt: DateTime.now()),
           ],
           phase: GenerationPhase.streaming,
           stage: null,
@@ -351,7 +359,9 @@ class StoryGenerateController extends _$StoryGenerateController {
     );
 
     if (index < 0) {
-      timeline.add(GenerationEntry.novel(content: delta));
+      timeline.add(
+        GenerationEntry.novel(content: delta, createdAt: DateTime.now()),
+      );
       return timeline;
     }
     final current = timeline[index] as GenerationNovelEntry;
@@ -382,7 +392,13 @@ class StoryGenerateController extends _$StoryGenerateController {
       (entry) => entry is GenerationNovelEntry,
     );
     if (index < 0) {
-      timeline.add(GenerationEntry.novel(content: content, isStreaming: false));
+      timeline.add(
+        GenerationEntry.novel(
+          content: content,
+          createdAt: DateTime.now(),
+          isStreaming: false,
+        ),
+      );
       return timeline;
     }
     timeline[index] = (timeline[index] as GenerationNovelEntry).copyWith(

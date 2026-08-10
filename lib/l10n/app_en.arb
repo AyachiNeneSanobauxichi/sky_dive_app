@@ -269,9 +269,62 @@
   "@storyGenerateStart": {
     "description": "Primary action that kicks off generation from the wish input"
   },
-  "storyGenerateThinking": "Reading what you wrote…",
-  "@storyGenerateThinking": {
-    "description": "Status label shown while waiting for the first streamed token"
+  "storyGenerateWaitReading": "Reading what you wrote…",
+  "@storyGenerateWaitReading": {
+    "description": "Waiting phrase, understanding stage: the AI is taking in the user's story"
+  },
+  "storyGenerateWaitFeeling": "Sitting with how that felt…",
+  "@storyGenerateWaitFeeling": {
+    "description": "Waiting phrase, understanding stage: the AI is weighing the emotion behind the wish"
+  },
+  "storyGenerateWaitAngle": "Looking for the best angle…",
+  "@storyGenerateWaitAngle": {
+    "description": "Waiting phrase, understanding stage: the AI is picking the most satisfying take"
+  },
+  "storyGenerateWaitQuestion": "Thinking of a question or two…",
+  "@storyGenerateWaitQuestion": {
+    "description": "Waiting phrase, understanding stage: the AI may ask a clarifying question next"
+  },
+  "storyGenerateWaitFrame": "Building the story's frame…",
+  "@storyGenerateWaitFrame": {
+    "description": "Waiting phrase, outlining stage: the AI is drafting the structure"
+  },
+  "storyGenerateWaitBeats": "Pacing out the scenes…",
+  "@storyGenerateWaitBeats": {
+    "description": "Waiting phrase, outlining stage: the AI is arranging the beats"
+  },
+  "storyGenerateWaitTwist": "Designing the twist…",
+  "@storyGenerateWaitTwist": {
+    "description": "Waiting phrase, outlining stage: the AI is planning the turning point"
+  },
+  "storyGenerateWaitEnding": "Finding an ending that lands…",
+  "@storyGenerateWaitEnding": {
+    "description": "Waiting phrase, outlining stage: the AI is choosing the payoff"
+  },
+  "storyGenerateWaitOpening": "Choosing the opening line…",
+  "@storyGenerateWaitOpening": {
+    "description": "Waiting phrase, writing stage: the AI is picking the first sentence"
+  },
+  "storyGenerateWaitScene": "Setting the scene…",
+  "@storyGenerateWaitScene": {
+    "description": "Waiting phrase, writing stage: the AI is describing the setting"
+  },
+  "storyGenerateWaitLines": "Polishing the dialogue…",
+  "@storyGenerateWaitLines": {
+    "description": "Waiting phrase, writing stage: the AI is working on the characters' lines"
+  },
+  "storyGenerateWaitPolish": "Almost there — tightening it up…",
+  "@storyGenerateWaitPolish": {
+    "description": "Waiting phrase, writing stage: the AI is wrapping up"
+  },
+  "storyGenerateElapsed": "{seconds}s so far",
+  "@storyGenerateElapsed": {
+    "description": "Elapsed wait time shown under the waiting phrase once the wait passes a few seconds",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
   },
   "storyGenerateStop": "Stop generating",
   "@storyGenerateStop": {
@@ -288,6 +341,10 @@
   "storyGenerateNovelLabel": "Your story",
   "@storyGenerateNovelLabel": {
     "description": "Label on the timeline entry holding the generated story body"
+  },
+  "storyGenerateClarifyLabel": "A quick question",
+  "@storyGenerateClarifyLabel": {
+    "description": "Label on the timeline entry holding the AI's clarification question"
   },
   "storyGenerateClarifySubmit": "Send answer",
   "@storyGenerateClarifySubmit": {
