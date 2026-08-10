@@ -25,10 +25,18 @@ abstract class StoryScriptPageDto with _$StoryScriptPageDto {
       _$StoryScriptPageDtoFromJson(json);
 
   /// [favoriteIds] 是仓库另外探来的已收藏 id 集合（列表接口不带收藏态）。
-  StoryScriptPage toEntity(Set<String> favoriteIds) => StoryScriptPage(
+  ///
+  /// [allFavorited] 给收藏端点用：那一页的每一条按定义都是已收藏的，不必再拿
+  /// 探来的集合去对——探测只取了前 100 条，收藏多的用户会有几条被误标成未收藏。
+  StoryScriptPage toEntity({
+    Set<String> favoriteIds = const <String>{},
+    bool allFavorited = false,
+  }) => StoryScriptPage(
     scripts: <StoryScript>[
       for (final record in records)
-        record.toEntity(isFavorited: favoriteIds.contains(record.id)),
+        record.toEntity(
+          isFavorited: allFavorited || favoriteIds.contains(record.id),
+        ),
     ],
     current: current,
     // total 缺失（为 0）但确实拿到了记录时，退化成"至少有这么多条"，

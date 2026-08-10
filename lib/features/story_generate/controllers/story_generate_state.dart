@@ -101,52 +101,6 @@ enum GenerationPhase {
   failed,
 }
 
-/// 时间线上的一条。
-///
-/// 用 sealed union 而不是「一个带 kind 字段的结构体」：UI 要对每种条目渲染完全不同的
-/// 组件，穷尽匹配能保证新增类型时不会漏掉渲染分支。
-///
-/// 每条都带 [GenerationEntry.createdAt]（条目**诞生**的时刻，不是更新时刻）：
-/// 时间戳一旦生成就不再变，正文条目在流式追加时靠 `copyWith` 原样带着它，
-/// 所以显示的是"这段是几点开始写的"，不会每来一个 delta 就跳一次表。
-@freezed
-sealed class GenerationEntry with _$GenerationEntry {
-  /// 用户的心愿，时间线第一条。
-  const factory GenerationEntry.wish({
-    required String text,
-    required DateTime createdAt,
-  }) = GenerationWishEntry;
-
-  /// 澄清卡。[answer] 非空表示已作答、卡片收起为摘要。
-  const factory GenerationEntry.clarification({
-    required ClarificationCard card,
-    required DateTime createdAt,
-    String? answer,
-  }) = GenerationClarificationEntry;
-
-  /// 大纲卡。[resolution] 非空表示已决定（确认或提了修改意见）。
-  const factory GenerationEntry.outline({
-    required StoryOutline outline,
-    required DateTime createdAt,
-    OutlineResolution? resolution,
-
-    /// 用户填的修改意见（[resolution] 为 [OutlineResolution.modified] 时有值）。
-    String? feedback,
-  }) = GenerationOutlineEntry;
-
-  /// 正文。生成中 [isStreaming] 为 true，末尾显示光标。
-  const factory GenerationEntry.novel({
-    required String content,
-    required DateTime createdAt,
-    @Default(true) bool isStreaming,
-  }) = GenerationNovelEntry;
-}
-
-/// 用户对大纲的处置。
-enum OutlineResolution {
-  /// 确认，直接开写。
-  confirmed,
-
-  /// 提了修改意见，让 AI 重出大纲。
-  modified,
-}
+// [GenerationEntry] / [OutlineResolution] 已移到 `domain/generation_entry.dart`
+// ——回放（`story-generate.api.md` v4）由数据层直接产出时间线条目，模型留在这里
+// 会让数据层反过来依赖控制器层。本文件通过 `domain/index.dart` 拿到它们。

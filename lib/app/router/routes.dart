@@ -82,8 +82,10 @@ final List<RouteBase> appRoutes = [
   GoRoute(
     name: RouteName.storyGenerate,
     path: RoutePath.storyGenerate,
+    // `?conversationId=...` 则不发起生成，而是回放那一次创作（只读）。
     builder: (context, state) => StoryGenerateScreen(
       seed: state.uri.queryParameters[RouteQuery.generateSeed],
+      conversationId: state.uri.queryParameters[RouteQuery.conversationId],
     ),
   ),
   // 已生成故事的全量列表。同样在 shell 外：翻长列表时底部再顶一条 tab 栏是浪费高度，
@@ -92,6 +94,15 @@ final List<RouteBase> appRoutes = [
     name: RouteName.storyHistory,
     path: RoutePath.storyHistory,
     builder: (context, state) => const StoryHistoryScreen(),
+  ),
+  // 单篇爽文详情。`?id=...` 用 query 而不是 `extra`：详情要能被深链接直达，
+  // 也要能在热重启后恢复——`extra` 两样都做不到。
+  GoRoute(
+    name: RouteName.storyHistoryDetail,
+    path: RoutePath.storyHistoryDetail,
+    builder: (context, state) => StoryDetailScreen(
+      scriptId: state.uri.queryParameters[RouteQuery.scriptId] ?? "",
+    ),
   ),
   GoRoute(
     name: RouteName.userProfileSettings,

@@ -21,9 +21,13 @@ StoryHistoryRepository storyHistoryRepository(Ref ref) =>
 /// 混在一起的话，翻第 3 页失败会把已经看到的两页一起换成错误页——用户读到一半
 /// 的列表凭什么因为下一页没拿到就消失。
 ///
+/// ## 为什么按分类分家（family）
+/// 每个分类**各自维护自己的分页与滚动位置**，切回来不重新加载、不跳回顶部。
+/// 共用一份状态的话，切一次分类就得把已翻的几页丢掉重来。
+///
 /// ## keepAlive
-/// story 首页和历史全量页共用本控制器：从首页点进来是**秒开**，不会再转一次圈。
-/// 两处看到的收藏/删除结果也天然一致，不存在"删了回到首页还在"。
+/// story 首页和历史全量页的「全部」分类共用同一个实例：从首页点进来是**秒开**，
+/// 不会再转一次圈；两处看到的收藏/删除结果也天然一致，不存在"删了回到首页还在"。
 @Riverpod(keepAlive: true)
 class StoryHistoryController extends _$StoryHistoryController {
   StoryHistoryRepository get _repo => ref.read(storyHistoryRepositoryProvider);
@@ -39,15 +43,35 @@ class StoryHistoryController extends _$StoryHistoryController {
   Failure? loadMoreFailure;
 
   @override
-  Future<StoryScriptPage> build() => _fetchFirstPage();
+  Future<StoryScriptPage> build(StoryScriptFilter filter) => _fetchFirstPage();
 
   Future<StoryScriptPage> _fetchFirstPage() async {
-    // 收藏探测失败不该拖垮整页历史：拿不到就当没有收藏，星标全暗，
-    // 点一下仍然能正确切换。
-    _favoriteIds = await _repo.fetchFavoriteIds().onError(
-      (_, _) => const <String>{},
+    // 收藏分类不必探：那个端点返回的每一条按定义都是已收藏。
+    if (!filter.isFavoriteOnly) {
+      // 收藏探测失败不该拖垮整页历史：拿不到就当没有收藏，星标全暗，
+      // 点一下仍然能正确切换。
+      _favoriteIds = await _repo.fetchFavoriteIds().onError(
+        (_, _) => const <String>{},
+      );
+    }
+    return _repo.fetchPage(
+      current: 1,
+      filter: filter,
+      favoriteIds: _favoriteIds,
     );
-    return _repo.fetchPage(current: 1, favoriteIds: _favoriteIds);
+  }
+
+  /// 作废其它分类的缓存。
+  ///
+  /// 收藏 / 删除只改得动**当前**这份列表，其它分类还留着旧数据：在「全部」里收藏了
+  /// 一篇，切到「收藏」却看不见它，会让人以为没收藏上。作废之后它们下次被读到时
+  /// 才重新拉，没人看的分类不会白白发请求。
+  void _invalidateOtherFilters() {
+    for (final other in StoryScriptFilter.values) {
+      if (other != filter) {
+        ref.invalidate(storyHistoryControllerProvider(other));
+      }
+    }
   }
 
   /// 下拉刷新 / 错误重试：回到第一页。
@@ -75,6 +99,7 @@ class StoryHistoryController extends _$StoryHistoryController {
     try {
       final next = await _repo.fetchPage(
         current: page.current + 1,
+        filter: filter,
         favoriteIds: _favoriteIds,
       );
       // 拼接时按 id 去重：翻页期间有人新写了一篇，后端的偏移会整体后移一位，
@@ -103,21 +128,61 @@ class StoryHistoryController extends _$StoryHistoryController {
   ///
   /// 乐观更新：点下去立刻变。收藏是个轻动作，等一次网络往返才变星标会让人以为没点上，
   /// 然后再点一次——反而切回去了。失败回滚并把错误抛给调用方提示。
+  ///
+  /// 在「收藏」分类里取消收藏时，这一条**直接从列表里抽走**：它已经不属于这个列表了，
+  /// 留一颗暗星在收藏页里只会让人反复确认"到底取消没有"。
   Future<void> toggleFavorite(String id) async {
     final page = state.value;
     if (page == null) return;
-    final target = page.scripts.where((s) => s.id == id).firstOrNull;
-    if (target == null) return;
+    final index = page.scripts.indexWhere((script) => script.id == id);
+    if (index < 0) return;
+    final target = page.scripts[index];
+    final next = !target.isFavorited;
+    final dropsOut = filter.isFavoriteOnly && !next;
 
-    _applyFavorite(id, !target.isFavorited);
+    if (dropsOut) {
+      _removeAt(index);
+    } else {
+      _applyFavorite(id, next);
+    }
+
     try {
       final result = await _repo.toggleFavorite(id);
       // 以服务端返回的为准，不信本地取反：并发点两下时两者会对不上。
-      _applyFavorite(id, result);
+      if (dropsOut && result) {
+        _restore(index, target.copyWith(isFavorited: true));
+      } else if (!dropsOut) {
+        _applyFavorite(id, result);
+      }
+      _invalidateOtherFilters();
     } on Object {
-      _applyFavorite(id, target.isFavorited);
+      if (dropsOut) {
+        _restore(index, target);
+      } else {
+        _applyFavorite(id, target.isFavorited);
+      }
       rethrow;
     }
+  }
+
+  /// 把在**别处**（详情页）切好的收藏结果同步进这份列表，不发请求。
+  ///
+  /// 详情页不知道自己是从哪个分类点进来的，所以它切完收藏会挨个通知已加载的分类。
+  /// 有这个方法，退回列表时星标已经是对的，不必整页重刷。
+  void syncFavorite(String id, {required bool isFavorited}) {
+    final page = state.value;
+    if (page == null) return;
+    final index = page.scripts.indexWhere((script) => script.id == id);
+    if (index < 0) {
+      // 收藏分类里没有这一条却刚刚被收藏 → 这份缓存已经不全了，作废让它下次重拉。
+      if (filter.isFavoriteOnly && isFavorited) ref.invalidateSelf();
+      return;
+    }
+    if (filter.isFavoriteOnly && !isFavorited) {
+      _removeAt(index);
+      return;
+    }
+    _applyFavorite(id, isFavorited);
   }
 
   void _applyFavorite(String id, bool isFavorited) {
@@ -145,33 +210,45 @@ class StoryHistoryController extends _$StoryHistoryController {
   Future<void> deleteScript(String id) async {
     final page = state.value;
     if (page == null) return;
-    final index = page.scripts.indexWhere((s) => s.id == id);
+    final index = page.scripts.indexWhere((script) => script.id == id);
     if (index < 0) return;
     final removed = page.scripts[index];
 
+    _removeAt(index);
+    try {
+      await _repo.deleteScript(id);
+      _invalidateOtherFilters();
+    } on Object {
+      _restore(index, removed);
+      rethrow;
+    }
+  }
+
+  /// 抽走一条，总数跟着减一。
+  ///
+  /// 不减 total 的话 `hasMore` 会一直为 true，滚到底会反复去拉一页空的。
+  void _removeAt(int index) {
+    final page = state.value;
+    if (page == null || index < 0 || index >= page.scripts.length) return;
     state = AsyncData<StoryScriptPage>(
       page.copyWith(
         scripts: <StoryScript>[...page.scripts]..removeAt(index),
-        // 总数跟着减一，否则 hasMore 会一直是 true，滚到底反复去拉空的下一页。
         total: page.total > 0 ? page.total - 1 : 0,
       ),
     );
+  }
 
-    try {
-      await _repo.deleteScript(id);
-    } on Object {
-      final current = state.value;
-      if (current != null) {
-        state = AsyncData<StoryScriptPage>(
-          current.copyWith(
-            scripts: <StoryScript>[...current.scripts]
-              ..insert(index.clamp(0, current.scripts.length), removed),
-            total: current.total + 1,
-          ),
-        );
-      }
-      rethrow;
-    }
+  /// 把抽走的那条放回原位（越界时贴到末尾）。
+  void _restore(int index, StoryScript script) {
+    final page = state.value;
+    if (page == null) return;
+    state = AsyncData<StoryScriptPage>(
+      page.copyWith(
+        scripts: <StoryScript>[...page.scripts]
+          ..insert(index.clamp(0, page.scripts.length), script),
+        total: page.total + 1,
+      ),
+    );
   }
 }
 

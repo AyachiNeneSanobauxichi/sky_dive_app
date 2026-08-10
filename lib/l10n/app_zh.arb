@@ -7,6 +7,7 @@
   "commonInDevelopment": "开发中",
   "commonCancel": "取消",
   "commonRetry": "重试",
+  "commonBack": "返回",
 
   "authPhoneHint": "手机号",
   "authPhoneRequired": "请输入手机号",
@@ -80,6 +81,40 @@
   "storyHistoryDeleteConfirm": "删除",
   "storyHistoryDeleted": "已删除",
   "storyHistoryOpenAction": "看看写过什么",
+  "storyHistoryEntry": "历史",
+  "storyHistoryTimeToday": "今天",
+  "storyHistoryTimeYesterday": "昨天",
+  "storyHistoryTimeDaysAgo": "{days} 天前",
+  "@storyHistoryTimeDaysAgo": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "storyHistoryFilterAll": "全部",
+  "storyHistoryFilterShort": "短篇",
+  "storyHistoryFilterMedium": "中篇",
+  "storyHistoryFilterLong": "长篇",
+  "storyHistoryFilterFavorite": "收藏",
+  "storyHistoryEmptyLengthTitle": "还没有{length}",
+  "@storyHistoryEmptyLengthTitle": {
+    "placeholders": { "length": { "type": "String" } }
+  },
+  "storyHistoryEmptyLengthBody": "换个分类看看，或者现在就写一篇{length}。",
+  "@storyHistoryEmptyLengthBody": {
+    "placeholders": { "length": { "type": "String" } }
+  },
+  "storyHistoryEmptyFavoriteTitle": "还没有收藏",
+  "storyHistoryEmptyFavoriteBody": "在任意一篇卡片右上角点一下星星，它就会留在这里。",
+  "storyHistoryEmptyGoWrite": "去写一篇",
+  "storyDetailTitle": "爽文详情",
+  "storyDetailWishLabel": "你的心愿",
+  "storyDetailLoadFailed": "这篇没打开，检查网络后重试",
+  "storyDetailEmptyContent": "这一篇没有留下正文，可能是当时没写完。",
+  "storyDetailContinue": "继续编辑",
+  "storyDetailContinueUnavailable": "这篇是早期创作，没留下对话记录，接不上了",
+  "storyGenerateReplayTitle": "创作回放",
+  "storyGenerateReplayEmpty": "这次创作没有留下对话记录。",
+  "storyGenerateReplayFailed": "回放没加载出来，检查网络后重试",
+  "storyGenerateReplayComingSoon": "接着改写、续写马上就来",
+  "storyGenerateOutlineRevised": "这一版没被采用，AI 按意见重出了大纲",
 
   "storyGenerateTitle": "生成爽文",
   "storyGenerateIdleTitle": "想把哪件事写成故事？",

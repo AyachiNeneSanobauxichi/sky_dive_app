@@ -22,6 +22,10 @@
   "@commonRetry": {
     "description": "Generic retry action for failed requests"
   },
+  "commonBack": "Back",
+  "@commonBack": {
+    "description": "Generic action that returns to the previous screen"
+  },
 
   "authPhoneHint": "Phone number",
   "@authPhoneHint": {
@@ -299,6 +303,111 @@
   "storyHistoryOpenAction": "See what you've written",
   "@storyHistoryOpenAction": {
     "description": "Tooltip on the generate screen's toolbar icon that opens the story history"
+  },
+  "storyHistoryEntry": "History",
+  "@storyHistoryEntry": {
+    "description": "Label of the header shortcut on the story home screen that opens the history page"
+  },
+  "storyHistoryTimeToday": "Today",
+  "@storyHistoryTimeToday": {
+    "description": "Relative timestamp on a history card for a story created today"
+  },
+  "storyHistoryTimeYesterday": "Yesterday",
+  "@storyHistoryTimeYesterday": {
+    "description": "Relative timestamp on a history card for a story created yesterday"
+  },
+  "storyHistoryTimeDaysAgo": "{days} days ago",
+  "@storyHistoryTimeDaysAgo": {
+    "description": "Relative timestamp on a history card for a story created 2–6 days ago",
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "storyHistoryFilterAll": "All",
+  "@storyHistoryFilterAll": {
+    "description": "History filter chip that shows every story"
+  },
+  "storyHistoryFilterShort": "Short",
+  "@storyHistoryFilterShort": {
+    "description": "History filter chip and length badge for short stories"
+  },
+  "storyHistoryFilterMedium": "Medium",
+  "@storyHistoryFilterMedium": {
+    "description": "History filter chip and length badge for medium-length stories"
+  },
+  "storyHistoryFilterLong": "Long",
+  "@storyHistoryFilterLong": {
+    "description": "History filter chip and length badge for long stories"
+  },
+  "storyHistoryFilterFavorite": "Favorites",
+  "@storyHistoryFilterFavorite": {
+    "description": "History filter chip that only shows favorited stories"
+  },
+  "storyHistoryEmptyLengthTitle": "No {length} stories yet",
+  "@storyHistoryEmptyLengthTitle": {
+    "description": "Empty state title of a length filter tab in history",
+    "placeholders": { "length": { "type": "String" } }
+  },
+  "storyHistoryEmptyLengthBody": "Try another tab, or write a {length} story right now.",
+  "@storyHistoryEmptyLengthBody": {
+    "description": "Empty state body of a length filter tab in history",
+    "placeholders": { "length": { "type": "String" } }
+  },
+  "storyHistoryEmptyFavoriteTitle": "Nothing saved yet",
+  "@storyHistoryEmptyFavoriteTitle": {
+    "description": "Empty state title of the favorites tab in history"
+  },
+  "storyHistoryEmptyFavoriteBody": "Tap the star at the top right of any card and it will stay here.",
+  "@storyHistoryEmptyFavoriteBody": {
+    "description": "Empty state body of the favorites tab, explaining how to favorite a story"
+  },
+  "storyHistoryEmptyGoWrite": "Write one now",
+  "@storyHistoryEmptyGoWrite": {
+    "description": "Empty state action that takes the user back to the story creation screen"
+  },
+  "storyDetailTitle": "Story",
+  "@storyDetailTitle": {
+    "description": "App bar title of the story detail page before the real title is loaded"
+  },
+  "storyDetailWishLabel": "Your wish",
+  "@storyDetailWishLabel": {
+    "description": "Label above the original wish text on the story detail page"
+  },
+  "storyDetailLoadFailed": "Couldn't open this story. Check your connection and retry.",
+  "@storyDetailLoadFailed": {
+    "description": "Error message on the story detail page when loading fails"
+  },
+  "storyDetailEmptyContent": "This one has no text saved — it may never have finished.",
+  "@storyDetailEmptyContent": {
+    "description": "Shown on the story detail page when the story has no body text"
+  },
+  "storyDetailContinue": "Keep editing",
+  "@storyDetailContinue": {
+    "description": "Primary action on the story detail page that reopens the writing conversation"
+  },
+  "storyDetailContinueUnavailable": "This one is from an early version with no conversation saved.",
+  "@storyDetailContinueUnavailable": {
+    "description": "Explains why the keep-editing action is disabled for legacy stories"
+  },
+  "storyGenerateReplayTitle": "Replay",
+  "@storyGenerateReplayTitle": {
+    "description": "App bar title when the generate screen replays a past conversation"
+  },
+  "storyGenerateReplayEmpty": "No conversation was saved for this story.",
+  "@storyGenerateReplayEmpty": {
+    "description": "Empty state on the generate screen when a replayed conversation has nothing to show"
+  },
+  "storyGenerateReplayFailed": "Couldn't load the replay. Check your connection and retry.",
+  "@storyGenerateReplayFailed": {
+    "description": "Error message on the generate screen when loading a replay fails"
+  },
+  "storyGenerateReplayComingSoon": "Rewriting and continuing are coming soon",
+  "@storyGenerateReplayComingSoon": {
+    "description": "Bottom bar note during replay explaining that editing is not available yet"
+  },
+  "storyGenerateOutlineRevised": "Replaced — the AI reworked the outline from your notes",
+  "@storyGenerateOutlineRevised": {
+    "description": "Summary shown on a replayed outline card that was superseded by a later version"
   },
 
   "storyGenerateTitle": "Writing your story",

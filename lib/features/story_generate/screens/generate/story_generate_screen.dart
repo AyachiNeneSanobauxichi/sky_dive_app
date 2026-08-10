@@ -7,6 +7,7 @@ import "package:happy_os/app/router/index.dart";
 import "package:happy_os/core/error/index.dart";
 import "package:happy_os/core/theme/index.dart";
 import "package:happy_os/features/story_generate/controllers/index.dart";
+import "package:happy_os/features/story_generate/domain/index.dart";
 import "package:happy_os/features/story_generate/widgets/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
 import "package:happy_os/shared/utils/index.dart";
@@ -31,11 +32,17 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 /// 进行中时所有输入入口一律禁用（卡片按钮传 `enabled: false`），底部主行动变成
 /// 「停止生成」。生成中返回会二次确认——退出就等于丢掉这次生成。
 class StoryGenerateScreen extends ConsumerStatefulWidget {
-  const StoryGenerateScreen({super.key, this.seed});
+  const StoryGenerateScreen({super.key, this.seed, this.conversationId});
 
   /// 从故事页带来的心愿文本。有它就**自动开始生成**，不让用户再点一次；
   /// 没有则落到心愿输入态。
   final String? seed;
+
+  /// 要回放的会话 id（从爽文详情页的「继续编辑」进来）。
+  ///
+  /// 有它就进**回放模式**：不发起任何生成，把那次创作的完整过程只读展示出来。
+  /// 与 [seed] 互斥，同时带时以它为准——回放是明确的意图，seed 只是预填一句话。
+  final String? conversationId;
 
   @override
   ConsumerState<StoryGenerateScreen> createState() =>
@@ -49,9 +56,16 @@ class _StoryGenerateScreenState extends ConsumerState<StoryGenerateScreen> {
   int _lastEntryCount = 0;
   int _lastContentLength = 0;
 
+  /// 回放模式下要看的会话 id（空串视作没有）。
+  String get _replayId => widget.conversationId?.trim() ?? "";
+
+  bool get _isReplay => _replayId.isNotEmpty;
+
   @override
   void initState() {
     super.initState();
+    // 回放不发起生成。
+    if (_isReplay) return;
     final seed = widget.seed?.trim() ?? "";
     if (seed.isEmpty) return;
     // 带着心愿进来就直接开跑。放到首帧之后：build 期间不能改 provider 状态。
@@ -142,9 +156,16 @@ class _StoryGenerateScreenState extends ConsumerState<StoryGenerateScreen> {
     return leave ?? false;
   }
 
+  /// 条目时间戳的格式化器。在页面层按 locale 建一次，不要每条目各建一个
+  /// ——`DateFormat` 的构造要读 locale 数据，不便宜。
+  DateFormat _timeFormat(BuildContext context) =>
+      DateFormat.Hm(Localizations.localeOf(context).toLanguageTag());
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    if (_isReplay) return _buildReplay(l10n);
+
     final state = ref.watch(storyGenerateControllerProvider);
     final controller = ref.read(storyGenerateControllerProvider.notifier);
 
@@ -201,15 +222,42 @@ class _StoryGenerateScreenState extends ConsumerState<StoryGenerateScreen> {
                           l10n: l10n,
                         )
                       : _Timeline(
-                          state: state,
-                          controller: controller,
+                          entries: state.timeline,
                           scrollController: _scrollController,
                           l10n: l10n,
                           // 时间格式跟着 locale 走：中文 24 小时制、英文按系统习惯，
                           // 硬编码 "HH:mm" 在部分英文区会显得别扭。
-                          timeFormat: DateFormat.Hm(
-                            Localizations.localeOf(context).toLanguageTag(),
-                          ),
+                          timeFormat: _timeFormat(context),
+                          isAwaitingUser: state.isAwaitingUser,
+                          onAnswerClarification: controller.answerClarification,
+                          onConfirmOutline: controller.confirmOutline,
+                          onModifyOutline: controller.modifyOutline,
+                          trailing: <Widget>[
+                            // 进行态与失败卡各自带**固定 key**：两者在同一个位置交替
+                            // 出现，没有 key 时 Flutter 会试图就地更新，带 ticker 的
+                            // 子树最容易在这一步出问题。
+                            if (state.phase == GenerationPhase.connecting)
+                              GenerationStatusIndicator(
+                                key: const ValueKey<String>("status-thinking"),
+                                phrases: waitingPhrasesFor(
+                                  l10n,
+                                  state.waitStage,
+                                ),
+                                elapsedLabel: l10n.storyGenerateElapsed,
+                              ),
+                            if (state.failure case final Failure failure)
+                              HappyRetryCard(
+                                key: const ValueKey<String>("status-retry"),
+                                message: state.canResume
+                                    ? l10n.storyGenerateResumeHint
+                                    : failure.displayMessage,
+                                retryLabel: state.canResume
+                                    ? l10n.storyGenerateResume
+                                    : l10n.commonRetry,
+                                onRetry: controller.retry,
+                                isRetrying: state.isBusy,
+                              ),
+                          ],
                         ),
                 ),
                 _BottomBar(state: state, controller: controller, l10n: l10n),
@@ -217,6 +265,101 @@ class _StoryGenerateScreenState extends ConsumerState<StoryGenerateScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// 回放模式：只读地重演一次已完成的创作（`story-generate.md` v4）。
+  ///
+  /// 这里**完全不碰生成控制器**——回放和生成是两件事，watch 一下就会把那个
+  /// provider 建起来，页面返回时又要考虑它的清理，凭空多一份状态。
+  Widget _buildReplay(AppLocalizations l10n) {
+    final replay = ref.watch(conversationReplayProvider(_replayId));
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.storyGenerateReplayTitle)),
+      body: HappyStarfieldBackground(
+        parallax: false,
+        child: SafeArea(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: switch (replay) {
+                  AsyncData(:final value) when value.isEmpty => HappyEmptyState(
+                    icon: LucideIcons.messagesSquare,
+                    title: l10n.storyGenerateReplayTitle,
+                    description: l10n.storyGenerateReplayEmpty,
+                    actionLabel: l10n.commonBack,
+                    onAction: () => Navigator.of(context).maybePop(),
+                  ),
+                  AsyncData(:final value) => _Timeline(
+                    entries: value,
+                    scrollController: _scrollController,
+                    l10n: l10n,
+                    timeFormat: _timeFormat(context),
+                  ),
+                  AsyncError(:final error) => ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(
+                      HappySemanticSpacing.screenPadding,
+                    ),
+                    children: <Widget>[
+                      const SizedBox(height: HappySpacing.s40),
+                      HappyRetryCard(
+                        message: error is Failure
+                            ? error.displayMessage
+                            : l10n.storyGenerateReplayFailed,
+                        retryLabel: l10n.commonRetry,
+                        onRetry: () =>
+                            ref.invalidate(conversationReplayProvider(_replayId)),
+                      ),
+                    ],
+                  ),
+                  _ => const Center(child: CircularProgressIndicator()),
+                },
+              ),
+              // 底部不放按钮：这一期还接不上续写，给一个按钮点了什么都不会发生
+              // 比没有按钮更糟。用一行说明把"为什么这里不能写"说清楚。
+              _ReplayNote(label: l10n.storyGenerateReplayComingSoon),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 回放页底部的说明行。
+class _ReplayNote extends StatelessWidget {
+  const _ReplayNote({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(HappySemanticSpacing.screenPadding),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: HappySemanticSpacing.labelGap,
+        children: <Widget>[
+          Icon(
+            LucideIcons.sparkles,
+            size: HappyIconSize.sm,
+            color: scheme.onSurfaceVariant,
+          ),
+          Flexible(
+            child: Text(
+              label,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -275,23 +418,40 @@ class _IdleView extends StatelessWidget {
 }
 
 /// 时间线本体。
+///
+/// 生成与回放**共用这一个渲染器**：用户在回放里看到的，就该是当初生成时看到的那一页，
+/// 只是不再有进行态、卡片也不可交互（[isAwaitingUser] 为 false，回调不传）。
+/// 各写一套的话，两边的长相迟早会漂开。
 class _Timeline extends StatelessWidget {
   const _Timeline({
-    required this.state,
-    required this.controller,
+    required this.entries,
     required this.scrollController,
     required this.l10n,
     required this.timeFormat,
+    this.isAwaitingUser = false,
+    this.onAnswerClarification,
+    this.onConfirmOutline,
+    this.onModifyOutline,
+    this.trailing = const <Widget>[],
   });
 
-  final StoryGenerateState state;
-  final StoryGenerateController controller;
+  final List<GenerationEntry> entries;
   final ScrollController scrollController;
   final AppLocalizations l10n;
 
   /// 条目时间戳的格式化器。在页面层按 locale 建一次，不要每条目各建一个
   /// ——`DateFormat` 的构造要读 locale 数据，不便宜。
   final DateFormat timeFormat;
+
+  /// 是否轮到用户作答。false 时卡片上的输入与按钮一律禁用（回放恒为 false）。
+  final bool isAwaitingUser;
+
+  final ValueChanged<String>? onAnswerClarification;
+  final VoidCallback? onConfirmOutline;
+  final ValueChanged<String>? onModifyOutline;
+
+  /// 挂在时间线末尾的东西（进行态指示器、失败重试卡）。回放没有这些。
+  final List<Widget> trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -306,28 +466,9 @@ class _Timeline extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: HappySemanticSpacing.itemGap,
         children: <Widget>[
-          for (final (index, entry) in state.timeline.indexed)
+          for (final (index, entry) in entries.indexed)
             KeyedSubtree(key: ValueKey<int>(index), child: _entryView(entry)),
-          // 进行态与失败卡各自带**固定 key**：两者在同一个位置交替出现，没有 key
-          // 时 Flutter 会试图就地更新，带 ticker 的子树最容易在这一步出问题。
-          if (state.phase == GenerationPhase.connecting)
-            GenerationStatusIndicator(
-              key: const ValueKey<String>("status-thinking"),
-              phrases: waitingPhrasesFor(l10n, state.waitStage),
-              elapsedLabel: l10n.storyGenerateElapsed,
-            ),
-          if (state.failure case final Failure failure)
-            HappyRetryCard(
-              key: const ValueKey<String>("status-retry"),
-              message: state.canResume
-                  ? l10n.storyGenerateResumeHint
-                  : failure.displayMessage,
-              retryLabel: state.canResume
-                  ? l10n.storyGenerateResume
-                  : l10n.commonRetry,
-              onRetry: controller.retry,
-              isRetrying: state.isBusy,
-            ),
+          ...trailing,
         ],
       ),
     );
@@ -350,8 +491,8 @@ class _Timeline extends StatelessWidget {
         label: l10n.storyGenerateClarifyLabel,
         timeLabel: timeFormat.format(createdAt),
         // 只有"轮到用户作答"时才可交互：上一轮还在跑时禁用，防重复提交。
-        enabled: state.isAwaitingUser,
-        onSubmit: controller.answerClarification,
+        enabled: isAwaitingUser,
+        onSubmit: onAnswerClarification ?? _ignoreText,
         submitLabel: l10n.storyGenerateClarifySubmit,
         answeredLabel: l10n.storyGenerateClarifyAnswered,
         customHint: l10n.storyGenerateClarifyCustomHint,
@@ -367,9 +508,9 @@ class _Timeline extends StatelessWidget {
         resolution: resolution,
         feedback: feedback,
         timeLabel: timeFormat.format(createdAt),
-        enabled: state.isAwaitingUser,
-        onConfirm: controller.confirmOutline,
-        onModify: controller.modifyOutline,
+        enabled: isAwaitingUser,
+        onConfirm: onConfirmOutline ?? _ignore,
+        onModify: onModifyOutline ?? _ignoreText,
         title: l10n.storyGenerateOutlineTitle,
         endingLabel: l10n.storyGenerateOutlineEnding,
         emptyLabel: l10n.storyGenerateOutlineEmpty,
@@ -377,7 +518,11 @@ class _Timeline extends StatelessWidget {
         modifyLabel: l10n.storyGenerateOutlineModify,
         feedbackHint: l10n.storyGenerateOutlineFeedbackHint,
         confirmedLabel: l10n.storyGenerateOutlineConfirmed,
-        modifiedLabel: l10n.storyGenerateOutlineModified,
+        // 回放里的"被改过的那几版"没有意见原文（后端没单独落库），
+        // 这时换一句不带引文的说明，而不是显示一个空的冒号后面什么都没有。
+        modifiedLabel: (feedback) => feedback.isEmpty
+            ? l10n.storyGenerateOutlineRevised
+            : l10n.storyGenerateOutlineModified(feedback),
       ),
     GenerationNovelEntry(
       :final content,
@@ -391,6 +536,11 @@ class _Timeline extends StatelessWidget {
         timeLabel: timeFormat.format(createdAt),
       ),
   };
+
+  /// 回放模式下卡片全禁用，这些回调不会被触发；给个空实现只是为了让卡片组件
+  /// 的必填参数有值，不必为"只读"再复制一套组件。
+  static void _ignore() {}
+  static void _ignoreText(String _) {}
 }
 
 /// 底部行动条。每个阶段只给**当下唯一该做的事**，不堆按钮。

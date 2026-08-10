@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:happy_os/core/theme/index.dart";
-import "package:happy_os/features/story_generate/controllers/index.dart";
 import "package:happy_os/features/story_generate/domain/index.dart";
 import "package:happy_os/features/story_generate/widgets/timeline_entry_header.dart";
 import "package:happy_os/shared/widgets/index.dart";

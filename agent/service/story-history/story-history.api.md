@@ -124,6 +124,48 @@ const plotJson = {
 
 3. 去掉 Markdown 符号后取前 90 字作为列表摘要。
 
+## v2
+
+### 1. 分页按篇幅过滤
+
+沿用 v1 的 `/epicScript/page`，多带一个 `length`：
+
+```ts
+const request = {
+  current: 1,
+  size: 10,
+  orderBy: "createTime",
+  orderDirection: "desc",
+  length: "short", // short | medium | long；不传 = 全部
+};
+```
+
+「收藏」分类不走这个端点，走 v1 已有的 `/epicScript/favorite/page`（它不支持 `length`，
+所以收藏与篇幅**不能叠加筛选**，UI 上也就做成单选的一组 chip 而不是两组）。
+
+### 2. 剧本详情（补全文用）
+
+```ts
+// get
+const path = "/epicScript/detail"; // ?id=xxx
+// data: EpicScriptResponse（结构同列表项）；不存在时 code 为 404
+```
+
+列表项里已经带了 `plotJson.fullContent`，所以详情页**默认不请求**这个端点，
+只有全文缺失（早期数据只有四段式、或 `plotJson` 为空）时才补一次。
+
+### 3. 列表项要多用两个字段
+
+v1 的实体只留了列表用得上的几个字段，v2 的卡片与详情页要把下面两个也映射进来：
+
+| 字段 | 用途 |
+| --- | --- |
+| `style` | 文风。后端下发的**自由字符串**（没有枚举清单），原样显示，不做本地映射 |
+| `length` | 篇幅。取值 `short` / `medium` / `long`，客户端映射成「短篇 / 中篇 / 长篇」并用于筛选 |
+
+> `length` 是少数几个客户端认得出取值的字段，所以它能做筛选；`style` 不行——
+> 连有哪些值都不知道，做成筛选项只会漏掉没列出来的那些。
+
 ### ⚠️ 契约缺口
 
 - **列表响应里没有 `isFavorited`**。要在列表上显示收藏星标，只能另外拉一次

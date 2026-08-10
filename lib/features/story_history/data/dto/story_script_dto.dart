@@ -48,6 +48,8 @@ abstract class StoryScriptDto with _$StoryScriptDto {
       summary: _summaryOf(content),
       createdAt: _parseTime(createTime) ?? DateTime.now(),
       theme: _trimToNull(theme),
+      style: _trimToNull(style),
+      length: StoryLength.tryParse(length),
       content: content,
       conversationId: _firstNonEmpty(<String?>[
         conversationId,

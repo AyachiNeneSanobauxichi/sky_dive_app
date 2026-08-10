@@ -12,16 +12,38 @@ class StoryHistoryRepository {
 
   /// 拉一页历史。
   ///
+  /// [filter] 决定走哪个端点：收藏走 `/epicScript/favorite/page`，其余走
+  /// `/epicScript/page` 并把篇幅交给**服务端**过滤。不在客户端筛已加载的那几页——
+  /// "当前页恰好没有短篇"会被用户读成"我没写过短篇"。
+  ///
   /// [favoriteIds] 由调用方传进来而不是这里每次现拉：翻第 2、3 页时收藏集合没变，
   /// 每页都去探一次收藏列表等于把请求数翻倍。
   Future<StoryScriptPage> fetchPage({
     required int current,
+    StoryScriptFilter filter = StoryScriptFilter.all,
     int size = defaultPageSize,
     Set<String> favoriteIds = const <String>{},
   }) => _guard(() async {
-    final json = await _remote.fetchPage(current: current, size: size);
-    return StoryScriptPageDto.fromJson(json).toEntity(favoriteIds);
+    if (filter.isFavoriteOnly) {
+      final json = await _remote.fetchFavoritePage(current: current, size: size);
+      return StoryScriptPageDto.fromJson(json).toEntity(allFavorited: true);
+    }
+    final json = await _remote.fetchPage(
+      current: current,
+      size: size,
+      length: filter.length?.wire,
+    );
+    return StoryScriptPageDto.fromJson(json).toEntity(favoriteIds: favoriteIds);
   });
+
+  /// 单篇详情。只在列表给的全文缺失时才调（见 `story-history.api.md` v2）。
+  ///
+  /// [isFavorited] 由调用方带进来：详情接口和列表一样不下发收藏态。
+  Future<StoryScript> fetchDetail(String id, {bool isFavorited = false}) =>
+      _guard(() async {
+        final json = await _remote.fetchDetail(id);
+        return StoryScriptDto.fromJson(json).toEntity(isFavorited: isFavorited);
+      });
 
   /// 探已收藏的 id 集合。
   ///

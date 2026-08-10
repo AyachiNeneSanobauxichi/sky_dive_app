@@ -19,6 +19,9 @@ abstract final class RouteName {
 
   /// 生成历史全量列表页（story tab 下的深入页）。
   static const storyHistory = "storyHistory";
+
+  /// 单篇爽文详情（历史列表下的深入页）。
+  static const storyHistoryDetail = "storyHistoryDetail";
 }
 
 abstract final class RoutePath {
@@ -42,8 +45,11 @@ abstract final class RoutePath {
   /// 行动条，再顶一条 tab 栏会和它抢位置）。
   static const storyGenerate = "/story/generate";
 
-  /// 生成历史全量列表。首页只露最近 5 条，这里是完整清单。
+  /// 生成历史全量列表。首页只露最近几条，这里是完整清单。
   static const storyHistory = "/story/history";
+
+  /// 单篇爽文详情（`?id=xxx`）。写成 history 的下一级表达归属，同样注册在 shell 外。
+  static const storyHistoryDetail = "/story/history/detail";
 
   /// 登录后落地的默认 tab（= 第一个分支）。守卫与登录成功跳转都用它，
   /// 这样以后调整"首屏是哪个 tab"只改这一行。
@@ -60,4 +66,13 @@ abstract final class RouteQuery {
   /// 有它＝直接开跑，没有＝先在生成页补一句。生成页只关心这一件事，所以不再另传
   /// 「从哪个入口来的」——那个信息已经由它有没有值表达完了。
   static const generateSeed = "seed";
+
+  /// 要打开的剧本 id（爽文详情页）。
+  static const scriptId = "id";
+
+  /// 要回放的会话 id（生成页）。
+  ///
+  /// 与 [generateSeed] **互斥**：同时带时以它为准。回放是明确的意图，
+  /// 而 seed 只是"预填一句话"。
+  static const conversationId = "conversationId";
 }

@@ -11,7 +11,6 @@ import "package:happy_os/features/story_history/index.dart";
 import "package:happy_os/l10n/app_localizations.dart";
 import "package:happy_os/shared/utils/index.dart";
 import "package:happy_os/shared/widgets/index.dart";
-import "package:intl/intl.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 import "package:skeletonizer/skeletonizer.dart";
 
@@ -45,6 +44,12 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
   /// 输入框是否正在被编辑（决定灵感区折不折叠）。
   bool _isComposing = false;
 
+  /// 首页那几条历史读的是「全部」这一格——和历史页的第一个分类**共用同一份数据**，
+  /// 点进去是秒开的，两处的收藏/删除结果也天然一致。
+  static final _historyProvider = storyHistoryControllerProvider(
+    StoryScriptFilter.all,
+  );
+
   void _onComposerFocusChanged(bool hasFocus) {
     if (_isComposing == hasFocus) return;
     setState(() => _isComposing = hasFocus);
@@ -54,7 +59,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final history = ref.watch(storyHistoryControllerProvider);
+    final history = ref.watch(_historyProvider);
     final inspirations = ref.watch(inspirationControllerProvider);
 
     return Scaffold(
@@ -69,8 +74,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
           behavior: HitTestBehavior.translucent,
           onTap: () => FocusScope.of(context).unfocus(),
           child: RefreshIndicator(
-            onRefresh: () =>
-                ref.read(storyHistoryControllerProvider.notifier).reload(),
+            onRefresh: () => ref.read(_historyProvider.notifier).reload(),
             child: ListView(
               // 往下拖也收键盘：想看下面的历史时不必先找收起键。
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -82,7 +86,31 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                 bottom: HappySemanticSpacing.sectionGap,
               ),
               children: <Widget>[
-                Text(l10n.storyGreeting, style: theme.textTheme.displaySmall),
+                // 招呼与历史入口同排：入口常驻右上角，不必滚到页面底部的「查看全部」。
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        l10n.storyGreeting,
+                        style: theme.textTheme.displaySmall,
+                      ),
+                    ),
+                    TextButton.icon(
+                      onPressed: () =>
+                          context.pushNamed(RouteName.storyHistory),
+                      icon: const Icon(
+                        LucideIcons.history,
+                        size: HappyIconSize.sm,
+                      ),
+                      label: Text(l10n.storyHistoryEntry),
+                      style: TextButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        foregroundColor: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: HappySpacing.s8),
                 Text(
                   l10n.storyGreetingBody,
@@ -167,15 +195,10 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                 const SizedBox(height: HappySpacing.s8),
                 _HistoryBlock(
                   state: history,
-                  onRetry: () => ref
-                      .read(storyHistoryControllerProvider.notifier)
-                      .reload(showSkeleton: true),
+                  onRetry: () =>
+                      ref.read(_historyProvider.notifier).reload(showSkeleton: true),
                   onEmptyAction: () => _openGenerate(context),
-                  // 点开一篇已写好的故事该进阅读页，而不是开一次空白生成——
-                  // 阅读页还没做，先明说"即将上线"。
-                  // TODO(story): 阅读页就绪后改成带 script.id 跳过去。
-                  onOpenStory: (_) =>
-                      HappyToast.info(context, l10n.commonComingSoon),
+                  onOpenStory: (script) => _openDetail(context, script.id),
                   onToggleFavorite: _toggleFavorite,
                 ),
               ],
@@ -191,9 +214,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
   Future<void> _toggleFavorite(StoryScript script) async {
     final l10n = AppLocalizations.of(context);
     try {
-      await ref
-          .read(storyHistoryControllerProvider.notifier)
-          .toggleFavorite(script.id);
+      await ref.read(_historyProvider.notifier).toggleFavorite(script.id);
     } on Object catch (e) {
       if (!mounted) return;
       HappyToast.error(
@@ -211,6 +232,14 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
       queryParameters: <String, String>{
         if (seed != null && seed.isNotEmpty) RouteQuery.generateSeed: seed,
       },
+    );
+  }
+
+  /// 进爽文详情。首页预览卡和历史全量页走同一条详情路由。
+  void _openDetail(BuildContext context, String scriptId) {
+    context.pushNamed(
+      RouteName.storyHistoryDetail,
+      queryParameters: <String, String>{RouteQuery.scriptId: scriptId},
     );
   }
 }
@@ -280,7 +309,6 @@ class _HistoryBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
-    final dateFormat = DateFormat.MMMd(locale);
 
     Widget list(List<StoryScript> scripts, {bool isSkeleton = false}) => Column(
       children: <Widget>[
@@ -293,11 +321,16 @@ class _HistoryBlock extends StatelessWidget {
             ),
             child: StoryScriptCard(
               script: script,
-              timeLabel: dateFormat.format(script.createdAt),
+              timeLabel: storyRelativeTimeOf(
+                l10n,
+                script.createdAt,
+                locale: locale,
+              ),
               emptyTitleLabel: l10n.storyHistoryUntitled,
               favoriteLabel: script.isFavorited
                   ? l10n.storyHistoryUnfavorite
                   : l10n.storyHistoryFavorite,
+              lengthLabel: lengthLabelOf(l10n, script.length),
               // 骨架上的按钮点了没有意义，但也不能真的可点——骨架期用户看到的是
               // 假数据，点中"某一篇"会收藏到一个不存在的 id 上。
               onTap: isSkeleton ? _noop : () => onOpenStory(script),

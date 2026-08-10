@@ -23,6 +23,14 @@ abstract class StoryScript with _$StoryScript {
     /// 用户当初那句心愿。它比标题更能唤起"这篇是写什么的"。
     String? theme,
 
+    /// 文风。后端下发的**自由字符串**（契约里没有取值清单），原样显示。
+    /// 正因为取值不可知，它只能展示，不能拿来做筛选——列不全的筛选项等于漏数据。
+    String? style,
+
+    /// 篇幅。取值可枚举，所以它同时是展示信息和筛选维度。
+    /// 认不出的取值解析成 null，卡片上就不显示这一枚徽标。
+    StoryLength? length,
+
     /// 全文（Markdown）。列表不需要，阅读页要。
     String? content,
 
@@ -35,6 +43,32 @@ abstract class StoryScript with _$StoryScript {
     /// 探一次收藏列表再套上来的（见 `story-history.api.md` 的契约缺口）。
     @Default(false) bool isFavorited,
   }) = _StoryScript;
+}
+
+/// 篇幅。对应接口的 `length` 字段（`story-history.api.md` v2）。
+enum StoryLength {
+  short("short"),
+  medium("medium"),
+  long("long");
+
+  const StoryLength(this.wire);
+
+  /// 传给接口、也是接口回传的取值。枚举名与线上取值刻意同名，
+  /// 但仍然显式写一遍：改枚举名不该悄悄改掉请求参数。
+  final String wire;
+
+  /// 宽松解析：大小写与首尾空格都容忍，认不出返回 null。
+  ///
+  /// 认不出**不抛异常**——这批数据里 `length` 是后来才加的，早期剧本压根没有这个
+  /// 字段，为一个展示用的徽标让整页历史打不开不值当。
+  static StoryLength? tryParse(String? raw) {
+    final value = raw?.trim().toLowerCase();
+    if (value == null || value.isEmpty) return null;
+    for (final length in StoryLength.values) {
+      if (length.wire == value) return length;
+    }
+    return null;
+  }
 }
 
 /// 一页故事。分页要靠 [hasMore] 决定还能不能往下滚，所以页码信息必须跟着数据走。

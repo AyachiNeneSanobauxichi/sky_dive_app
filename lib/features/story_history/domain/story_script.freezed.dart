@@ -18,7 +18,11 @@ mixin _$StoryScript {
  String get title;/// 列表里露出的一小段（约 90 字，已去 Markdown 符号）。
  String get summary;/// 创建时间，列表按它倒序。
  DateTime get createdAt;/// 用户当初那句心愿。它比标题更能唤起"这篇是写什么的"。
- String? get theme;/// 全文（Markdown）。列表不需要，阅读页要。
+ String? get theme;/// 文风。后端下发的**自由字符串**（契约里没有取值清单），原样显示。
+/// 正因为取值不可知，它只能展示，不能拿来做筛选——列不全的筛选项等于漏数据。
+ String? get style;/// 篇幅。取值可枚举，所以它同时是展示信息和筛选维度。
+/// 认不出的取值解析成 null，卡片上就不显示这一枚徽标。
+ StoryLength? get length;/// 全文（Markdown）。列表不需要，阅读页要。
  String? get content;/// 关联会话 id。日后"接着改这一篇"要靠它回到生成会话。
  String? get conversationId;/// 是否已收藏。
 ///
@@ -35,16 +39,16 @@ $StoryScriptCopyWith<StoryScript> get copyWith => _$StoryScriptCopyWithImpl<Stor
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StoryScript&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.content, content) || other.content == content)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.isFavorited, isFavorited) || other.isFavorited == isFavorited));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StoryScript&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.style, style) || other.style == style)&&(identical(other.length, length) || other.length == length)&&(identical(other.content, content) || other.content == content)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.isFavorited, isFavorited) || other.isFavorited == isFavorited));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,summary,createdAt,theme,content,conversationId,isFavorited);
+int get hashCode => Object.hash(runtimeType,id,title,summary,createdAt,theme,style,length,content,conversationId,isFavorited);
 
 @override
 String toString() {
-  return 'StoryScript(id: $id, title: $title, summary: $summary, createdAt: $createdAt, theme: $theme, content: $content, conversationId: $conversationId, isFavorited: $isFavorited)';
+  return 'StoryScript(id: $id, title: $title, summary: $summary, createdAt: $createdAt, theme: $theme, style: $style, length: $length, content: $content, conversationId: $conversationId, isFavorited: $isFavorited)';
 }
 
 
@@ -55,7 +59,7 @@ abstract mixin class $StoryScriptCopyWith<$Res>  {
   factory $StoryScriptCopyWith(StoryScript value, $Res Function(StoryScript) _then) = _$StoryScriptCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String summary, DateTime createdAt, String? theme, String? content, String? conversationId, bool isFavorited
+ String id, String title, String summary, DateTime createdAt, String? theme, String? style, StoryLength? length, String? content, String? conversationId, bool isFavorited
 });
 
 
@@ -72,14 +76,16 @@ class _$StoryScriptCopyWithImpl<$Res>
 
 /// Create a copy of StoryScript
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? summary = null,Object? createdAt = null,Object? theme = freezed,Object? content = freezed,Object? conversationId = freezed,Object? isFavorited = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? summary = null,Object? createdAt = null,Object? theme = freezed,Object? style = freezed,Object? length = freezed,Object? content = freezed,Object? conversationId = freezed,Object? isFavorited = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,summary: null == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,theme: freezed == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
-as String?,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String?,style: freezed == style ? _self.style : style // ignore: cast_nullable_to_non_nullable
+as String?,length: freezed == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
+as StoryLength?,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String?,conversationId: freezed == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
 as String?,isFavorited: null == isFavorited ? _self.isFavorited : isFavorited // ignore: cast_nullable_to_non_nullable
 as bool,
@@ -167,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String summary,  DateTime createdAt,  String? theme,  String? content,  String? conversationId,  bool isFavorited)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String summary,  DateTime createdAt,  String? theme,  String? style,  StoryLength? length,  String? content,  String? conversationId,  bool isFavorited)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _StoryScript() when $default != null:
-return $default(_that.id,_that.title,_that.summary,_that.createdAt,_that.theme,_that.content,_that.conversationId,_that.isFavorited);case _:
+return $default(_that.id,_that.title,_that.summary,_that.createdAt,_that.theme,_that.style,_that.length,_that.content,_that.conversationId,_that.isFavorited);case _:
   return orElse();
 
 }
@@ -188,10 +194,10 @@ return $default(_that.id,_that.title,_that.summary,_that.createdAt,_that.theme,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String summary,  DateTime createdAt,  String? theme,  String? content,  String? conversationId,  bool isFavorited)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String summary,  DateTime createdAt,  String? theme,  String? style,  StoryLength? length,  String? content,  String? conversationId,  bool isFavorited)  $default,) {final _that = this;
 switch (_that) {
 case _StoryScript():
-return $default(_that.id,_that.title,_that.summary,_that.createdAt,_that.theme,_that.content,_that.conversationId,_that.isFavorited);case _:
+return $default(_that.id,_that.title,_that.summary,_that.createdAt,_that.theme,_that.style,_that.length,_that.content,_that.conversationId,_that.isFavorited);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +214,10 @@ return $default(_that.id,_that.title,_that.summary,_that.createdAt,_that.theme,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String summary,  DateTime createdAt,  String? theme,  String? content,  String? conversationId,  bool isFavorited)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String summary,  DateTime createdAt,  String? theme,  String? style,  StoryLength? length,  String? content,  String? conversationId,  bool isFavorited)?  $default,) {final _that = this;
 switch (_that) {
 case _StoryScript() when $default != null:
-return $default(_that.id,_that.title,_that.summary,_that.createdAt,_that.theme,_that.content,_that.conversationId,_that.isFavorited);case _:
+return $default(_that.id,_that.title,_that.summary,_that.createdAt,_that.theme,_that.style,_that.length,_that.content,_that.conversationId,_that.isFavorited);case _:
   return null;
 
 }
@@ -223,7 +229,7 @@ return $default(_that.id,_that.title,_that.summary,_that.createdAt,_that.theme,_
 
 
 class _StoryScript implements StoryScript {
-  const _StoryScript({required this.id, required this.title, required this.summary, required this.createdAt, this.theme, this.content, this.conversationId, this.isFavorited = false});
+  const _StoryScript({required this.id, required this.title, required this.summary, required this.createdAt, this.theme, this.style, this.length, this.content, this.conversationId, this.isFavorited = false});
   
 
 @override final  String id;
@@ -235,6 +241,12 @@ class _StoryScript implements StoryScript {
 @override final  DateTime createdAt;
 /// 用户当初那句心愿。它比标题更能唤起"这篇是写什么的"。
 @override final  String? theme;
+/// 文风。后端下发的**自由字符串**（契约里没有取值清单），原样显示。
+/// 正因为取值不可知，它只能展示，不能拿来做筛选——列不全的筛选项等于漏数据。
+@override final  String? style;
+/// 篇幅。取值可枚举，所以它同时是展示信息和筛选维度。
+/// 认不出的取值解析成 null，卡片上就不显示这一枚徽标。
+@override final  StoryLength? length;
 /// 全文（Markdown）。列表不需要，阅读页要。
 @override final  String? content;
 /// 关联会话 id。日后"接着改这一篇"要靠它回到生成会话。
@@ -255,16 +267,16 @@ _$StoryScriptCopyWith<_StoryScript> get copyWith => __$StoryScriptCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StoryScript&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.content, content) || other.content == content)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.isFavorited, isFavorited) || other.isFavorited == isFavorited));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StoryScript&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.style, style) || other.style == style)&&(identical(other.length, length) || other.length == length)&&(identical(other.content, content) || other.content == content)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.isFavorited, isFavorited) || other.isFavorited == isFavorited));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,summary,createdAt,theme,content,conversationId,isFavorited);
+int get hashCode => Object.hash(runtimeType,id,title,summary,createdAt,theme,style,length,content,conversationId,isFavorited);
 
 @override
 String toString() {
-  return 'StoryScript(id: $id, title: $title, summary: $summary, createdAt: $createdAt, theme: $theme, content: $content, conversationId: $conversationId, isFavorited: $isFavorited)';
+  return 'StoryScript(id: $id, title: $title, summary: $summary, createdAt: $createdAt, theme: $theme, style: $style, length: $length, content: $content, conversationId: $conversationId, isFavorited: $isFavorited)';
 }
 
 
@@ -275,7 +287,7 @@ abstract mixin class _$StoryScriptCopyWith<$Res> implements $StoryScriptCopyWith
   factory _$StoryScriptCopyWith(_StoryScript value, $Res Function(_StoryScript) _then) = __$StoryScriptCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String summary, DateTime createdAt, String? theme, String? content, String? conversationId, bool isFavorited
+ String id, String title, String summary, DateTime createdAt, String? theme, String? style, StoryLength? length, String? content, String? conversationId, bool isFavorited
 });
 
 
@@ -292,14 +304,16 @@ class __$StoryScriptCopyWithImpl<$Res>
 
 /// Create a copy of StoryScript
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? summary = null,Object? createdAt = null,Object? theme = freezed,Object? content = freezed,Object? conversationId = freezed,Object? isFavorited = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? summary = null,Object? createdAt = null,Object? theme = freezed,Object? style = freezed,Object? length = freezed,Object? content = freezed,Object? conversationId = freezed,Object? isFavorited = null,}) {
   return _then(_StoryScript(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,summary: null == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,theme: freezed == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
-as String?,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String?,style: freezed == style ? _self.style : style // ignore: cast_nullable_to_non_nullable
+as String?,length: freezed == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
+as StoryLength?,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String?,conversationId: freezed == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
 as String?,isFavorited: null == isFavorited ? _self.isFavorited : isFavorited // ignore: cast_nullable_to_non_nullable
 as bool,

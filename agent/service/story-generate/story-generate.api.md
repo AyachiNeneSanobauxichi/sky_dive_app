@@ -109,9 +109,61 @@ const errorPayload = {
 };
 ```
 
-### 错误码
+### 错误码（v1）
 
 | `payload.code` | 含义 | 客户端处理 |
 | --- | --- | --- |
 | `DAILY_GENERATION_IN_PROGRESS` | 今天已有未完成的会话 | 留存 `session_id`，展示「继续创作」，点击后发 `action: "retry"` |
 | 其余 | 通用生成失败 | 展示 `message` + 重试入口；已生成的正文保留不清屏 |
+
+## v4
+
+会话回放（把一次已完成的创作还原成时间线）。契约来源：
+`happy-life-star/mini-program/api-doc/05-message-chat.md`。
+
+### 会话消息列表
+
+```ts
+// get
+const path = "/message/listByConversation"; // ?conversationId=xxx&includeVersions=false
+// data: MessageResponse[]
+```
+
+`includeVersions` 传 `false`：回放要的是"当初那一遍"，把每条消息的历史版本都摊开
+会让时间线出现多份大纲/正文，反而看不懂。
+
+```ts
+const message = {
+  id: "",
+  conversationId: "",
+  content: "", // 正文 / 卡片 JSON / 大纲 JSON，随 type 而定
+  type: "", // 见下表
+  sender: "", // "user" | 其它（AI 侧取值未在文档中固定）
+  messageOrder: 0, // 会话内序号，回放按它升序
+  scriptId: "",
+  createTime: "",
+};
+```
+
+### `type` 取值与渲染对应
+
+| `type` | `content` 是什么 | 还原成 |
+| --- | --- | --- |
+| `chat`（且 `sender == "user"`） | 纯文本 | 心愿条目 |
+| `clarification_question` | **澄清卡的 JSON**（结构同 SSE 的 `card`） | 澄清卡条目 |
+| `clarification_answer` | 用户的回答文本 | 并入它所回答的那张卡（不单独成条） |
+| `outline` | **大纲的 JSON**（结构同 SSE 的 `outline`） | 大纲条目（已决定态） |
+| `script` | 正文全文 | 正文条目（非流式） |
+| `system` | 欢迎语等 | **丢弃**，不展示 |
+
+### 三个必须处理的坑（小程序 `ScriptDetailView.vue` 已踩过）
+
+1. **问答配对不能靠相邻**：库里 `clarification_answer` 的 `messageOrder` 有可能排在
+   它对应的 question 之前。要按 order 升序，为每个 question 找**它之后第一个尚未被
+   领走的** answer；配不上的 answer 直接丢弃（只显示答案而看不到问题只会让人困惑）。
+2. **心愿未必在消息列表里**，也未必排在第一条。列表里没有 `chat`+`user` 消息时，用剧本的
+   `theme` 补一条；有但顺序靠后时，把它提到最前面——它逻辑上就是这次创作的开头。
+3. **正文可能不在消息里**（早期数据只落了剧本表），此时回落到剧本的 `plotJson.fullContent`。
+
+> 三条的共同点：这批数据是多个版本的服务端先后写进去的，回放必须容忍缺字段和乱序，
+> 缺一条就少渲染一条，而不是整页报错。
