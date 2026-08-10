@@ -152,12 +152,12 @@ class _PromptSwap extends StatefulWidget {
 
 class _PromptSwapState extends State<_PromptSwap>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    duration: HappyMotion.normal,
-    vsync: this,
-    // 首帧就位：进页面时不该演一次"换组"。
-    value: 1,
-  );
+  /// ⚠️ 必须在 [initState] 里建，不能写成 `late final … = AnimationController(…)`。
+  /// 这条动画只有"换过一组"才会跑：从没换过就被移除时（骨架换成真数据、或打字
+  /// 折叠灵感区），`dispose()` 里的 `_controller.dispose()` 会成为**第一次访问**，
+  /// 于是在 element 已经 unmount 之后才去建 Ticker——`vsync` 要查 `TickerMode`
+  /// 祖先，直接抛 "Looking up a deactivated widget's ancestor is unsafe"。
+  late final AnimationController _controller;
 
   late final Animation<double> _progress = _controller.drive(
     CurveTween(curve: HappyMotion.standard),
@@ -165,6 +165,17 @@ class _PromptSwapState extends State<_PromptSwap>
 
   /// 上一组提示。换组动画期间和新的一组同时在树上。
   List<InspirationPrompt>? _outgoing;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: HappyMotion.normal,
+      vsync: this,
+      // 首帧就位：进页面时不该演一次"换组"。
+      value: 1,
+    );
+  }
 
   @override
   void didUpdateWidget(_PromptSwap oldWidget) {
