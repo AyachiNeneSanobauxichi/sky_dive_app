@@ -180,8 +180,8 @@ return unauthenticated();case _:
 /// @nodoc
 
 
-class AuthUnknown implements AuthState {
-  const AuthUnknown();
+class AuthUnknown extends AuthState {
+  const AuthUnknown(): super._();
   
 
 
@@ -212,8 +212,8 @@ String toString() {
 /// @nodoc
 
 
-class Authenticated implements AuthState {
-  const Authenticated(this.user);
+class Authenticated extends AuthState {
+  const Authenticated(this.user): super._();
   
 
  final  User user;
@@ -287,8 +287,8 @@ $UserCopyWith<$Res> get user {
 /// @nodoc
 
 
-class Unauthenticated implements AuthState {
-  const Unauthenticated();
+class Unauthenticated extends AuthState {
+  const Unauthenticated(): super._();
   
 
 

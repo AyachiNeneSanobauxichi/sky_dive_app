@@ -1,10 +1,9 @@
 import "package:dio/dio.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
-import "package:happy_os/core/config/index.dart";
-import "package:happy_os/core/network/index.dart";
-import "package:happy_os/core/speech/index.dart";
-import "package:happy_os/core/storage/index.dart";
+import "package:sky_dive/core/config/index.dart";
+import "package:sky_dive/core/network/index.dart";
+import "package:sky_dive/core/storage/index.dart";
 import "package:pretty_dio_logger/pretty_dio_logger.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
@@ -90,15 +89,3 @@ Dio dio(Ref ref) {
 /// 网络访问门面：业务层只依赖 `DioClient`，不直接接触 `Dio`。
 @Riverpod(keepAlive: true)
 DioClient dioClient(Ref ref) => DioClient(ref.watch(dioProvider));
-
-/// 端侧语音识别门面。
-///
-/// keepAlive：初始化要过平台通道、还可能弹权限窗，监听者归零就销毁的话，
-/// 用户每次点麦克风都要重新走一遍初始化（慢，且有机型会重复弹窗）。
-@Riverpod(keepAlive: true)
-SpeechRecognizer speechRecognizer(Ref ref) {
-  final recognizer = SpeechRecognizer();
-  // 麦克风是独占资源，provider 销毁时必须放掉。
-  ref.onDispose(recognizer.dispose);
-  return recognizer;
-}

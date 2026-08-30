@@ -4,10 +4,10 @@ import "package:flutter/material.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
-import "package:happy_os/app/app.dart";
-import "package:happy_os/core/settings/index.dart";
-import "package:happy_os/core/storage/index.dart";
-import "package:happy_os/shared/utils/index.dart";
+import "package:sky_dive/app/app.dart";
+import "package:sky_dive/core/settings/index.dart";
+import "package:sky_dive/core/storage/index.dart";
+import "package:sky_dive/shared/utils/index.dart";
 
 Future<void> main() async {
   // 异步初始化前需先绑定 Flutter engine。
@@ -43,7 +43,7 @@ Future<void> main() async {
   runApp(
     ProviderScope(
       overrides: [initialAppSettingsProvider.overrideWithValue(settings)],
-      child: const HappyApp(),
+      child: const SkyApp(),
     ),
   );
 }

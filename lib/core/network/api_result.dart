@@ -1,4 +1,4 @@
-import "package:happy_os/core/error/failure.dart";
+import "package:sky_dive/core/error/failure.dart";
 
 /// 不抛异常的结果包装（可选）。
 ///

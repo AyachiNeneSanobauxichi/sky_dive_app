@@ -15,7 +15,12 @@ T _$identity<T>(T value) => value;
 mixin _$AuthSession {
 
  User get user; AuthTokens get tokens;/// 服务端记录的本次登录时刻（解析失败则为 null）。
- DateTime? get loginTime;
+ DateTime? get loginTime;/// 这次会话是不是**刚注册**出来的。
+///
+/// 首页据此决定要不要走新人引导（第一次跳伞的人需要先看安全须知与体重限制），
+/// 老客直接进航线列表。放在会话里而不是靠 `totalJumps == 0` 猜：
+/// 老客也可能一次都还没跳（约了还没到日子）。
+ bool get isNewAccount;
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +31,16 @@ $AuthSessionCopyWith<AuthSession> get copyWith => _$AuthSessionCopyWithImpl<Auth
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthSession&&(identical(other.user, user) || other.user == user)&&(identical(other.tokens, tokens) || other.tokens == tokens)&&(identical(other.loginTime, loginTime) || other.loginTime == loginTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthSession&&(identical(other.user, user) || other.user == user)&&(identical(other.tokens, tokens) || other.tokens == tokens)&&(identical(other.loginTime, loginTime) || other.loginTime == loginTime)&&(identical(other.isNewAccount, isNewAccount) || other.isNewAccount == isNewAccount));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,user,tokens,loginTime);
+int get hashCode => Object.hash(runtimeType,user,tokens,loginTime,isNewAccount);
 
 @override
 String toString() {
-  return 'AuthSession(user: $user, tokens: $tokens, loginTime: $loginTime)';
+  return 'AuthSession(user: $user, tokens: $tokens, loginTime: $loginTime, isNewAccount: $isNewAccount)';
 }
 
 
@@ -46,7 +51,7 @@ abstract mixin class $AuthSessionCopyWith<$Res>  {
   factory $AuthSessionCopyWith(AuthSession value, $Res Function(AuthSession) _then) = _$AuthSessionCopyWithImpl;
 @useResult
 $Res call({
- User user, AuthTokens tokens, DateTime? loginTime
+ User user, AuthTokens tokens, DateTime? loginTime, bool isNewAccount
 });
 
 
@@ -63,12 +68,13 @@ class _$AuthSessionCopyWithImpl<$Res>
 
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? user = null,Object? tokens = null,Object? loginTime = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? user = null,Object? tokens = null,Object? loginTime = freezed,Object? isNewAccount = null,}) {
   return _then(_self.copyWith(
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as User,tokens: null == tokens ? _self.tokens : tokens // ignore: cast_nullable_to_non_nullable
 as AuthTokens,loginTime: freezed == loginTime ? _self.loginTime : loginTime // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,isNewAccount: null == isNewAccount ? _self.isNewAccount : isNewAccount // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 /// Create a copy of AuthSession
@@ -171,10 +177,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( User user,  AuthTokens tokens,  DateTime? loginTime)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( User user,  AuthTokens tokens,  DateTime? loginTime,  bool isNewAccount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthSession() when $default != null:
-return $default(_that.user,_that.tokens,_that.loginTime);case _:
+return $default(_that.user,_that.tokens,_that.loginTime,_that.isNewAccount);case _:
   return orElse();
 
 }
@@ -192,10 +198,10 @@ return $default(_that.user,_that.tokens,_that.loginTime);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( User user,  AuthTokens tokens,  DateTime? loginTime)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( User user,  AuthTokens tokens,  DateTime? loginTime,  bool isNewAccount)  $default,) {final _that = this;
 switch (_that) {
 case _AuthSession():
-return $default(_that.user,_that.tokens,_that.loginTime);case _:
+return $default(_that.user,_that.tokens,_that.loginTime,_that.isNewAccount);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +218,10 @@ return $default(_that.user,_that.tokens,_that.loginTime);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( User user,  AuthTokens tokens,  DateTime? loginTime)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( User user,  AuthTokens tokens,  DateTime? loginTime,  bool isNewAccount)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthSession() when $default != null:
-return $default(_that.user,_that.tokens,_that.loginTime);case _:
+return $default(_that.user,_that.tokens,_that.loginTime,_that.isNewAccount);case _:
   return null;
 
 }
@@ -227,13 +233,19 @@ return $default(_that.user,_that.tokens,_that.loginTime);case _:
 
 
 class _AuthSession implements AuthSession {
-  const _AuthSession({required this.user, required this.tokens, this.loginTime});
+  const _AuthSession({required this.user, required this.tokens, this.loginTime, this.isNewAccount = false});
   
 
 @override final  User user;
 @override final  AuthTokens tokens;
 /// 服务端记录的本次登录时刻（解析失败则为 null）。
 @override final  DateTime? loginTime;
+/// 这次会话是不是**刚注册**出来的。
+///
+/// 首页据此决定要不要走新人引导（第一次跳伞的人需要先看安全须知与体重限制），
+/// 老客直接进航线列表。放在会话里而不是靠 `totalJumps == 0` 猜：
+/// 老客也可能一次都还没跳（约了还没到日子）。
+@override@JsonKey() final  bool isNewAccount;
 
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
@@ -245,16 +257,16 @@ _$AuthSessionCopyWith<_AuthSession> get copyWith => __$AuthSessionCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthSession&&(identical(other.user, user) || other.user == user)&&(identical(other.tokens, tokens) || other.tokens == tokens)&&(identical(other.loginTime, loginTime) || other.loginTime == loginTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthSession&&(identical(other.user, user) || other.user == user)&&(identical(other.tokens, tokens) || other.tokens == tokens)&&(identical(other.loginTime, loginTime) || other.loginTime == loginTime)&&(identical(other.isNewAccount, isNewAccount) || other.isNewAccount == isNewAccount));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,user,tokens,loginTime);
+int get hashCode => Object.hash(runtimeType,user,tokens,loginTime,isNewAccount);
 
 @override
 String toString() {
-  return 'AuthSession(user: $user, tokens: $tokens, loginTime: $loginTime)';
+  return 'AuthSession(user: $user, tokens: $tokens, loginTime: $loginTime, isNewAccount: $isNewAccount)';
 }
 
 
@@ -265,7 +277,7 @@ abstract mixin class _$AuthSessionCopyWith<$Res> implements $AuthSessionCopyWith
   factory _$AuthSessionCopyWith(_AuthSession value, $Res Function(_AuthSession) _then) = __$AuthSessionCopyWithImpl;
 @override @useResult
 $Res call({
- User user, AuthTokens tokens, DateTime? loginTime
+ User user, AuthTokens tokens, DateTime? loginTime, bool isNewAccount
 });
 
 
@@ -282,12 +294,13 @@ class __$AuthSessionCopyWithImpl<$Res>
 
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? user = null,Object? tokens = null,Object? loginTime = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? user = null,Object? tokens = null,Object? loginTime = freezed,Object? isNewAccount = null,}) {
   return _then(_AuthSession(
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as User,tokens: null == tokens ? _self.tokens : tokens // ignore: cast_nullable_to_non_nullable
 as AuthTokens,loginTime: freezed == loginTime ? _self.loginTime : loginTime // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,isNewAccount: null == isNewAccount ? _self.isNewAccount : isNewAccount // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

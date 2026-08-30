@@ -13,6 +13,7 @@ _LoginResponseDto _$LoginResponseDtoFromJson(Map<String, dynamic> json) =>
       expiresIn: (json['expiresIn'] as num?)?.toInt() ?? 0,
       userInfo: UserDto.fromJson(json['userInfo'] as Map<String, dynamic>),
       loginTime: json['loginTime'] as String?,
+      isNewAccount: json['isNewAccount'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$LoginResponseDtoToJson(_LoginResponseDto instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$LoginResponseDtoToJson(_LoginResponseDto instance) =>
       'expiresIn': instance.expiresIn,
       'userInfo': instance.userInfo,
       'loginTime': instance.loginTime,
+      'isNewAccount': instance.isNewAccount,
     };

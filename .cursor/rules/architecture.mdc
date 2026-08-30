@@ -49,12 +49,12 @@ lib/
 
 | 模块 | 位置 | 职责 | 与其它模块的关系 |
 | --- | --- | --- | --- |
-| **auth** | `features/auth/` | 手机号 + 短信验证码登录、全局登录态、令牌与会话 | 其余模块都在登录后才可达 |
-| **story** | `features/story/` | **生成并管理用户生成的爽文**：与 AI 聊天调试生成、保存、再编辑、列表管理。产品主路径 | 消费 track 的轨迹作素材，读 user 的风格设定 |
-| **track** | `features/track/` | **用户的成长轨迹**：记录真实经历（时间 / 事件 / 感受 / 结果）。条目是生成爽文的 **key**（真实骨架的来源） | 产出素材给 story |
-| **user** | `features/user/` | **用户设定**：账号信息与生成偏好（昵称 / 头像 / 故事风格 / 语气强度 / 内容边界），即"作者设定"；含退出登录 | 提供设定给 story |
+| **auth** | `features/auth/` | 邮箱 + 密码 / 手机号 + 短信验证码登录、注册、全局登录态、令牌与会话 | 其余模块都在登录后才可达 |
+| **flight** | `features/flight/` | **航线**：可跳的机场（drop zone）、机型、高度档位、天气窗口。发现与转化的起点 | 产出可预约的航线给 booking |
+| **booking** | `features/booking/` | **预约**：下单、行程状态、天气改期、退款、跳伞记录（jump log） | 消费 flight 的航线，读 account 的资料 |
+| **account** | `features/account/` | **账号**：身份卡（执照等级 / 累计跳伞次数）、外观与语言偏好、条款、退出登录 | 提供资料给 booking |
 
-`features/home/` 不是业务模块，只是**外壳**：底部导航 + `IndexedStack`，承载 story / track / user 三个 tab（顺序即上表顺序）。各 tab 页面自带 `Scaffold` 与 AppBar，便于日后原样升级成独立路由。
+`features/home/` 不是业务模块，只是**外壳**：天空背景 + 底部导航 + 分支容器（`HomeBranchStack`），承载 flight / booking / account 三个 tab（顺序即上表顺序）。三个 tab 由 `StatefulShellRoute` 的分支承载，各自是真实路由、各有独立返回栈、且常驻挂载（见 `07-routing.md`）。
 
 > 每个模块的需求以文档为准：`agent/service/<模块>/<模块>.md`（页面）+ `<模块>.api.md`（接口契约），见 `agent-workflow.mdc`。代码侧每个 `features/<模块>/index.dart` 顶部也写了同样的职责说明。
 
@@ -156,33 +156,33 @@ class TodoRepositoryImpl implements TodoRepository {
 **provider 绑定（依赖注入）：**
 
 ```dart
-// lib/features/story/data/story_providers.dart
-part "story_providers.g.dart";
+// lib/features/flight/data/flight_providers.dart
+part "flight_providers.g.dart";
 
 @Riverpod(keepAlive: true)
-StoryRepository storyRepository(Ref ref) =>
-    StoryRepositoryImpl(ref.watch(dioClientProvider));
+FlightRepository flightRepository(Ref ref) =>
+    FlightRepositoryImpl(ref.watch(dioClientProvider));
 ```
 
 **controller 编排：**
 
 ```dart
-// lib/features/story/controllers/story_list_controller.dart
-part "story_list_controller.g.dart";
+// lib/features/flight/controllers/flight_list_controller.dart
+part "flight_list_controller.g.dart";
 
-// build 返回 Future → 生成 AsyncNotifier 形态，provider 名 storyListControllerProvider
+// build 返回 Future → 生成 AsyncNotifier 形态，provider 名 flightListControllerProvider
 @riverpod
-class StoryListController extends _$StoryListController {
+class FlightListController extends _$FlightListController {
   @override
-  Future<List<Story>> build() =>
-      ref.watch(storyRepositoryProvider).fetchStories();
+  Future<List<Flight>> build() =>
+      ref.watch(flightRepositoryProvider).fetchFlights();
 
   Future<void> add(String title) async {
-    final repo = ref.read(storyRepositoryProvider);
+    final repo = ref.read(flightRepositoryProvider);
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       await repo.create(title);
-      return repo.fetchStories();
+      return repo.fetchFlights();
     });
   }
 }

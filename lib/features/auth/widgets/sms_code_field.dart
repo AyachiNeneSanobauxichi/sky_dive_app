@@ -1,22 +1,25 @@
 import "package:flutter/material.dart";
 import "package:form_builder_validators/form_builder_validators.dart";
-import "package:happy_os/core/theme/index.dart";
-import "package:happy_os/features/auth/domain/index.dart";
-import "package:happy_os/l10n/app_localizations.dart";
-import "package:happy_os/shared/widgets/index.dart";
+import "package:sky_dive/core/theme/index.dart";
+import "package:sky_dive/features/auth/domain/index.dart";
+import "package:sky_dive/l10n/app_localizations.dart";
+import "package:sky_dive/shared/widgets/index.dart";
 
 /// 验证码区块：6 格 OTP 输入 + 发送 / 重发入口。
 ///
-/// 发送按钮放在格子**下方右侧**而不是右侧并排：OTP 需要整行宽度才能保证每格够大、
+/// 发送按钮放在格子**下方**而不是右侧并排：OTP 需要整行宽度才能保证每格够大、
 /// 数字够醒目；挤一个按钮进去会把格子压窄成"小方块"。按钮本身撑到
-/// `HappyControlSize.minTapTarget`（44），视觉上是弱行动、热区仍然合规。
+/// `SkyControlSize.minTapTarget`（44），视觉上是弱行动、热区仍然合规。
+///
+/// **居中**而不是右对齐：上面是六个居中排布的格子，底下挂一个贴右边的按钮会读成
+/// 一个游离的元素；居中才让这两行是同一个"验证码区块"。
 ///
 /// 按钮只有两态：可发送 / 冷却中（纯文字说明剩余秒数）。
 ///
 /// 刻意**没有忙碌态、也没有切换动效**：冷却在点击那一刻同步起算
 /// （见 `SmsCodeController.send`），所以点下去的下一帧就是「N 秒后重发」——
 /// 转圈没有信息量，交叉淡入还会让这行字横向挪一下。两态高度锁在
-/// `HappyControlSize.minTapTarget`，切换时布局不跳。
+/// `SkyControlSize.minTapTarget`，切换时布局不跳。
 class SmsCodeField extends StatelessWidget {
   const SmsCodeField({
     super.key,
@@ -55,9 +58,9 @@ class SmsCodeField extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: HappySpacing.s4,
+      spacing: SkySpacing.s4,
       children: <Widget>[
-        HappyOtpField(
+        SkyOtpField(
           controller: controller,
           focusNode: focusNode,
           enabled: enabled,
@@ -78,21 +81,21 @@ class SmsCodeField extends StatelessWidget {
           ]),
         ),
         Align(
-          alignment: Alignment.centerRight,
+          alignment: Alignment.center,
           child: SizedBox(
             // 两态同高：视觉上是弱行动，热区仍撑到 44，且切换时这行不上下跳。
-            height: HappyControlSize.minTapTarget,
+            height: SkyControlSize.minTapTarget,
             child: state.isCoolingDown
                 // 冷却中换成**纯文字说明**而不是禁用按钮：灰掉的按钮读起来像"坏了"，
                 // 一句"N 秒后可重发"才说清这是在等而不是出错。
                 ? Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: HappySpacing.s12,
+                      horizontal: SkySpacing.s12,
                     ),
-                    // widthFactor: 1 —— 只做垂直居中。用 `Center` 会撑满可用宽度，
-                    // 把外层的右对齐吃掉，这行字就跑到屏幕正中去了。
+                    // widthFactor: 1 —— 只包住文字本身，不撑满可用宽度，
+                    // 否则外层的居中会失效（一个撑满的盒子居不了中）。
                     child: Align(
-                      alignment: Alignment.centerRight,
+                      alignment: Alignment.center,
                       widthFactor: 1,
                       child: Text(
                         l10n.authResendAfter(state.cooldownSeconds),
@@ -102,10 +105,10 @@ class SmsCodeField extends StatelessWidget {
                       ),
                     ),
                   )
-                : HappyButton(
+                : SkyButton(
                     label: l10n.authSendCode,
-                    variant: HappyButtonVariant.ghost,
-                    size: HappyButtonSize.small,
+                    variant: SkyButtonVariant.ghost,
+                    size: SkyButtonSize.small,
                     isFullWidth: false,
                     onPressed: enabled && state.canSend ? onSendCode : null,
                   ),

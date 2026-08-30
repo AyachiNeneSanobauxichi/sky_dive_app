@@ -80,25 +80,25 @@
 ## 📌 异步可变状态（AsyncNotifier）
 
 ```dart
-// lib/features/story/controllers/story_list_controller.dart
-import "package:happy_os/features/story/domain/index.dart";
+// lib/features/flight/controllers/flight_list_controller.dart
+import "package:sky_dive/features/flight/domain/index.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
-part "story_list_controller.g.dart";
+part "flight_list_controller.g.dart";
 
-/// build 返回 Future → 生成 AsyncNotifier 形态，provider 名为 storyListControllerProvider。
+/// build 返回 Future → 生成 AsyncNotifier 形态，provider 名为 flightListControllerProvider。
 @riverpod
-class StoryListController extends _$StoryListController {
+class FlightListController extends _$FlightListController {
   @override
-  Future<List<Story>> build() {
-    return ref.watch(storyRepositoryProvider).fetchStories();
+  Future<List<Flight>> build() {
+    return ref.watch(flightRepositoryProvider).fetchFlights();
   }
 
   Future<void> add(String title) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(storyRepositoryProvider).create(title);
-      return ref.read(storyRepositoryProvider).fetchStories();
+      await ref.read(flightRepositoryProvider).create(title);
+      return ref.read(flightRepositoryProvider).fetchFlights();
     });
   }
 
@@ -112,17 +112,17 @@ class StoryListController extends _$StoryListController {
 ## 📌 函数式 provider（依赖注入 / 派生）
 
 ```dart
-part "story_providers.g.dart";
+part "flight_providers.g.dart";
 
 // 依赖注入：常驻，避免 Repository 被反复重建
 @Riverpod(keepAlive: true)
-StoryRepository storyRepository(Ref ref) =>
-    StoryRepositoryImpl(ref.watch(dioClientProvider));
+FlightRepository flightRepository(Ref ref) =>
+    FlightRepositoryImpl(ref.watch(dioClientProvider));
 
 // 只读派生值
 @riverpod
 int draftCount(Ref ref) {
-  final stories = ref.watch(storyListControllerProvider).valueOrNull ?? const [];
+  final flights = ref.watch(flightListControllerProvider).valueOrNull ?? const [];
   return stories.where((s) => s.isDraft).length;
 }
 ```
@@ -130,11 +130,11 @@ int draftCount(Ref ref) {
 ## 📌 带参数（旧 family）
 
 ```dart
-// 函数式：加参数即可，生成 storyByIdProvider(String id)
+// 函数式：加参数即可，生成 flightByIdProvider(String id)
 @riverpod
-Future<Story> storyById(Ref ref, String id) =>
-    ref.watch(storyRepositoryProvider).getById(id);
-// 使用：ref.watch(storyByIdProvider("123"))
+Future<Flight> flightById(Ref ref, String id) =>
+    ref.watch(flightRepositoryProvider).getById(id);
+// 使用：ref.watch(flightByIdProvider("123"))
 
 // Notifier 形态：参数加在 build 上，生成 scopedDraftProvider(String scope)
 @riverpod
@@ -153,16 +153,16 @@ class ScopedDraft extends _$ScopedDraft {
 @override
 Widget build(BuildContext context, WidgetRef ref) {
   // 副作用放 listen，不要写在 build 主体里
-  ref.listen(storyListControllerProvider, (prev, next) {
+  ref.listen(flightListControllerProvider, (prev, next) {
     if (next case AsyncError(:final error)) {
-      HappyToast.error(context, error.toString());
+      SkyToast.error(context, error.toString());
     }
   });
-  final stories = ref.watch(storyListControllerProvider);
+  final flights = ref.watch(flightListControllerProvider);
   return stories.when(
-    data: (list) => StoryListView(items: list),
+    data: (list) => FlightListView(items: list),
     // 页面级加载态用骨架屏，不用转圈（见 09-theming-ui.md）
-    loading: () => const StoryListSkeleton(),
+    loading: () => const FlightListSkeleton(),
     error: (e, _) => ErrorView(message: e.toString()),
   );
 }

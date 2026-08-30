@@ -4,9 +4,9 @@
 /// 结果就是"缺 12 和 20"这种断档没人发现；数值命名让整条阶梯一眼可见、
 /// 也让设计稿上的 "gap 20" 能一一对应，同时仍然满足"禁止魔法值"的红线。
 ///
-/// 用法：优先用下方 [HappySemanticSpacing] 的语义别名（页面边距、卡片内边距…），
+/// 用法：优先用下方 [SkySemanticSpacing] 的语义别名（页面边距、卡片内边距…），
 /// 只有语义别名覆盖不到时才直接用原始刻度。
-abstract final class HappySpacing {
+abstract final class SkySpacing {
   static const double none = 0;
   static const double s2 = 2;
   static const double s4 = 4;
@@ -26,28 +26,29 @@ abstract final class HappySpacing {
 }
 
 /// 语义化间距：把"用在哪"固化下来，避免同一类场景在不同页面用不同数值。
-abstract final class HappySemanticSpacing {
+abstract final class SkySemanticSpacing {
   /// 页面左右安全边距。C 端移动端统一 20，比 16 更透气、比 24 更省横向空间。
-  static const double screenPadding = HappySpacing.s20;
+  static const double screenPadding = SkySpacing.s20;
 
   /// 卡片内边距。
-  static const double cardPadding = HappySpacing.s16;
+  static const double cardPadding = SkySpacing.s16;
 
   /// 大区块之间的垂直间距（一屏内的"段落"分隔）。
-  static const double sectionGap = HappySpacing.s32;
+  static const double sectionGap = SkySpacing.s32;
 
   /// 同一区块内条目之间的间距。
-  static const double itemGap = HappySpacing.s12;
+  static const double itemGap = SkySpacing.s12;
 
   /// 标签与其控件之间的间距。
-  static const double labelGap = HappySpacing.s8;
+  static const double labelGap = SkySpacing.s8;
 
   /// 底部弹层顶部到内容的间距（留出拖拽把手）。
-  static const double sheetTopGap = HappySpacing.s24;
+  static const double sheetTopGap = SkySpacing.s24;
 }
 
-/// 圆角刻度。深色电影感基调下整体偏大圆角，观感更"软"、更像消费级产品。
-abstract final class HappyRadius {
+/// 圆角刻度。整体偏大圆角，观感更"软"、更像消费级产品；
+/// 也与天空主题里大量出现的圆弧（云、伞衣、光晕）同调。
+abstract final class SkyRadius {
   static const double xs = 6;
   static const double sm = 10;
   static const double md = 14;
@@ -68,8 +69,8 @@ abstract final class HappyRadius {
   static const double toast = md;
 }
 
-/// 描边宽度。原本这些值借用了 `HappySpacing`，语义不对——描边不是间距。
-abstract final class HappyBorderWidth {
+/// 描边宽度。原本这些值借用了 `SkySpacing`，语义不对——描边不是间距。
+abstract final class SkyBorderWidth {
   /// 常规描边 / 分割线。
   static const double hairline = 1;
 
@@ -78,7 +79,7 @@ abstract final class HappyBorderWidth {
 }
 
 /// 图标尺寸刻度。
-abstract final class HappyIconSize {
+abstract final class SkyIconSize {
   static const double xs = 14;
   static const double sm = 16;
   static const double md = 20;
@@ -88,7 +89,7 @@ abstract final class HappyIconSize {
 }
 
 /// 控件最小高度（同时也是可点击热区下限，均 ≥ 44 满足移动端可达性）。
-abstract final class HappyControlSize {
+abstract final class SkyControlSize {
   static const double buttonSmall = 36;
   static const double buttonMedium = 48;
   static const double buttonLarge = 56;

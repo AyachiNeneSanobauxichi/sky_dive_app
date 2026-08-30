@@ -1,5 +1,5 @@
 import "package:dio/dio.dart";
-import "package:happy_os/core/error/app_exception.dart";
+import "package:sky_dive/core/error/app_exception.dart";
 
 /// 错误映射拦截器：把底层 `DioException` 收敛成项目 `AppException`。
 ///

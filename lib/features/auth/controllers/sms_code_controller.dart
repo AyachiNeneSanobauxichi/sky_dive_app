@@ -1,7 +1,7 @@
 import "dart:async";
 
-import "package:happy_os/features/auth/controllers/auth_controller.dart";
-import "package:happy_os/features/auth/domain/index.dart";
+import "package:sky_dive/features/auth/controllers/auth_controller.dart";
+import "package:sky_dive/features/auth/domain/index.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
 part "sms_code_controller.g.dart";
@@ -19,7 +19,7 @@ part "sms_code_controller.g.dart";
 /// autoDispose（默认）：只在登录页存活期间有意义，离开页面即重置。
 @riverpod
 class SmsCodeController extends _$SmsCodeController {
-  /// 倒计时步长。这是业务时间而非动效时长，故不取 `HappyMotion`。
+  /// 倒计时步长。这是业务时间而非动效时长，故不取 `SkyMotion`。
   static const Duration _tick = Duration(seconds: 1);
 
   /// 乐观冷却时长：接口还没回来时先按这个数倒计时。

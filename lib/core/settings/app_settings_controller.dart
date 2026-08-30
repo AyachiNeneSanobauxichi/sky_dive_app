@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "package:happy_os/core/providers/index.dart";
-import "package:happy_os/core/settings/app_settings.dart";
+import "package:sky_dive/core/providers/index.dart";
+import "package:sky_dive/core/settings/app_settings.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
 part "app_settings_controller.g.dart";

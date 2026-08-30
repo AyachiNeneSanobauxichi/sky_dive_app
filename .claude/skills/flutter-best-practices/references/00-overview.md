@@ -23,7 +23,7 @@
 
 - **字符串**：使用**双引号** `"..."`（`analysis_options.yaml` 已配置 `prefer_double_quotes: true`）。
 - **const 优先**：能 `const` 的 Widget/构造一律加 `const`。
-- **导入顺序**：`dart:` → `package:`（第三方）→ `package:happy_os/`（本项目）→ 相对导入，组间空行。
+- **导入顺序**：`dart:` → `package:`（第三方）→ `package:sky_dive/`（本项目）→ 相对导入，组间空行。
 - **行宽**：遵循 `dart format` 默认（80 列），不要手动关闭格式化。
 - **禁止** `print()`，统一用 `AppLogger`（见 `10-storage-security.md` / utils）。
 
@@ -37,12 +37,12 @@
 
 > 项目**不允许**魔法数字、内联字体、硬编码颜色，一律用全局令牌。
 
-- **间距** → `HappySemanticSpacing`（`screenPadding`/`cardPadding`/`sectionGap`…，优先）或 `HappySpacing`（`s4`/`s8`/`s16`… 4pt 数值刻度），不写裸数值。
-- **圆角 / 描边 / 图标 / 控件高度** → `HappyRadius` / `HappyBorderWidth` / `HappyIconSize` / `HappyControlSize`。
-- **颜色** → `Theme.of(context).colorScheme`。`HappyColors` 只给 `app_theme` / `app_gradients` / `app_shadows` 当原料，**业务层禁止直接引用**。
+- **间距** → `SkySemanticSpacing`（`screenPadding`/`cardPadding`/`sectionGap`…，优先）或 `SkySpacing`（`s4`/`s8`/`s16`… 4pt 数值刻度），不写裸数值。
+- **圆角 / 描边 / 图标 / 控件高度** → `SkyRadius` / `SkyBorderWidth` / `SkyIconSize` / `SkyControlSize`。
+- **颜色** → `Theme.of(context).colorScheme`。`SkyColors` 只给 `app_theme` / `app_gradients` / `app_shadows` 当原料，**业务层禁止直接引用**。
 - **文字样式** → `Theme.of(context).textTheme`，禁止内联 `TextStyle(fontSize: ..., fontWeight: ...)`。
-- **渐变 / 阴影 / 光晕** → `HappyGradients` / `HappyShadows`。
-- **动效时长与曲线** → `HappyMotion`，禁止 `Duration(milliseconds: 300)`、`Curves.easeInOut` 字面量。
+- **渐变 / 阴影 / 光晕** → `SkyGradients` / `SkyShadows`。
+- **动效时长与曲线** → `SkyMotion`，禁止 `Duration(milliseconds: 300)`、`Curves.easeInOut` 字面量。
 
 ```dart
 // ❌ 禁止：魔法字号 + 内联字体 + 裸数值间距
@@ -50,7 +50,7 @@ textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
 padding: const EdgeInsets.all(16),
 // ✅ 用全局令牌
 style: Theme.of(context).textTheme.labelLarge,
-padding: const EdgeInsets.all(HappySemanticSpacing.cardPadding),
+padding: const EdgeInsets.all(SkySemanticSpacing.cardPadding),
 ```
 
 > 完整令牌清单与用法见 `09-theming-ui.md`。

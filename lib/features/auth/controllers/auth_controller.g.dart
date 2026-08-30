@@ -8,17 +8,75 @@ part of 'auth_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Auth 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+/// Auth 数据源 DI。
+///
+/// ⚠️ 当前装配的是 **mock**（后端未就绪）。接真后端时把这里换成
+/// `AuthRemoteDataSource(ref.watch(dioClientProvider))`，并删除 `data/mock/` 整个目录。
+/// 这是整条认证链路上**唯一**需要改的一行。
+
+@ProviderFor(authDataSource)
+final authDataSourceProvider = AuthDataSourceProvider._();
+
+/// Auth 数据源 DI。
+///
+/// ⚠️ 当前装配的是 **mock**（后端未就绪）。接真后端时把这里换成
+/// `AuthRemoteDataSource(ref.watch(dioClientProvider))`，并删除 `data/mock/` 整个目录。
+/// 这是整条认证链路上**唯一**需要改的一行。
+
+final class AuthDataSourceProvider
+    extends $FunctionalProvider<AuthDataSource, AuthDataSource, AuthDataSource>
+    with $Provider<AuthDataSource> {
+  /// Auth 数据源 DI。
+  ///
+  /// ⚠️ 当前装配的是 **mock**（后端未就绪）。接真后端时把这里换成
+  /// `AuthRemoteDataSource(ref.watch(dioClientProvider))`，并删除 `data/mock/` 整个目录。
+  /// 这是整条认证链路上**唯一**需要改的一行。
+  AuthDataSourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authDataSourceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$authDataSourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<AuthDataSource> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  AuthDataSource create(Ref ref) {
+    return authDataSource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AuthDataSource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AuthDataSource>(value),
+    );
+  }
+}
+
+String _$authDataSourceHash() => r'fe437017c6fcbbe21634cfc3d1e138bab8baabef';
+
+/// Auth 仓库 DI。
 
 @ProviderFor(authRepository)
 final authRepositoryProvider = AuthRepositoryProvider._();
 
-/// Auth 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+/// Auth 仓库 DI。
 
 final class AuthRepositoryProvider
     extends $FunctionalProvider<AuthRepository, AuthRepository, AuthRepository>
     with $Provider<AuthRepository> {
-  /// Auth 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+  /// Auth 仓库 DI。
   AuthRepositoryProvider._()
     : super(
         from: null,
@@ -52,15 +110,15 @@ final class AuthRepositoryProvider
   }
 }
 
-String _$authRepositoryHash() => r'fdcc143418aeac9bba6bac8abffd08d4ed73541d';
+String _$authRepositoryHash() => r'954cf775d6e44e1fb761b013ae07e70d2b44bf1c';
 
-/// 全局登录态控制器（v2）。
+/// 全局登录态控制器。
 ///
 /// - `AsyncLoading`（仅冷启动 [build] 期间）：登录态未定，路由停在 splash。
 /// - `AsyncData(AuthState)`：已定态，驱动路由守卫重定向。
 ///
-/// 登录/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由页面
-/// 各自的本地标记承载；登录失败以异常上抛，页面本地捕获提示。
+/// 登录/注册/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由
+/// 页面各自的本地标记承载；失败以异常上抛，页面本地捕获提示。
 ///
 /// keepAlive 必需：autoDispose 会在无监听者时重跑 [build] 的静默刷新流程，
 /// 造成登录态抖动甚至误登出。
@@ -68,25 +126,25 @@ String _$authRepositoryHash() => r'fdcc143418aeac9bba6bac8abffd08d4ed73541d';
 @ProviderFor(AuthController)
 final authControllerProvider = AuthControllerProvider._();
 
-/// 全局登录态控制器（v2）。
+/// 全局登录态控制器。
 ///
 /// - `AsyncLoading`（仅冷启动 [build] 期间）：登录态未定，路由停在 splash。
 /// - `AsyncData(AuthState)`：已定态，驱动路由守卫重定向。
 ///
-/// 登录/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由页面
-/// 各自的本地标记承载；登录失败以异常上抛，页面本地捕获提示。
+/// 登录/注册/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由
+/// 页面各自的本地标记承载；失败以异常上抛，页面本地捕获提示。
 ///
 /// keepAlive 必需：autoDispose 会在无监听者时重跑 [build] 的静默刷新流程，
 /// 造成登录态抖动甚至误登出。
 final class AuthControllerProvider
     extends $AsyncNotifierProvider<AuthController, AuthState> {
-  /// 全局登录态控制器（v2）。
+  /// 全局登录态控制器。
   ///
   /// - `AsyncLoading`（仅冷启动 [build] 期间）：登录态未定，路由停在 splash。
   /// - `AsyncData(AuthState)`：已定态，驱动路由守卫重定向。
   ///
-  /// 登录/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由页面
-  /// 各自的本地标记承载；登录失败以异常上抛，页面本地捕获提示。
+  /// 登录/注册/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由
+  /// 页面各自的本地标记承载；失败以异常上抛，页面本地捕获提示。
   ///
   /// keepAlive 必需：autoDispose 会在无监听者时重跑 [build] 的静默刷新流程，
   /// 造成登录态抖动甚至误登出。
@@ -109,15 +167,15 @@ final class AuthControllerProvider
   AuthController create() => AuthController();
 }
 
-String _$authControllerHash() => r'edd1c1b530f22d70b3a09524892520ed8d886355';
+String _$authControllerHash() => r'29d7654d106b36847ffc5671464d7790c546e238';
 
-/// 全局登录态控制器（v2）。
+/// 全局登录态控制器。
 ///
 /// - `AsyncLoading`（仅冷启动 [build] 期间）：登录态未定，路由停在 splash。
 /// - `AsyncData(AuthState)`：已定态，驱动路由守卫重定向。
 ///
-/// 登录/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由页面
-/// 各自的本地标记承载；登录失败以异常上抛，页面本地捕获提示。
+/// 登录/注册/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由
+/// 页面各自的本地标记承载；失败以异常上抛，页面本地捕获提示。
 ///
 /// keepAlive 必需：autoDispose 会在无监听者时重跑 [build] 的静默刷新流程，
 /// 造成登录态抖动甚至误登出。

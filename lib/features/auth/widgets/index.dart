@@ -1,3 +1,10 @@
+export "auth_agreement.dart";
+export "auth_failure_message.dart";
+export "auth_method_switcher.dart";
+export "display_name_field.dart";
+export "email_field.dart";
+export "password_field.dart";
+export "password_strength_bar.dart";
 export "phone_field.dart";
 export "phone_summary.dart";
 export "sms_code_field.dart";

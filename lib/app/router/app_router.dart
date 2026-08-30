@@ -1,10 +1,10 @@
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:happy_os/app/router/route_guard.dart";
-import "package:happy_os/app/router/route_name.dart";
-import "package:happy_os/app/router/routes.dart";
-import "package:happy_os/features/auth/index.dart";
-import "package:happy_os/l10n/app_localizations.dart";
+import "package:sky_dive/app/router/route_guard.dart";
+import "package:sky_dive/app/router/route_name.dart";
+import "package:sky_dive/app/router/routes.dart";
+import "package:sky_dive/features/auth/index.dart";
+import "package:sky_dive/l10n/app_localizations.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
 part "app_router.g.dart";

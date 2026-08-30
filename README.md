@@ -1,169 +1,144 @@
-# happy_os
+# SkyDive
 
-HappyOS 是一个 AI 驱动的应用，基于用户自己的人生经历生成个性化的故事。采用 **feature-first + Clean Architecture** 分层架构，遵循企业级工程规范。
+日本跳伞运营商的 **C 端 app**：挑航线（drop zone / 机型 / 高度）→ 看天气窗口 → 下预约 → 管理自己的跳伞记录。
 
-> 完整开发规范见 Claude skill [`.claude/skills/flutter-best-practices/`](./.claude/skills/flutter-best-practices/SKILL.md) 与 Cursor 规则 `.cursor/rules/*.mdc`（同一套规范的两种表达）。
+Flutter · Riverpod 3 · Freezed 3 · go_router · Material 3。UI 与交互是本项目的第一优先级。
 
-## 技术栈
+---
 
-| 领域     | 技术                                              | 版本           | 说明                                                                                               |
-| -------- | ------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------- |
-| 框架     | Flutter / Dart                                    | Dart `^3.10.1` | 现代语法（records / patterns / sealed / switch 表达式）                                            |
-| 状态管理 | `flutter_riverpod` + `riverpod_annotation`        | 3.1.x / 4.0.x  | `@riverpod` 注解 + 代码生成；⚠️ 版本上限锁死，见下方 [Riverpod 版本锁](#riverpod-版本锁勿放宽) |
-| 网络     | `dio` + `pretty_dio_logger` + `connectivity_plus` | 5.10.x         | 统一 `DioClient` + 拦截器 + 断网检测                                                               |
-| 安全存储 | `flutter_secure_storage`                          | 9.2.x          | token 等敏感数据（Keychain/Keystore）                                                              |
-| 数据模型 | `freezed` + `json_serializable` + `*_annotation`  | 3.2.x / 6.11.x | 不可变模型 + JSON 序列化                                                                           |
-| 表单校验 | `form_builder_validators`                         | 11.3.x         | 复用校验规则（邮箱/必填/长度等）                                                                   |
-| 路由     | `go_router`                                       | 17.3.x         | 声明式路由 + 鉴权守卫                                                                              |
-| 配置     | `flutter_dotenv`                                  | 6.0.x          | `.env` 环境变量                                                                                    |
-| 日志     | `logger`                                          | 2.7.x          | 统一 `AppLogger`                                                                                   |
-| 国际化   | `flutter_localizations` + `intl`（gen-l10n）      | SDK / 0.20.x   | 中英双语、随系统切换；`AppLocalizations` 由 `lib/l10n/*.arb` 生成                                  |
-| 图片     | `cached_network_image`                            | 3.4.x          | 网络图缓存                                                                                         |
-| 代码生成 | `build_runner` + `freezed` + `json_serializable` + `riverpod_generator` | 2.15.x / 4.0.x | 生成 `*.freezed.dart` / `*.g.dart`                                            |
-| 静态检查 | `flutter_lints`                                   | 6.0.x          | 基线 lint 规则；⚠️ 无 `riverpod_lint`（当前 SDK 装不上）                                            |
+## 现在能跑什么
 
-## 项目结构
+| 模块 | 状态 |
+| --- | --- |
+| **认证**（登录 / 注册 / 会话 / 登出） | ✅ 完整链路（走 mock 假后端） |
+| **主题**（白昼晴空 / 暮色高空 + 跟随系统） | ✅ 完整 design token 体系 |
+| **国际化**（日本語 / English / 中文 + 跟随系统） | ✅ |
+| **账号页**（身份卡 / 外观 / 语言 / 登出） | ✅ |
+| **航线 tab** | 🚧 骨架（页头 + 空态），待业务文档 |
+| **预约 tab** | 🚧 骨架（页头 + 空态），待业务文档 |
 
-```text
-lib/
-├── main.dart          # 入口（加载 .env、ProviderScope、runApp）
-├── app/               # 应用装配（MaterialApp、router）
-├── core/              # 跨功能基础设施（network / error / storage / config / theme）
-├── features/          # 业务功能（feature-first：data/domain/controllers/screens/widgets）
-├── l10n/              # 国际化：*.arb 文案源（AppLocalizations 为生成产物，不入库）
-└── shared/            # 业务无关可复用（widgets / utils）
+### 演示账号（mock 期间）
+
+后端尚未就绪，认证走 `lib/features/auth/data/mock/`。登录页底部有一条演示账号提示条，支持一键填入：
+
+```
+邮箱：demo@skydive.jp
+密码：skydive2026
 ```
 
-## 环境要求
+短信登录：任意日本手机号（`070/080/090` + 8 位，如 `09012345678`），验证码固定 `123456`。
 
-- Flutter SDK —— **已验证组合：Flutter 3.38.3 / Dart 3.10.1**
-- 已配置 iOS / Android 开发环境（Xcode / Android Studio + 模拟器或真机）
+> ⚠️ 账号存在**进程内存**里：热重启 / 杀进程后注册的账号会消失，这是刻意的——mock 不该假装自己是数据库。
 
-> 升级到带 Dart ≥ 3.12.0 的 Flutter 可解开 Riverpod 版本锁并启用 `riverpod_lint`，
-> 但当前 Flutter 是**全局 git checkout**，升级会影响本机所有项目；如需仅本项目升级请先引入 `fvm`。
-> 详见下方 [Riverpod 版本锁](#riverpod-版本锁勿放宽)。
+---
 
-验证环境：
-
-```bash
-flutter --version
-flutter doctor
-```
-
-## 启动方法
-
-### 1. 安装依赖
+## 快速开始
 
 ```bash
 flutter pub get
+flutter gen-l10n                # .arb 产物不入库，clone 后必须先跑一次
+dart run build_runner build     # freezed / json / @riverpod 产物
+flutter run
 ```
 
-### 2. 配置环境变量
-
-复制模板 `.env.example` 为 `.env`，按需修改（读取封装见 `lib/core/config/env.dart`）：
+日常开发：
 
 ```bash
-cp .env.example .env
+dart run build_runner watch     # 改注解时挂着
+dart format .
+flutter analyze                 # 提交前必须零告警
 ```
 
-```env
-API_BASE_URL=https://api.example.com
-ENABLE_LOGGING=true
+⚠️ **不要跑 `flutter pub upgrade`**：`flutter_riverpod` 与 `riverpod_generator` 的版本上限是锁死的（当前 Dart 3.10.1 的解算边界），放宽会立刻无解。原委见 `.claude/skills/flutter-best-practices/references/12-code-generation.md`。
+
+---
+
+## 目录结构
+
+```
+lib/
+├─ main.dart              # 只做初始化：dotenv、全局错误兜底、预读偏好、ProviderScope
+├─ app/                   # 应用装配：MaterialApp、路由表、守卫、启动页、设置切换过渡
+├─ core/                  # 基础设施（业务无关）
+│  ├─ config/             # Env：.env 的唯一读取入口
+│  ├─ error/              # AppException（技术） → Failure（面向 UI）
+│  ├─ network/            # DioClient + 三个拦截器（鉴权 / 解包信封 / 错误映射）
+│  ├─ providers/          # 全局单例 provider（storage / token / dio）
+│  ├─ settings/           # 深浅色与语言偏好
+│  ├─ storage/            # SecureStorage（refreshToken 与用户快照）
+│  └─ theme/              # design token：色 / 渐变 / 阴影 / 间距 / 字体 / 动效
+├─ features/              # 业务模块，各自 data / domain / controllers / screens / widgets
+│  ├─ auth/               # 登录 · 注册 · 会话（含 data/mock/ 假后端）
+│  ├─ home/               # 外壳：天空背景 + 底部 tab + 分支容器（不是业务模块）
+│  ├─ flight/             # 航线 🚧
+│  ├─ booking/            # 预约 🚧
+│  └─ account/            # 账号
+├─ l10n/                  # app_en.arb（模板）+ app_ja.arb + app_zh.arb
+└─ shared/                # 跨 feature 复用：Sky* 全局组件 + 工具
 ```
 
-> `.env` / `.env.*` 已在 `.gitignore` 中忽略（保留 `.env.example`），请勿提交真实密钥。
+每个目录都有 `index.dart` barrel，对外只经 barrel 引用。
 
-### 3. 生成代码（Freezed / JSON / Riverpod）
+---
 
-**首次 clone 后必须先跑一次**，否则编译报「Target of URI hasn't been generated」。
-之后修改了下列任一注解也要重跑：
+## 设计系统
 
-| 注解 | 产物 | 位置 |
+**基调：高空 · 深浅双主场。** 核心画面是从万米高空跃出——头顶平流层蓝、脚下云海、伞衣张开时那一抹朱橙。
+
+- **浅色 = 白昼晴空**（白天挑航线、看天气、下预约，主流场景）
+- **深色 = 暮色高空**（黄昏跳与夜间查看行程，天幕压暗、地平线留一道余晖）
+
+两套都是一等设计目标，都按 WCAG AA（正文 ≥ 4.5:1）逐色校过对比度。默认跟随系统昼夜。
+
+| 令牌 | 类 | 管什么 |
 | --- | --- | --- |
-| `@freezed` | `*.freezed.dart` | 与源文件同目录 |
-| `@JsonSerializable` / `fromJson` | `*.g.dart` | 与源文件同目录 |
-| `@riverpod` / `@Riverpod(...)` | `*.g.dart` | 与源文件同目录 |
+| `app_colors.dart` | `SkyColors` | 原始色值（业务层禁止直接引用） |
+| `app_theme.dart` | `SkyTheme` | `light` / `dark` 两套 `ThemeData`，逐角色显式指定，不用 `fromSeed` |
+| `app_text_styles.dart` | `SkyFonts` / `SkyTextStyles` | 单一字体族（Inter）+ CJK 回退链 + 完整 `TextTheme` |
+| `app_spacing.dart` | `SkySpacing` / `SkyRadius` / `SkyIconSize` … | 间距 / 圆角 / 描边 / 图标 / 控件尺寸 |
+| `app_gradients.dart` | `SkyGradients` | 品牌光带、天幕、云带、光晕、地平线余晖 |
+| `app_shadows.dart` | `SkyShadows` | 阴影与品牌光晕（按 `Brightness` 分支） |
+| `app_motion.dart` | `SkyMotion` | 时长与缓动曲线 |
 
-```bash
-dart run build_runner build
-```
+**禁止魔法值**：颜色走 `colorScheme`、文字走 `textTheme`、其余取上表令牌。
 
-开发期可用监听模式自动生成：
+全局组件在 `lib/shared/widgets/`，一律 `Sky` 前缀：`SkyButton` / `SkyToast` / `SkyOtpField` / `SkyEmptyState` / `SkyBrandMark` / `SkyBackground` / `SkyGlassCard` / `SkyRetryCard` / `SkyCheckbox`。
 
-```bash
-dart run build_runner watch
-```
+---
 
-> 产物（`*.freezed.dart` / `*.g.dart`）**入库但不手改**，`analysis_options.yaml` 已将其排除在 lint 之外。
-> （注意：gen-l10n 的产物策略相反，**不入库**，见下一节。）
-> `build_runner` 2.15+ 已移除 `--delete-conflicting-outputs`，传了只会警告并忽略；要清缓存用 `dart run build_runner clean`。
+## 规范
 
-#### Riverpod 版本锁（勿放宽）
+工程规范是**唯一权威来源**，有两种表达，内容一致：
 
-`pubspec.yaml` 里这两个上限是**刻意锁死**的，改成 `^` 或跑 `flutter pub upgrade` 都会让依赖解算立刻失败：
+- Claude Code → skill `.claude/skills/flutter-best-practices/`（入口 `references/00-overview.md`）
+- Cursor → `.cursor/rules/*.mdc`
 
-```yaml
-flutter_riverpod: ">=3.0.0 <3.3.0"   # 解析为 3.1.0
-riverpod_generator: <4.0.6           # 解析为 4.0.0+1
-```
+改规范时**两处都要更新**（见 `.cursor/rules/sync.mdc`）。
 
-根因：`riverpod_generator` ≥ 4.0.6 与 `riverpod_lint` ≥ 3.1.6 都要求 **Dart SDK ≥ 3.12.0**，
-当前是 3.10.1；退到低版本后又与 Freezed 3 的 `build ^3.0.0` 冲突，只能把 riverpod 压到 3.1.0。
-因此 **`riverpod_lint` 未安装**——provider 用法错误没有静态检查兜底，只能靠 code review。
+写任何 UI 之前必读两篇：`09-theming-ui.md`（视觉令牌）+ `17-ux-interaction.md`（交互体验）。
 
-完整分析与解锁路径（升级 Flutter SDK / 引入 fvm）见规范模块
-[`references/12-code-generation.md`](./.claude/skills/flutter-best-practices/references/12-code-generation.md) 的「🔒 Riverpod 版本锁」一节。
+业务需求以 `agent/` 下的文档为准：
 
-### 4. 生成国际化（i18n）
+- `agent/infra/base.md` — 产品定位与全局取向
+- `agent/service/<feature>/<feature>.md` — 页面与交互
+- `agent/service/<feature>/<feature>.api.md` — 接口与数据契约
 
-用户文案维护在 `lib/l10n/app_en.arb`（模板）与 `lib/l10n/app_zh.arb`，由 gen-l10n 生成 `AppLocalizations`。
+---
 
-**首次 clone 后必须先跑一次**，否则 `flutter analyze` / IDE 会报「`AppLocalizations` 上不存在 xxx」：
+## 接真后端时要改什么
 
-```bash
-flutter gen-l10n
-```
+认证链路已按"随时可切"设计，改动点只有三处：
 
-改了 `.arb` 之后同样要重跑。`flutter run` / `flutter build` 因 `pubspec.yaml` 的 `flutter: generate: true` 会自动生成，但 **`flutter analyze` 不会**。
+1. `lib/features/auth/controllers/auth_controller.dart` 里的 `authDataSource` provider —— 换回 `AuthRemoteDataSource(ref.watch(dioClientProvider))`；
+2. 删除 `lib/features/auth/data/mock/` 整个目录；
+3. 上一步会让登录页的演示账号提示条编译报错（`kAuthMockEnabled`），把那个分支和 `screens/login/widgets/mock_credentials_hint.dart` 一并删掉。
 
-> ⚠️ **产物不入库**：`lib/l10n/app_localizations*.dart` 已在 `.gitignore` 中忽略，与 `*.freezed.dart` / `*.g.dart` 的策略**相反**。
->
-> 原因：入库会要求「改 `.arb` 必须紧跟一次 gen-l10n 并把产物一起提交」，任何一半的回滚或合并冲突都会让产物与 `.arb` 脱钩——表现是 `.arb` 里明明有 key，代码里 `l10n.xxx` 却报未定义，而 diff 里看不出任何异常。本项目真实踩过一次。改成本地生成后，唯一的真源就是 `.arb`。
+`.env` 里配 `BASE_URL` 与 `API_PREFIX`（见 `.env.example`）。
 
-> 加新文案：先在 `app_en.arb` 加 `key` + `@key`（description），再在 `app_zh.arb` 加对应中文（两个文件 key 必须一一对应），然后重新生成。缺翻译会写进 `l10n_untranslated.txt`（也不入库）。
+---
 
-### 5. 运行应用
+## 已知边界
 
-```bash
-flutter run                 # 运行到默认设备
-flutter devices             # 查看可用设备
-flutter run -d <device_id>  # 指定设备运行
-```
-
-## 常用命令
-
-```bash
-dart format .                    # 代码格式化
-flutter analyze                  # 静态分析（提交前需零告警）
-dart run build_runner build      # 改了 @freezed / @JsonSerializable / @riverpod 后重新生成
-dart run build_runner watch      # 开发期自动生成
-dart run build_runner clean      # 清理生成缓存
-flutter gen-l10n                 # clone 后 / 改了 lib/l10n/*.arb 后生成 AppLocalizations（产物不入库）
-flutter build apk                # 构建 Android 包
-flutter build ios                # 构建 iOS 包
-```
-
-## 开发规范
-
-同一套规范以两种 AI 原生格式维护（内容等价）：
-
-- **Claude — skill**：[`.claude/skills/flutter-best-practices/`](./.claude/skills/flutter-best-practices/SKILL.md)（`SKILL.md` + `references/`，按需加载）
-- **Claude 入口**：[`.claude/CLAUDE.md`](./.claude/CLAUDE.md)（自动加载的红线，指向上述 skill）
-- **Claude 团队配置**：[`.claude/settings.json`](./.claude/settings.json)（共享命令权限白名单；个人覆盖写 `.claude/settings.local.json`）
-- **Cursor — rules**：`.cursor/rules/*.mdc`（每条规则自包含，按 `globs` 自动生效）
-
-> **规范同步**：Cursor rules 与 Claude skill 是同一套规范的两种表达。改规范或新增领域时两处都要更新，领域↔文件对照见 [`.cursor/rules/sync.mdc`](./.cursor/rules/sync.mdc)。
-
-提交前请确保：`dart format` 已执行、`flutter analyze` 零告警。
-
-> 本项目**不写自动化测试**（无 `test/` 目录）：质量由 `flutter analyze` + 人工在真机/模拟器上验证兜。
+- **原生工程标识未改名**：`android/` 的 `applicationId` 与 `ios/` 的 bundle id 仍是上一个项目的值。改这两处会影响签名与已装应用的升级路径，留给人工决定。
+- **字体回退日文优先**：`SkyFonts.textFallback` 把日文字体排在中文之前（主市场是日本），代价是简中界面下共用汉字会显示日文字形。取舍与解法写在 `app_text_styles.dart` 的 TODO 里。
+- **本项目不写自动化测试**（无 `test/` 目录），质量靠 `flutter analyze` 零告警 + 人工验证兜。

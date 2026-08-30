@@ -1,11 +1,11 @@
 {
-    "name": "HappyOS",
-    "short_name": "HappyOS",
+    "name": "SkyDive",
+    "short_name": "SkyDive",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "HappyOS — AI-powered personalized story generation",
+    "background_color": "#F2F7FD",
+    "theme_color": "#0A6FC2",
+    "description": "SkyDive — book a skydive in Japan: drop zones, weather windows and your jump log",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

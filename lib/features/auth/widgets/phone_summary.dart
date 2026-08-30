@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
-import "package:happy_os/core/theme/index.dart";
-import "package:happy_os/features/auth/domain/index.dart";
-import "package:happy_os/l10n/app_localizations.dart";
-import "package:happy_os/shared/widgets/index.dart";
+import "package:sky_dive/core/theme/index.dart";
+import "package:sky_dive/features/auth/domain/index.dart";
+import "package:sky_dive/l10n/app_localizations.dart";
+import "package:sky_dive/shared/widgets/index.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
 /// 已发码后的手机号摘要（打码 + "修改"入口）。
@@ -33,24 +33,24 @@ class PhoneSummary extends StatelessWidget {
     return Container(
       // 不写死高度：多了一行说明文字，且要能随系统字体缩放长高。
       padding: const EdgeInsets.only(
-        left: HappySpacing.s16,
-        top: HappySpacing.s8,
-        bottom: HappySpacing.s8,
+        left: SkySpacing.s16,
+        top: SkySpacing.s8,
+        bottom: SkySpacing.s8,
       ),
       decoration: BoxDecoration(
         color: scheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(HappyRadius.input),
+        borderRadius: BorderRadius.circular(SkyRadius.input),
         border: Border.all(
           color: scheme.outlineVariant,
-          width: HappyBorderWidth.hairline,
+          width: SkyBorderWidth.hairline,
         ),
       ),
       child: Row(
-        spacing: HappySemanticSpacing.itemGap,
+        spacing: SkySemanticSpacing.itemGap,
         children: <Widget>[
           Icon(
             LucideIcons.smartphone,
-            size: HappyIconSize.md,
+            size: SkyIconSize.md,
             color: scheme.onSurfaceVariant,
           ),
           Expanded(
@@ -74,11 +74,11 @@ class PhoneSummary extends StatelessWidget {
           ),
           SizedBox(
             // 文字按钮，但热区撑到 44。
-            height: HappyControlSize.minTapTarget,
-            child: HappyButton(
+            height: SkyControlSize.minTapTarget,
+            child: SkyButton(
               label: l10n.authChangePhone,
-              variant: HappyButtonVariant.ghost,
-              size: HappyButtonSize.small,
+              variant: SkyButtonVariant.ghost,
+              size: SkyButtonSize.small,
               isFullWidth: false,
               onPressed: enabled ? onEdit : null,
             ),

@@ -1,5 +1,5 @@
 import "package:freezed_annotation/freezed_annotation.dart";
-import "package:happy_os/features/auth/domain/index.dart";
+import "package:sky_dive/features/auth/domain/index.dart";
 
 part "send_sms_code_response_dto.freezed.dart";
 part "send_sms_code_response_dto.g.dart";

@@ -209,7 +209,7 @@ return $default(_that.themeMode,_that.locale);case _:
 
 
 class _AppSettings implements AppSettings {
-  const _AppSettings({this.themeMode = ThemeMode.dark, this.locale});
+  const _AppSettings({this.themeMode = ThemeMode.system, this.locale});
   
 
 @override@JsonKey() final  ThemeMode themeMode;

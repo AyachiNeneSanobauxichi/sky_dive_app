@@ -1,86 +1,128 @@
 # auth api
 
+> ⚠️ 后端尚未就绪。以下契约是客户端与假后端（`lib/features/auth/data/mock/`）共同遵循的**约定稿**，
+> 真实后端接入时以后端为准，客户端只需改 DTO 与 `authDataSourceProvider` 一行装配。
+>
+> 所有响应都是信封形态：`{ code, message, data }`，下面的 `response` 只写 `data` 的形状。
+
 ## v1
 
-- 获取验证码接口
+### 发送短信验证码
+
+`GET /auth/sms-code`，无需鉴权。
 
 ```ts
-// get
-const path =
-  "https://lifescript.happylifeos.com/api/auth/sms-code?phone=15040646791";
+// request（query）
+{
+  phone: string; // 日本国内格式，含前导 0，如 "09012345678"
+}
 
-const response = {
-  code: 200,
-  message: "验证码已发送",
-  data: {
-    code: "123456",
-    expiresIn: 300,
-    message: "验证码已发送，用于登录验证，有效期5分钟",
-  },
-  timestamp: 1785860858577,
-};
+// response
+{
+  code: string | null;    // 联调期回显的验证码，生产环境应移除
+  expiresIn: number;      // 验证码有效期（秒），v1 = 300。⚠️ 不是重发冷却
+  message: string | null; // 服务端提示文案
+}
 ```
 
-- 登录接口
+> 重发冷却**不由接口下发**，客户端本地按 60 秒计（`SmsCodeController`）。服务端仍应按号码做真正的限频。
+
+### 邮箱密码登录
+
+`POST /auth/login/email`，无需鉴权。
 
 ```ts
-// post
-const path = "https://lifescript.happylifeos.com/api/auth/login";
+// request
+{
+  email: string;
+  password: string;
+}
 
-const request = {
-  phone: "15040646791",
-  smsCode: "123456",
-};
-
-const response = {
-  code: 200,
-  message: "登录成功",
-  data: {
-    accessToken:
-      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyZDY3MDJkZjk1MzFlNzYyZDgzZjEzMzgwNTk0MmU0MiIsInVzZXJuYW1lIjoi5byA5b-Db0Y2SnhxIiwidXNlclR5cGUiOiJ1c2VyIiwiaWF0IjoxNzg1ODYwOTY3LCJleHAiOjE3ODU5NDczNjd9.2nJKi3vJdzgVAX-Ls-sUmcIvg5vfHXvCXa4sc-VKBnDnivX9h_pogeHxU704ONZIeLPv7VWEA5WMWmQxxOap1A",
-    refreshToken:
-      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyZDY3MDJkZjk1MzFlNzYyZDgzZjEzMzgwNTk0MmU0MiIsInVzZXJuYW1lIjoi5byA5b-Db0Y2SnhxIiwidXNlclR5cGUiOiJ1c2VyIiwiaWF0IjoxNzg1ODYwOTY3LCJleHAiOjE3ODY0NjU3Njd9.uhwP1w3DKWLd7SB9tBdkYX4_yCqKvEaOJv3OfFT0U-ULeAbAD9Am4CH3vpzcT4GTZyfqOJmhR8R-sq8tubWO5g",
-    expiresIn: 86400,
-    userInfo: {
-      id: "2d6702df9531e762d83f133805942e42",
-      account: "15040646791",
-      username: "开心oF6Jxq",
-      nickname: "开心oF6Jxq",
-      phone: "15040646791",
-      status: 1,
-      memberLevel: "free",
-      totalDays: 0,
-      lastActiveTime: "2026-07-02 00:36:26",
-      createTime: "2026-04-16 00:45:28",
-    },
-    loginTime: "2026-08-05 00:29:27",
-  },
-  timestamp: 1785860967960,
-};
+// response —— 与 /auth/login/sms、/auth/register 同形
+{
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;        // accessToken 有效期（秒），v1 = 86400
+  loginTime: string;        // ISO-8601
+  isNewAccount: boolean;    // 本次是否新建了账号
+  userInfo: {
+    id: string;
+    displayName: string;
+    email: string | null;
+    phone: string | null;
+    avatarUrl: string | null;
+    licenseLevel: string | null; // "none" | "aff" | "a" | "b" | "c" | "d"
+    totalJumps: number;
+    createdAt: string | null;    // ISO-8601
+    lastActiveAt: string | null; // ISO-8601
+  };
+}
 ```
 
-## v2
+### 短信验证码登录
 
-- 鉴权约定：登录成功后，后续所有需鉴权接口都要带 accessToken 请求头。
+`POST /auth/login/sms`，无需鉴权。未注册的手机号**由服务端直接建号**并返回 `isNewAccount: true`。
 
 ```ts
-const headers = {
-  Authorization: `Bearer ${accessToken}`,
-};
+// request
+{
+  phone: string;
+  smsCode: string; // 6 位数字
+}
+
+// response：同 /auth/login/email
 ```
 
-- 未授权处理：接口返回未授权（token 缺失 / 失效 / 无权限）时，客户端清空本地会话并退回登录页。
+### 注册
 
-- 未授权的响应形态待后端确认：是 HTTP 401，还是 HTTP 200 + 信封 `code` 为 401（本项目信封成功码为 200，业务码与 HTTP 码同形）。当前客户端只按 **HTTP 401** 处理。
-
-- 登录成功后获取用户信息：接口见 `agent/service/user/user.api.md` v2 的 `GET /user-profile/me`（需鉴权头）。
-
-## v3
-
-- logout 接口
-- 需要清空缓存
+`POST /auth/register`，无需鉴权。成功即返回**可用会话**（不要求客户端再登录一次）。
 
 ```ts
-// post
-const = "https://lifescript.happylifeos.com/api/auth/logout";
+// request
+{
+  email: string;
+  password: string;
+  displayName: string;
+  phone?: string | null; // 选填
+}
+
+// response：同 /auth/login/email，isNewAccount 恒为 true
 ```
+
+### 刷新令牌
+
+`POST /auth/refresh-token`，无需鉴权（凭 refreshToken 本身）。
+
+```ts
+// request
+{
+  refreshToken: string;
+}
+
+// response —— 只回新的 accessToken，不轮换 refreshToken
+{
+  accessToken: string;
+  expiresIn: number;
+}
+```
+
+> ⚠️ 这个端点的路径还与 `core/network/interceptors/auth_interceptor.dart` 里的硬编码值联动，后端定稿后两处要一起改。
+
+### 登出
+
+`POST /auth/logout`，**需鉴权**（服务端凭 accessToken 判断吊销谁的会话）。无请求体，`data` 为 `null`。
+
+> 客户端等待上限 5 秒，超时或失败都照常清空本地会话——登出是"我现在就要离开"的诉求。
+
+### 业务错误码
+
+`code` 非成功码时的取值。客户端按码出本地化文案（`authFailureMessage`），码表以外的一律用服务端下发的 `message` 兜底。
+
+| code | 含义 | 客户端行为 |
+| --- | --- | --- |
+| 10001 | 邮箱或密码不正确 | 只清密码、保留邮箱、聚焦回密码框。**不区分**"账号不存在"与"密码错"，否则等于提供账号探测接口 |
+| 10002 | 验证码不正确 | 清空 OTP、聚焦回第一格 |
+| 10003 | 验证码已过期 | 同上，文案提示重新获取 |
+| 10010 | 邮箱已被注册 | 就地钉在邮箱字段下方并聚焦 |
+| 10011 | 手机号已绑定其它账号 | 就地钉在手机号字段下方并聚焦 |
+| 10020 | 账号被停用 | 就地钉在邮箱字段下方（不用 toast） |

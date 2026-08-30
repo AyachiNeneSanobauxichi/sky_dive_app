@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserDto {
 
- String get id; String get phone; String? get account; String? get username; String? get nickname; int? get status; String? get memberLevel; int get totalDays; String? get lastActiveTime; String? get createTime;
+ String get id; String get displayName; String? get email; String? get phone; String? get avatarUrl; String? get licenseLevel; int get totalJumps; String? get createdAt; String? get lastActiveAt;
 /// Create a copy of UserDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $UserDtoCopyWith<UserDto> get copyWith => _$UserDtoCopyWithImpl<UserDto>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserDto&&(identical(other.id, id) || other.id == id)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.account, account) || other.account == account)&&(identical(other.username, username) || other.username == username)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.status, status) || other.status == status)&&(identical(other.memberLevel, memberLevel) || other.memberLevel == memberLevel)&&(identical(other.totalDays, totalDays) || other.totalDays == totalDays)&&(identical(other.lastActiveTime, lastActiveTime) || other.lastActiveTime == lastActiveTime)&&(identical(other.createTime, createTime) || other.createTime == createTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserDto&&(identical(other.id, id) || other.id == id)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.licenseLevel, licenseLevel) || other.licenseLevel == licenseLevel)&&(identical(other.totalJumps, totalJumps) || other.totalJumps == totalJumps)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastActiveAt, lastActiveAt) || other.lastActiveAt == lastActiveAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,phone,account,username,nickname,status,memberLevel,totalDays,lastActiveTime,createTime);
+int get hashCode => Object.hash(runtimeType,id,displayName,email,phone,avatarUrl,licenseLevel,totalJumps,createdAt,lastActiveAt);
 
 @override
 String toString() {
-  return 'UserDto(id: $id, phone: $phone, account: $account, username: $username, nickname: $nickname, status: $status, memberLevel: $memberLevel, totalDays: $totalDays, lastActiveTime: $lastActiveTime, createTime: $createTime)';
+  return 'UserDto(id: $id, displayName: $displayName, email: $email, phone: $phone, avatarUrl: $avatarUrl, licenseLevel: $licenseLevel, totalJumps: $totalJumps, createdAt: $createdAt, lastActiveAt: $lastActiveAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $UserDtoCopyWith<$Res>  {
   factory $UserDtoCopyWith(UserDto value, $Res Function(UserDto) _then) = _$UserDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String phone, String? account, String? username, String? nickname, int? status, String? memberLevel, int totalDays, String? lastActiveTime, String? createTime
+ String id, String displayName, String? email, String? phone, String? avatarUrl, String? licenseLevel, int totalJumps, String? createdAt, String? lastActiveAt
 });
 
 
@@ -65,18 +65,17 @@ class _$UserDtoCopyWithImpl<$Res>
 
 /// Create a copy of UserDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? phone = null,Object? account = freezed,Object? username = freezed,Object? nickname = freezed,Object? status = freezed,Object? memberLevel = freezed,Object? totalDays = null,Object? lastActiveTime = freezed,Object? createTime = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? displayName = null,Object? email = freezed,Object? phone = freezed,Object? avatarUrl = freezed,Object? licenseLevel = freezed,Object? totalJumps = null,Object? createdAt = freezed,Object? lastActiveAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,phone: null == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
-as String,account: freezed == account ? _self.account : account // ignore: cast_nullable_to_non_nullable
-as String?,username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
-as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as int?,memberLevel: freezed == memberLevel ? _self.memberLevel : memberLevel // ignore: cast_nullable_to_non_nullable
-as String?,totalDays: null == totalDays ? _self.totalDays : totalDays // ignore: cast_nullable_to_non_nullable
-as int,lastActiveTime: freezed == lastActiveTime ? _self.lastActiveTime : lastActiveTime // ignore: cast_nullable_to_non_nullable
-as String?,createTime: freezed == createTime ? _self.createTime : createTime // ignore: cast_nullable_to_non_nullable
+as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
+as String,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,licenseLevel: freezed == licenseLevel ? _self.licenseLevel : licenseLevel // ignore: cast_nullable_to_non_nullable
+as String?,totalJumps: null == totalJumps ? _self.totalJumps : totalJumps // ignore: cast_nullable_to_non_nullable
+as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String?,lastActiveAt: freezed == lastActiveAt ? _self.lastActiveAt : lastActiveAt // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -162,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String phone,  String? account,  String? username,  String? nickname,  int? status,  String? memberLevel,  int totalDays,  String? lastActiveTime,  String? createTime)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String displayName,  String? email,  String? phone,  String? avatarUrl,  String? licenseLevel,  int totalJumps,  String? createdAt,  String? lastActiveAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserDto() when $default != null:
-return $default(_that.id,_that.phone,_that.account,_that.username,_that.nickname,_that.status,_that.memberLevel,_that.totalDays,_that.lastActiveTime,_that.createTime);case _:
+return $default(_that.id,_that.displayName,_that.email,_that.phone,_that.avatarUrl,_that.licenseLevel,_that.totalJumps,_that.createdAt,_that.lastActiveAt);case _:
   return orElse();
 
 }
@@ -183,10 +182,10 @@ return $default(_that.id,_that.phone,_that.account,_that.username,_that.nickname
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String phone,  String? account,  String? username,  String? nickname,  int? status,  String? memberLevel,  int totalDays,  String? lastActiveTime,  String? createTime)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String displayName,  String? email,  String? phone,  String? avatarUrl,  String? licenseLevel,  int totalJumps,  String? createdAt,  String? lastActiveAt)  $default,) {final _that = this;
 switch (_that) {
 case _UserDto():
-return $default(_that.id,_that.phone,_that.account,_that.username,_that.nickname,_that.status,_that.memberLevel,_that.totalDays,_that.lastActiveTime,_that.createTime);case _:
+return $default(_that.id,_that.displayName,_that.email,_that.phone,_that.avatarUrl,_that.licenseLevel,_that.totalJumps,_that.createdAt,_that.lastActiveAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +202,10 @@ return $default(_that.id,_that.phone,_that.account,_that.username,_that.nickname
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String phone,  String? account,  String? username,  String? nickname,  int? status,  String? memberLevel,  int totalDays,  String? lastActiveTime,  String? createTime)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String displayName,  String? email,  String? phone,  String? avatarUrl,  String? licenseLevel,  int totalJumps,  String? createdAt,  String? lastActiveAt)?  $default,) {final _that = this;
 switch (_that) {
 case _UserDto() when $default != null:
-return $default(_that.id,_that.phone,_that.account,_that.username,_that.nickname,_that.status,_that.memberLevel,_that.totalDays,_that.lastActiveTime,_that.createTime);case _:
+return $default(_that.id,_that.displayName,_that.email,_that.phone,_that.avatarUrl,_that.licenseLevel,_that.totalJumps,_that.createdAt,_that.lastActiveAt);case _:
   return null;
 
 }
@@ -218,19 +217,18 @@ return $default(_that.id,_that.phone,_that.account,_that.username,_that.nickname
 @JsonSerializable()
 
 class _UserDto extends UserDto {
-  const _UserDto({required this.id, required this.phone, this.account, this.username, this.nickname, this.status, this.memberLevel, this.totalDays = 0, this.lastActiveTime, this.createTime}): super._();
+  const _UserDto({required this.id, required this.displayName, this.email, this.phone, this.avatarUrl, this.licenseLevel, this.totalJumps = 0, this.createdAt, this.lastActiveAt}): super._();
   factory _UserDto.fromJson(Map<String, dynamic> json) => _$UserDtoFromJson(json);
 
 @override final  String id;
-@override final  String phone;
-@override final  String? account;
-@override final  String? username;
-@override final  String? nickname;
-@override final  int? status;
-@override final  String? memberLevel;
-@override@JsonKey() final  int totalDays;
-@override final  String? lastActiveTime;
-@override final  String? createTime;
+@override final  String displayName;
+@override final  String? email;
+@override final  String? phone;
+@override final  String? avatarUrl;
+@override final  String? licenseLevel;
+@override@JsonKey() final  int totalJumps;
+@override final  String? createdAt;
+@override final  String? lastActiveAt;
 
 /// Create a copy of UserDto
 /// with the given fields replaced by the non-null parameter values.
@@ -245,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserDto&&(identical(other.id, id) || other.id == id)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.account, account) || other.account == account)&&(identical(other.username, username) || other.username == username)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.status, status) || other.status == status)&&(identical(other.memberLevel, memberLevel) || other.memberLevel == memberLevel)&&(identical(other.totalDays, totalDays) || other.totalDays == totalDays)&&(identical(other.lastActiveTime, lastActiveTime) || other.lastActiveTime == lastActiveTime)&&(identical(other.createTime, createTime) || other.createTime == createTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserDto&&(identical(other.id, id) || other.id == id)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.licenseLevel, licenseLevel) || other.licenseLevel == licenseLevel)&&(identical(other.totalJumps, totalJumps) || other.totalJumps == totalJumps)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastActiveAt, lastActiveAt) || other.lastActiveAt == lastActiveAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,phone,account,username,nickname,status,memberLevel,totalDays,lastActiveTime,createTime);
+int get hashCode => Object.hash(runtimeType,id,displayName,email,phone,avatarUrl,licenseLevel,totalJumps,createdAt,lastActiveAt);
 
 @override
 String toString() {
-  return 'UserDto(id: $id, phone: $phone, account: $account, username: $username, nickname: $nickname, status: $status, memberLevel: $memberLevel, totalDays: $totalDays, lastActiveTime: $lastActiveTime, createTime: $createTime)';
+  return 'UserDto(id: $id, displayName: $displayName, email: $email, phone: $phone, avatarUrl: $avatarUrl, licenseLevel: $licenseLevel, totalJumps: $totalJumps, createdAt: $createdAt, lastActiveAt: $lastActiveAt)';
 }
 
 
@@ -265,7 +263,7 @@ abstract mixin class _$UserDtoCopyWith<$Res> implements $UserDtoCopyWith<$Res> {
   factory _$UserDtoCopyWith(_UserDto value, $Res Function(_UserDto) _then) = __$UserDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String phone, String? account, String? username, String? nickname, int? status, String? memberLevel, int totalDays, String? lastActiveTime, String? createTime
+ String id, String displayName, String? email, String? phone, String? avatarUrl, String? licenseLevel, int totalJumps, String? createdAt, String? lastActiveAt
 });
 
 
@@ -282,18 +280,17 @@ class __$UserDtoCopyWithImpl<$Res>
 
 /// Create a copy of UserDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? phone = null,Object? account = freezed,Object? username = freezed,Object? nickname = freezed,Object? status = freezed,Object? memberLevel = freezed,Object? totalDays = null,Object? lastActiveTime = freezed,Object? createTime = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? displayName = null,Object? email = freezed,Object? phone = freezed,Object? avatarUrl = freezed,Object? licenseLevel = freezed,Object? totalJumps = null,Object? createdAt = freezed,Object? lastActiveAt = freezed,}) {
   return _then(_UserDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,phone: null == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
-as String,account: freezed == account ? _self.account : account // ignore: cast_nullable_to_non_nullable
-as String?,username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
-as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as int?,memberLevel: freezed == memberLevel ? _self.memberLevel : memberLevel // ignore: cast_nullable_to_non_nullable
-as String?,totalDays: null == totalDays ? _self.totalDays : totalDays // ignore: cast_nullable_to_non_nullable
-as int,lastActiveTime: freezed == lastActiveTime ? _self.lastActiveTime : lastActiveTime // ignore: cast_nullable_to_non_nullable
-as String?,createTime: freezed == createTime ? _self.createTime : createTime // ignore: cast_nullable_to_non_nullable
+as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
+as String,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,licenseLevel: freezed == licenseLevel ? _self.licenseLevel : licenseLevel // ignore: cast_nullable_to_non_nullable
+as String?,totalJumps: null == totalJumps ? _self.totalJumps : totalJumps // ignore: cast_nullable_to_non_nullable
+as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String?,lastActiveAt: freezed == lastActiveAt ? _self.lastActiveAt : lastActiveAt // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -62,33 +62,33 @@ class TodoRepositoryImpl implements TodoRepository {
 **provider 绑定（依赖注入）：**
 
 ```dart
-// lib/features/story/data/story_providers.dart
-part "story_providers.g.dart";
+// lib/features/flight/data/flight_providers.dart
+part "flight_providers.g.dart";
 
 @Riverpod(keepAlive: true)
-StoryRepository storyRepository(Ref ref) =>
-    StoryRepositoryImpl(ref.watch(dioClientProvider));
+FlightRepository flightRepository(Ref ref) =>
+    FlightRepositoryImpl(ref.watch(dioClientProvider));
 ```
 
 **controller 编排：**
 
 ```dart
-// lib/features/story/controllers/story_list_controller.dart
-part "story_list_controller.g.dart";
+// lib/features/flight/controllers/flight_list_controller.dart
+part "flight_list_controller.g.dart";
 
-// build 返回 Future → 生成 AsyncNotifier 形态，provider 名 storyListControllerProvider
+// build 返回 Future → 生成 AsyncNotifier 形态，provider 名 flightListControllerProvider
 @riverpod
-class StoryListController extends _$StoryListController {
+class FlightListController extends _$FlightListController {
   @override
-  Future<List<Story>> build() =>
-      ref.watch(storyRepositoryProvider).fetchStories();
+  Future<List<Flight>> build() =>
+      ref.watch(flightRepositoryProvider).fetchFlights();
 
   Future<void> add(String title) async {
-    final repo = ref.read(storyRepositoryProvider);
+    final repo = ref.read(flightRepositoryProvider);
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       await repo.create(title);
-      return repo.fetchStories();
+      return repo.fetchFlights();
     });
   }
 }

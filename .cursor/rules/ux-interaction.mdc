@@ -12,9 +12,9 @@ alwaysApply: false
 
 ## 🎯 项目定位（来自 `agent/infra/base.md`）
 
-- 产品形态：**与 AI 聊天调试、生成"爽文"故事**的移动 app。核心体验是「说出经历 → 看着故事长出来 → 反复调试」。
+- 产品形态：**日本跳伞运营商的 C 端 app**。核心体验是「挑一条航线 → 看天气窗口 → 下预约 → 当天跳」。
 - 目标用户是**普通消费者**，不是开发者/后台使用者：容忍度低、审美期待高、一处发木就流失。
-- 视觉气质：现代 + 贴合本项目主题（深色优先 · 电影感 · 紫罗兰→品红的光），见 `ui-theming.mdc`。
+- 视觉气质：现代 + 贴合本项目主题（高空 · 深浅双主场 · 高空蓝→高空青的光），见 `ui-theming.mdc`。
 - 后端未就绪时用 mock 把**完整交互链路**跑通（见 `agent-workflow.mdc`），**不允许**因为"接口还没有"就省掉加载 / 空 / 错误态。
 
 ### 主动提更好的 UI 方案（硬要求）
@@ -33,10 +33,10 @@ alwaysApply: false
 
 | 时刻 | 必须给什么 | 用什么 |
 | --- | --- | --- |
-| **按下瞬间**（<100ms） | 视觉 + 触感 | `HappyMotion.pressScale` 缩放 / `InkWell` 水波 + `HapticFeedback` |
-| **等待中** | 明确的进行态，且**不可重复触发** | 骨架屏 / `HappyButton.isLoading` / `HappyThinkingIndicator` |
-| **成功** | 结果本身可见；无可见结果时补轻提示 | 新内容入场动效 / `HappyToast.success` |
-| **失败** | 说清**发生了什么 + 下一步怎么办** | `HappyToast.error` / 内联 `HappyRetryCard` |
+| **按下瞬间**（<100ms） | 视觉 + 触感 | `SkyMotion.pressScale` 缩放 / `InkWell` 水波 + `HapticFeedback` |
+| **等待中** | 明确的进行态，且**不可重复触发** | 骨架屏 / `SkyButton.isLoading` |
+| **成功** | 结果本身可见；无可见结果时补轻提示 | 新内容入场动效 / `SkyToast.success` |
+| **失败** | 说清**发生了什么 + 下一步怎么办** | `SkyToast.error` / 内联 `SkyRetryCard` |
 
 **成功后立刻换页的流程，先在原地确认一下**：登录 / 提交成功即跳转时，用户刚敲完最后一个字符就被弹走，不知道自己做对没做对。先在原页给一次 200–400ms 的短确认（输入框变对勾、卡片点亮），再触发导航——为此可以把"拿到结果"和"落地状态（触发路由）"拆成两步，但**落地那一步不能因为页面已卸载就跳过**，否则用户白操作一次。
 
@@ -45,8 +45,8 @@ alwaysApply: false
 onPressed: () => ref.read(xxxProvider.notifier).submit(),
 
 // ✅ 忙碌态锁住按钮 + 结果有提示
-HappyButton(
-  label: l10n.storyGenerate,
+SkyButton(
+  label: l10n.bookingSubmit,
   isLoading: state.isSubmitting,                 // 忙碌时按钮自身不可点，防重复提交
   onPressed: state.canSubmit ? _submit : null,   // 不满足条件时禁用而非静默失败
 )
@@ -61,20 +61,19 @@ HappyButton(
 | 加载 | 骨架屏（`skeletonizer`），用真实 item widget + 占位数据 | `CircularProgressIndicator` 撑满整页 |
 | 空 | 有插画/品牌标记 + 一句解释 + **一个引导下一步的行动按钮** | 只显示"暂无数据" |
 | 错误 | 人话文案 + **重试按钮**；已有内容时**内联**报错、不清屏 | 抛裸 `Exception.toString()`、整页红字 |
-| 有数据 | 首帧入场动效（列表用 `HappyMotion.stagger` 逐项） | 数据直接"闪现" |
+| 有数据 | 首帧入场动效（列表用 `SkyMotion.stagger` 逐项） | 数据直接"闪现" |
 
-- 空态不是兜底，是**引导位**：故事列表为空 → "写下你的第一段经历" + 直接进入输入。
+- 空态不是兜底，是**引导位**：预约列表为空 → "还没有预约" + 一步跳到航线列表。
 - **失败后清不清用户的输入，按"谁错了"分**：用户填错（验证码不对、密码错）→ 清空该字段并聚焦回去，省掉手动删；网络 / 服务端故障 → **保留**已填内容，那不是用户的错，清了等于让他白填一次。判断依据只能是错误类型 / 业务码，不能靠文案匹配。
 - 表单校验错误**就地展示在字段下方**（`form_builder_validators`），不要用 toast 报校验错误——toast 会消失，用户不知道哪个字段错了。
-- 流式生成是特例：不用骨架屏，走 `HappyThinkingIndicator` → `HappyStreamingText`，失败**保留残篇**（见 `ui-theming.mdc`）。
 
 ## 👆 触摸与手势
 
-- **热区 ≥ `HappyControlSize.minTapTarget`（44）**。图标按钮视觉可以小，热区不能小——需要时用 `SizedBox` / `padding` 撑开。
-- **禁止裸 `GestureDetector` 做主要按钮**：至少 `InkWell`（有水波）或复用 `HappyButton`。
+- **热区 ≥ `SkyControlSize.minTapTarget`（44）**。图标按钮视觉可以小，热区不能小——需要时用 `SizedBox` / `padding` 撑开。
+- **禁止裸 `GestureDetector` 做主要按钮**：至少 `InkWell`（有水波）或复用 `SkyButton`。
 - **防重复提交**：提交类操作必须在**发起时立刻**进入忙碌态并禁用入口，不能靠"用户不会点两次"。
-- **危险操作**（删除故事、退出登录、清空输入）必须二次确认；能做「撤销」的优先做撤销（toast 带撤销）而不是弹窗拦一道。
-- **不可用要看得出来**：不满足条件时禁用（`onPressed: null`，`HappyButton` 已有禁用态长相），不要能点但点了没反应。
+- **危险操作**（取消预约、退出登录、清空输入）必须二次确认；能做「撤销」的优先做撤销（toast 带撤销）而不是弹窗拦一道。
+- **不可用要看得出来**：不满足条件时禁用（`onPressed: null`，`SkyButton` 已有禁用态长相），不要能点但点了没反应。
 - 手势要有**可发现的替代路径**：滑动删除、长按菜单这类隐藏手势必须另有可见入口，不能是唯一操作方式。
 
 ## 📳 触感反馈（移动端不能缺）
@@ -84,31 +83,31 @@ HappyButton(
 | 场景 | 用 |
 | --- | --- |
 | 切换 / 勾选 / 选 chip / tab | `HapticFeedback.selectionClick()` |
-| 主行动点击、成功提示 | `HapticFeedback.lightImpact()`（`HappyButton`、`HappyToast.success` 已内置） |
-| 失败、破坏性操作确认 | `HapticFeedback.mediumImpact()`（`HappyToast.error` 已内置） |
+| 主行动点击、成功提示 | `HapticFeedback.lightImpact()`（`SkyButton`、`SkyToast.success` 已内置） |
+| 失败、破坏性操作确认 | `HapticFeedback.mediumImpact()`（`SkyToast.error` 已内置） |
 
 - 已封装的组件**不要再补一次**震动（会叠成"咔咔"两下）。
-- **不给**滚动、纯页面跳转、流式每个字加震动。
+- **不给**滚动、纯页面跳转加震动。
 - 高频连续操作（长按连加）做节流，别每帧震。
 
 ## ⌨️ 键盘与输入
 
-聊天/输入是本项目主路径，键盘处理错了体验直接崩：
+登录 / 注册 / 预约表单是本项目主路径，键盘处理错了体验直接崩：
 
 - 表单串联 `textInputAction`：中间字段 `next`、末字段 `done`；多行输入用 `newline`。
 - 输入区**不能被软键盘遮挡**：可滚动容器 + 底部预留 `MediaQuery.viewInsetsOf(context).bottom`；`Scaffold` 不要随手关掉 `resizeToAvoidBottomInset`。
 - 提交成功后**收起键盘**（`FocusScope.of(context).unfocus()`）；点击输入区外空白也应收起。
 - `autofocus` 最多给**首屏第一个必填字段**，其它页面进来不要弹键盘遮住内容。
 - 长文本输入给出可感知的边界：字数提示只在接近上限时出现，不要一直占位吓人。
-- 输入过程中**不做**逐字远程校验/请求；需要联动时防抖（`HappyMotion.normal` 级别以上）。
+- 输入过程中**不做**逐字远程校验/请求；需要联动时防抖（`SkyMotion.normal` 级别以上）。
 
 ## 🎬 动效：服务于理解，不是炫技
 
-- 时长/曲线只取 `HappyMotion`；入场用 `entrance`，退场用 `exit`，正反馈才用 `springy`。
+- 时长/曲线只取 `SkyMotion`；入场用 `entrance`，退场用 `exit`，正反馈才用 `springy`。
 - **入场动效给"新出现的内容"**，不给每次重建都跑一遍（否则每次 setState 都在闪）。
-- 列表逐项入场用 `HappyMotion.stagger`，且**只给首屏可见项**；长列表滚动时不要每个 item 都动。
-- **绝不阻塞操作**：动效期间界面必须可交互；超过 `HappyMotion.slow`（400ms）的动效只能用于页面级转场或叙事性内容。
-- 尊重系统「减弱动态效果」：环境动效（星野闪烁、星云漂移、呼吸光晕）判定 `MediaQuery.disableAnimationsOf(context)`。
+- 列表逐项入场用 `SkyMotion.stagger`，且**只给首屏可见项**；长列表滚动时不要每个 item 都动。
+- **绝不阻塞操作**：动效期间界面必须可交互；超过 `SkyMotion.slow`（400ms）的动效只能用于页面级转场或叙事性内容。
+- 尊重系统「减弱动态效果」：环境动效（云层漂移、星点呼吸、光晕呼吸）判定 `MediaQuery.disableAnimationsOf(context)`。
 - 布局变化用 `AnimatedContainer` / `AnimatedSize` / `AnimatedSwitcher` 过渡，不要"跳变"。
 
 ## 🧭 导航与状态保持
@@ -122,7 +121,6 @@ HappyButton(
 
 - 列表一律懒加载（`ListView.builder` / `SliverList`），item 给稳定 `key`。
 - 分页加载在底部给明确的"加载中 / 到底了 / 加载失败可重试"三态，不要静默停住。
-- 流式内容贴底自动滚动，但**用户手动上翻时不许把他拽回底部**——"是否贴底"要在状态更新**之前**判定（参考 `StoryScreen._autoScrollIfPinned()`）。
 - 下拉刷新用 `RefreshIndicator`，且刷新中不清空已有内容。
 
 ## ♿ 无障碍与适配（C 端基本盘）
@@ -137,7 +135,7 @@ HappyButton(
 
 - 用户可见文案全部走 i18n（见 `i18n.mdc`），`screens/`·`widgets/` 内不得出现字面量。
 - 错误文案讲**用户能做什么**（"网络似乎断了，检查连接后重试"），不讲技术细节（"DioException 500"）。
-- 语气贴合产品：叙事、口语化、简短；不用后台管理系统的"操作成功""请求失败"。
+- 语气贴合产品：轻快、口语化、简短，像同伴而不是柜台；不用后台管理系统的"操作成功""请求失败"。
 
 ## ✅ 交互自检清单（每次交付 UI 前逐条过）
 
@@ -146,7 +144,7 @@ HappyButton(
 - [ ] 提交类操作有忙碌态且**不可重复触发**；不可用状态是禁用而非静默。
 - [ ] 危险操作有二次确认或可撤销。
 - [ ] 键盘：不遮挡输入、`textInputAction` 串联、提交后收起。
-- [ ] 动效取自 `HappyMotion`，只给新内容，不阻塞交互，尊重「减弱动态效果」。
+- [ ] 动效取自 `SkyMotion`，只给新内容，不阻塞交互，尊重「减弱动态效果」。
 - [ ] 返回 / tab 切换不丢草稿、不丢滚动位置。
 - [ ] 图标按钮有 `Semantics` 或 `tooltip`；深浅两套主题都验过。
 - [ ] 文案全走 i18n，错误文案给出下一步。
@@ -157,7 +155,7 @@ HappyButton(
 - ❌ 点了没反应 / 只有网络回来后才有变化。
 - ❌ 整页转圈代替骨架屏；纯文字"暂无数据"代替空态引导。
 - ❌ 用 toast 报表单校验错误。
-- ❌ 报错清掉用户已有的内容（尤其流式残篇）。
+- ❌ 报错清掉用户已有的内容（网络故障时尤其不能清）。
 - ❌ 隐藏手势是唯一入口；裸 `GestureDetector` 当主按钮。
 - ❌ 自创震动强度、给滚动加震动、同一次点击震两下。
 - ❌ 键盘弹起遮住正在输入的框；提交后键盘赖着不走。

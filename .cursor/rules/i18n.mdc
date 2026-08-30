@@ -58,19 +58,21 @@ MaterialApp.router(
 基建已就绪，业务侧**直接用**，不要再自己搭：
 
 - 配置：项目根 `l10n.yaml`；`pubspec.yaml` 里 `flutter: generate: true`。
-- 文案源：`lib/l10n/app_en.arb`（模板，含 `@key` 描述/占位符）+ `lib/l10n/app_zh.arb`。
+- 文案源：`lib/l10n/app_en.arb`（**模板**，含 `@key` 描述/占位符）+ `app_ja.arb` + `app_zh.arb`。三份 key 必须一一对应；只有模板带 `@key` 元数据，译文文件只放键值。
 - 生成产物：`lib/l10n/app_localizations*.dart`（`output-class: AppLocalizations`，`nullable-getter: false`）。**产物不入库**（`.gitignore` 已忽略），与 `*.freezed.dart` / `*.g.dart` 的策略相反——见下。
 - 装配：`app.dart` 用 `AppLocalizations.localizationsDelegates`（+ `FormBuilderLocalizations.delegate`）与 `AppLocalizations.supportedLocales`；**不写死 `locale`**，跟随系统。
 - 访问：`final l10n = AppLocalizations.of(context);` 然后 `l10n.<key>`。
 
 ```dart
-import "package:happy_os/l10n/app_localizations.dart";
+import "package:sky_dive/l10n/app_localizations.dart";
 // ...
 final l10n = AppLocalizations.of(context);
 Text(l10n.loginTitle);
 ```
 
-**加新文案**：先在 `app_en.arb` 加 `key` + `@key`（description），再在 `app_zh.arb` 加对应中文，然后 `flutter gen-l10n` 重新生成。两个 arb 的 key 必须一一对应。
+**加新文案**：先在 `app_en.arb` 加 `key` + `@key`（description），再在 `app_ja.arb` / `app_zh.arb` 补上日文与中文，然后 `flutter gen-l10n` 重新生成。三个 arb 的 key 必须一一对应（缺 key 会写进 `l10n_untranslated.txt`）。
+
+**语言与兜底**：主市场是日本，但 `supportedLocales` 的首项是 `en`——系统语言既不是日语也不是中文时（欧美游客），回退到英文比回退到日文有用得多。"跟随系统"是默认值，用户可在账号页钉死某一种（`AppLanguageOption`）。
 
 ### ⚠️ 产物不入库：改完 `.arb` 必须自己重新生成
 

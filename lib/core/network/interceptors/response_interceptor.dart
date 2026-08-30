@@ -1,7 +1,7 @@
 import "package:dio/dio.dart";
-import "package:happy_os/core/error/app_exception.dart";
-import "package:happy_os/core/network/api_response.dart";
-import "package:happy_os/core/network/auth_events.dart";
+import "package:sky_dive/core/error/app_exception.dart";
+import "package:sky_dive/core/network/api_response.dart";
+import "package:sky_dive/core/network/auth_events.dart";
 
 /// 响应解包拦截器：处理后端统一信封 `{code, message, data}`。
 ///

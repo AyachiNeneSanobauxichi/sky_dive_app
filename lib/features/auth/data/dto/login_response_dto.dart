@@ -1,13 +1,14 @@
 import "package:freezed_annotation/freezed_annotation.dart";
-import "package:happy_os/features/auth/data/dto/user_dto.dart";
-import "package:happy_os/features/auth/domain/index.dart";
+import "package:sky_dive/features/auth/data/dto/user_dto.dart";
+import "package:sky_dive/features/auth/domain/index.dart";
 
 part "login_response_dto.freezed.dart";
 part "login_response_dto.g.dart";
 
-/// `POST /auth/login` 响应体（信封解包后的 data）：令牌 + 用户 + 登录时刻。
+/// 登录 / 注册接口的响应体（信封解包后的 data）：令牌 + 用户 + 登录时刻。
 ///
-/// 令牌与 `userInfo` 是必填：三者缺任何一个都无法建立可用会话，与其带着半个会话
+/// 三个登录入口（邮箱、短信、注册）共用同一个响应形状，所以只有一个 DTO。
+/// 令牌与 `userInfo` 是必填：缺任何一个都无法建立可用会话，与其带着半个会话
 /// 进 app 再到处判空，不如在解析这一步就失败。
 @freezed
 abstract class LoginResponseDto with _$LoginResponseDto {
@@ -21,6 +22,9 @@ abstract class LoginResponseDto with _$LoginResponseDto {
     @Default(0) int expiresIn,
     required UserDto userInfo,
     String? loginTime,
+
+    /// 本次是否为**新建账号**（注册，或短信首登时后端顺手建的号）。
+    @Default(false) bool isNewAccount,
   }) = _LoginResponseDto;
 
   factory LoginResponseDto.fromJson(Map<String, dynamic> json) =>
@@ -35,5 +39,6 @@ abstract class LoginResponseDto with _$LoginResponseDto {
       expiresIn: expiresIn > 0 ? Duration(seconds: expiresIn) : null,
     ),
     loginTime: UserDto.parseServerTime(loginTime),
+    isNewAccount: isNewAccount,
   );
 }

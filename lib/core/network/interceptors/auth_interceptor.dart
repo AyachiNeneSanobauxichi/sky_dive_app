@@ -1,8 +1,8 @@
 import "package:dio/dio.dart";
-import "package:happy_os/core/network/access_token_store.dart";
-import "package:happy_os/core/network/api_response.dart";
-import "package:happy_os/core/network/auth_events.dart";
-import "package:happy_os/core/storage/secure_storage.dart";
+import "package:sky_dive/core/network/access_token_store.dart";
+import "package:sky_dive/core/network/api_response.dart";
+import "package:sky_dive/core/network/auth_events.dart";
+import "package:sky_dive/core/storage/secure_storage.dart";
 
 /// 鉴权拦截器（v2）。
 ///

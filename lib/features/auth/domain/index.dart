@@ -1,4 +1,5 @@
 export "auth_error_codes.dart";
+export "auth_method.dart";
 export "auth_rules.dart";
 export "auth_session.dart";
 export "auth_state.dart";

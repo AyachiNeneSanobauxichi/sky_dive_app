@@ -1,5 +1,5 @@
-name: happy_os
-description: "HappyOS is an AI-powered app that generates personalized, thrilling stories based on the user's own life experiences."
+name: sky_dive
+description: "SkyDive is the customer-facing app of a Japanese skydiving operator: browse drop zones and jump routes, book a slot, and manage your jump log."
 publish_to: "none"
 version: 0.1.0
 
@@ -26,7 +26,6 @@ dependencies:
   form_builder_validators: ^11.3.0
   freezed_annotation: ^3.1.0
   go_router: ^17.3.0
-  gpt_markdown: ^1.1.8
   intl: ^0.20.2
   json_annotation: ^4.9.0
   logger: ^2.7.0
@@ -34,10 +33,6 @@ dependencies:
   pretty_dio_logger: ^1.4.0
   riverpod_annotation: ^4.0.0
   skeletonizer: ^2.1.3
-  # 端侧语音识别（iOS Speech 框架 / Android SpeechRecognizer），不经后端。
-  # ⚠️ 7.5.0+ 要求 Dart SDK >=3.12.0，当前是 3.10.1——pub 会自行跳过，
-  # 但升 Flutter SDK 前不要手动把它抬上去。
-  speech_to_text: ^7.4.0
   toastification: ^3.2.0
 
 dev_dependencies:
@@ -56,10 +51,12 @@ flutter:
   assets:
     - .env # dotenv 运行时读取的环境配置（需注册为 asset 才能被 rootBundle 加载）
 
-  # 只打包拉丁字体（合计约 1.5MB）；中文交给系统字体回退，
-  # 见 lib/core/theme/app_text_styles.dart 的 HappyFonts.textFallback。
+  # 只打包拉丁字体（约 700KB）；日文 / 中文交给系统字体回退，
+  # 见 lib/core/theme/app_text_styles.dart 的 SkyFonts.textFallback。
+  #
+  # 只有 Inter 一族：航空主题要的是仪表盘式的中性无衬线体，
+  # 标题层级靠字号 + 字重 + 负字距拉开，不再引第二种字体族。
   fonts:
-    # 界面与正文。由 Inter 可变字体实例化出的静态字重（opsz 固定 16）。
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter-Regular.ttf
@@ -70,11 +67,3 @@ flutter:
           weight: 600
         - asset: assets/fonts/Inter-Bold.ttf
           weight: 700
-    # 叙事标题。⚠️ 只有 Regular，写 w700 会触发系统伪粗体，禁止。
-    - family: InstrumentSerif
-      fonts:
-        - asset: assets/fonts/InstrumentSerif-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/InstrumentSerif-Italic.ttf
-          weight: 400
-          style: italic

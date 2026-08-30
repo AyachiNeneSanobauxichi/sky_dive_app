@@ -42,7 +42,7 @@ abstract class Todo with _$Todo {
 ```dart
 // lib/features/todo/data/todo_dto.dart
 import "package:freezed_annotation/freezed_annotation.dart";
-import "package:happy_os/features/todo/domain/index.dart";
+import "package:sky_dive/features/todo/domain/index.dart";
 
 part "todo_dto.freezed.dart";
 part "todo_dto.g.dart";

@@ -5,7 +5,7 @@ import "package:flutter/animation.dart";
 /// 动效是"廉价"和"精致"之间最大的分水岭，但前提是**全局一致**——同一类交互
 /// 在任何页面都该用同一个时长和曲线。因此禁止在 Widget 里写
 /// `Duration(milliseconds: 300)` 或 `Curves.easeInOut` 字面量，一律取本类令牌。
-abstract final class HappyMotion {
+abstract final class SkyMotion {
   // ───────────────────────── 时长 ─────────────────────────
 
   /// 90ms：按下反馈、勾选态翻转等"必须让人觉得是瞬时"的微交互。
@@ -20,10 +20,10 @@ abstract final class HappyMotion {
   /// 400ms：页面转场、底部弹层进出。
   static const Duration slow = Duration(milliseconds: 400);
 
-  /// 700ms：故事内容入场这类需要"被看见"的叙事性动效。
-  static const Duration story = Duration(milliseconds: 700);
+  /// 700ms：首屏主视觉、大块内容入场这类需要"被看见"的叙事性动效。
+  static const Duration hero = Duration(milliseconds: 700);
 
-  /// 6s：极光背景、呼吸光晕等无限循环的环境动效。放慢才不会分散注意力。
+  /// 6s：云层漂移、呼吸光晕等无限循环的环境动效。放慢才不会分散注意力。
   static const Duration ambient = Duration(milliseconds: 6000);
 
   /// 列表逐项入场的相邻延迟。

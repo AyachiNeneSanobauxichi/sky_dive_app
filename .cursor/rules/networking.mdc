@@ -1,5 +1,5 @@
 ---
-description: Dio 网络层规范（DioClient、拦截器、SSE 流式、断网、超时）
+description: Dio 网络层规范（DioClient、拦截器、断网、超时、错误收敛）
 globs: lib/**/data/**/*.dart,lib/core/network/**/*.dart
 alwaysApply: false
 ---
@@ -134,58 +134,3 @@ final class ApiFailure<T> extends ApiResult<T> {
 }
 ```
 
-## 📌 SSE 流式（AI 生成的通道）
-
-AI 流式生成走 `DioClient.postSse`，返回 `Stream<SseEvent>`。**不要**自己拿 `Dio` 手搓——它和普通请求有四处必须处理对的差异：
-
-```dart
-// core/network/dio_client.dart
-Stream<SseEvent> postSse(String path, {Object? data, CancelToken? cancelToken});
-```
-
-1. **`responseType: stream`**——拿原始字节流，不等 body 收完。`ResponseInterceptor` 只解包 `Map`，此处 data 是 `ResponseBody`，会原样放行，不冲突。
-2. **`receiveTimeout: Duration.zero`**——长连接绝不能吃接收超时。模型思考 30 秒不代表连接坏了，用默认 15 秒会把正常生成掐死。
-3. **错误分两段**：建连失败走 `DioException`；连上之后中断走**流的 error 通道**（Dio 不再包装）。两段都要收敛成 `AppException`。
-4. **主动取消不是错误**：`CancelToken.isCancel(e)` 时正常收流。
-
-### 解码：`SseDecoder`
-
-三个自己拼字符串一定会踩的坑（`core/network/sse/sse_decoder.dart` 已处理）：
-
-- **UTF-8 多字节字符会被 TCP 分块切断**。一个汉字 3 字节，很可能前 2 字节在这个 chunk、第 3 字节在下一个。必须用**有状态**的 `utf8.decoder` 转换整条流，绝不能对每个 chunk 单独 `utf8.decode`。
-- **分帧只能靠空行**，不能假设 chunk 边界 == 事件边界。
-- **流结束时最后一帧可能没有空行收尾**，必须补吐，否则稳定丢最后一个 token。
-
-`SseEvent` 只表达协议（`event` / `data` / `id`）；`[DONE]` 之类的哨兵是各家网关的业务约定，**由 feature 的 DataSource 识别**，core 不做假设。
-
-### 流式的异常收敛
-
-错误不是 `throw` 出来的而是从流的 error 通道送来的，所以 Repository 里要用 `StreamTransformer` 在管道上转换，**不能靠 try/catch**：
-
-```dart
-Stream<String> _guard(Stream<String> source) => source.transform(
-  StreamTransformer<String, String>.fromHandlers(
-    handleError: (error, stackTrace, sink) => sink.addError(
-      error is AppException ? error.toFailure() : error,
-      stackTrace,
-    ),
-  ),
-);
-```
-
-### 停止生成 = 取消订阅 + 掐断连接
-
-只 `subscription.cancel()` 是**假停止**：连接还开着，服务端会把整篇写完，token 照扣。必须同时 `cancelToken.cancel()`。参考 `StoryGenerationController._abort()`。
-
-### 匀速吐字：`TextPacer`
-
-LLM 的 token 不是均匀到达的（常见 300ms 静默后一次吐 40 字）。直接渲染 chunk 会一顿一顿地抽搐，主观比真实延迟更慢。`shared/utils/text_pacer.dart` 在数据和渲染之间加一层缓冲，进来多快不管、出去按固定节拍：
-
-```dart
-_subscription = TextPacer.pace(rawDeltaStream).listen(onDelta, onError: ..., onDone: ...);
-```
-
-两条语义保证：
-
-- **积压自适应**：每帧吐字数 = `ceil(积压 / ticksToDrain)`，且**只上调不下调**。若每帧都按当时剩余量重算，剩余量会变成几何衰减，2000 字要放 5 秒以上，拖出长尾——正是这一层要消灭的问题。
-- **出错先把缓冲吐完再转发错误**：流式生成失败时用户必须保住已生成的部分。

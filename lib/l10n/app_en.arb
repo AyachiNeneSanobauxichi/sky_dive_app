@@ -1,18 +1,12 @@
 {
   "@@locale": "en",
-
-  "appTitle": "HappyOS",
+  "appTitle": "SkyDive",
   "@appTitle": {
     "description": "Application name shown as the app title"
   },
-
-  "commonComingSoon": "This is coming soon",
+  "commonComingSoon": "Coming soon",
   "@commonComingSoon": {
     "description": "Toast shown when tapping an entry point whose page is not built yet"
-  },
-  "commonInDevelopment": "In progress",
-  "@commonInDevelopment": {
-    "description": "Trailing hint on a list entry whose feature is still being built"
   },
   "commonCancel": "Cancel",
   "@commonCancel": {
@@ -26,965 +20,452 @@
   "@commonBack": {
     "description": "Generic action that returns to the previous screen"
   },
-
-  "authPhoneHint": "Phone number",
-  "@authPhoneHint": {
-    "description": "Placeholder inside the phone number input"
+  "routeNotFound": "This page doesn't exist.",
+  "@routeNotFound": {
+    "description": "Fallback text for an unknown route"
   },
-  "authPhoneRequired": "Enter your phone number",
-  "@authPhoneRequired": {
-    "description": "Validation error when the phone field is empty"
+  "errorNetwork": "No connection. Check your network and try again.",
+  "@errorNetwork": {
+    "description": "Shown when the request failed because the device is offline or timed out"
   },
-  "authPhoneInvalid": "That doesn't look like a valid phone number",
-  "@authPhoneInvalid": {
-    "description": "Validation error when the phone number format is wrong"
+  "errorServer": "Something went wrong on our side. Please try again shortly.",
+  "@errorServer": {
+    "description": "Shown when the server returned an error"
   },
-  "authCodeHint": "Code",
-  "@authCodeHint": {
-    "description": "Placeholder inside the SMS verification code input"
+  "errorUnauthorized": "Your session expired. Please sign in again.",
+  "@errorUnauthorized": {
+    "description": "Shown when the session is no longer valid"
   },
-  "authCodeRequired": "Enter the code",
-  "@authCodeRequired": {
-    "description": "Validation error when the verification code field is empty"
+  "errorGeneric": "Something went wrong. Please try again.",
+  "@errorGeneric": {
+    "description": "Generic fallback error message"
   },
-  "authCodeInvalid": "Enter the 6-digit code",
-  "@authCodeInvalid": {
-    "description": "Validation error when the verification code is not 6 digits"
+  "tabFlights": "Jumps",
+  "@tabFlights": {
+    "description": "Bottom tab label for the drop zone / jump route list"
   },
-  "authSendCode": "Get code",
-  "@authSendCode": {
-    "description": "Button that requests an SMS verification code"
+  "tabBookings": "Bookings",
+  "@tabBookings": {
+    "description": "Bottom tab label for the user's bookings"
   },
-  "authResendAfter": "Resend in {seconds}s",
-  "@authResendAfter": {
-    "description": "Plain text (not a button) shown during the resend cooldown, replacing the send-code button",
-    "placeholders": {
-      "seconds": {
-        "type": "int"
-      }
-    }
+  "tabAccount": "Account",
+  "@tabAccount": {
+    "description": "Bottom tab label for the account screen"
   },
-  "authCodeSent": "Code sent",
-  "@authCodeSent": {
-    "description": "Toast shown after the verification code was sent successfully"
-  },
-  "authChangePhone": "Change",
-  "@authChangePhone": {
-    "description": "Button that reopens the phone number field after the code was sent"
-  },
-  "authCodeSentTo": "Code sent to",
-  "@authCodeSentTo": {
-    "description": "Small caption above the masked phone number in the collapsed summary"
-  },
-  "authAgreementPrefix": "I have read and agree to",
-  "@authAgreementPrefix": {
-    "description": "Label of the consent checkbox; the agreement links sit on their own row below it"
-  },
-  "authUserAgreement": "User Agreement",
-  "@authUserAgreement": {
-    "description": "User agreement link text"
-  },
-  "authAgreementAnd": "and",
-  "@authAgreementAnd": {
-    "description": "Conjunction between the two agreement link buttons"
-  },
-  "authPrivacyPolicy": "Privacy Policy",
-  "@authPrivacyPolicy": {
-    "description": "Privacy policy link text"
-  },
-  "authAgreementRequired": "Please read and agree to the User Agreement first",
-  "@authAgreementRequired": {
-    "description": "Validation error when the consent checkbox is not checked"
-  },
-  "authErrorGeneric": "Something went wrong. Please try again.",
-  "@authErrorGeneric": {
-    "description": "Generic fallback error message shown when an auth request fails"
-  },
-
-  "loginTitle": "Start your story",
+  "loginTitle": "Welcome back",
   "@loginTitle": {
     "description": "Login screen headline"
   },
-  "loginSubtitle": "Turn what really happened to you into a story people can't put down",
+  "loginSubtitle": "Sign in to book your jump, check the weather window and manage your bookings.",
   "@loginSubtitle": {
-    "description": "Login screen supporting text under the headline: states what the product does, so first-time visitors know what they are signing into"
+    "description": "Login screen supporting copy explaining what the app does"
   },
-  "loginSubmit": "Log in",
+  "loginSubmit": "Sign in",
   "@loginSubmit": {
-    "description": "Login submit button label"
+    "description": "Login submit button"
   },
-  "loginSignUpNotice": "New numbers get an account automatically",
-  "@loginSignUpNotice": {
-    "description": "Note under the login button explaining that unregistered numbers are signed up on the fly"
+  "loginNoAccount": "Don't have an account?",
+  "@loginNoAccount": {
+    "description": "Login footer prompt before the sign-up link"
   },
-  "loginSampleLabel": "Sample rewrite",
-  "@loginSampleLabel": {
-    "description": "Badge on the sample story card shown on the login screen"
+  "loginGoRegister": "Sign up",
+  "@loginGoRegister": {
+    "description": "Login footer link that opens the register screen"
   },
-  "loginSampleStory1": "The last train was empty except for me. In the reflection on the window opposite, the man in the grey coat looked up for the third time — and behind me, there was no one at all.",
-  "@loginSampleStory1": {
-    "description": "Placeholder excerpt of a rewritten story (1 of 3), rotating on the login screen so first-time visitors can see what the product produces"
+  "loginPhoneAutoSignUp": "New number? We'll create your account automatically.",
+  "@loginPhoneAutoSignUp": {
+    "description": "Login footer note shown in SMS mode, where no separate sign-up exists"
   },
-  "loginSampleStory2": "The interviewer smiled as he slid my resume back across the table. Three months later I signed with his biggest competitor, and the first thing I did was have that same resume delivered to his desk.",
-  "@loginSampleStory2": {
-    "description": "Placeholder excerpt of a rewritten story (2 of 3), rotating on the login screen"
+  "registerTitle": "Create account",
+  "@registerTitle": {
+    "description": "Register screen app bar title"
   },
-  "loginSampleStory3": "The landlord changed the locks at midnight and I sat in the stairwell until dawn. Nobody guessed that the old key he threw away would be my first step to owning the whole building.",
-  "@loginSampleStory3": {
-    "description": "Placeholder excerpt of a rewritten story (3 of 3), rotating on the login screen"
+  "registerSubtitle": "Just the basics for now. We'll collect jump details when you book.",
+  "@registerSubtitle": {
+    "description": "Register screen supporting copy explaining why the form is short"
   },
-
-  "homeTabStory": "Stories",
-  "@homeTabStory": {
-    "description": "Bottom navigation label for the story module (generate and manage rewritten stories)"
+  "registerSubmit": "Create account",
+  "@registerSubmit": {
+    "description": "Register submit button"
   },
-  "homeTabTrack": "Track",
-  "@homeTabTrack": {
-    "description": "Bottom navigation label for the track module (life events used as source material)"
+  "registerSuccess": "Account created. Welcome aboard!",
+  "@registerSuccess": {
+    "description": "Toast shown right after a successful registration"
   },
-  "homeTabUser": "You",
-  "@homeTabUser": {
-    "description": "Bottom navigation label for the user module (account and generation preferences)"
+  "authMethodEmail": "Email",
+  "@authMethodEmail": {
+    "description": "Label of the email + password login method"
   },
-  "storyTitle": "My stories",
-  "@storyTitle": {
-    "description": "App bar title of the story module"
+  "authMethodPhone": "SMS",
+  "@authMethodPhone": {
+    "description": "Label of the phone + SMS code login method"
   },
-  "storyEmptyTitle": "No stories yet",
-  "@storyEmptyTitle": {
-    "description": "Empty-state headline in the story module"
+  "authEmailHint": "Email address",
+  "@authEmailHint": {
+    "description": "Placeholder inside the email input"
   },
-  "storyEmptyBody": "Tell us something that really happened to you, and the AI rewrites it into a story people can't put down.",
-  "@storyEmptyBody": {
-    "description": "Empty-state body in the story module"
+  "authEmailRequired": "Enter your email address",
+  "@authEmailRequired": {
+    "description": "Validation error when the email field is empty"
   },
-  "storyEmptyAction": "Write your first story",
-  "@storyEmptyAction": {
-    "description": "Empty-state call to action in the story module"
+  "authEmailInvalid": "That doesn't look like a valid email address",
+  "@authEmailInvalid": {
+    "description": "Validation error when the email format is wrong"
   },
-
-  "storyGreeting": "What are we writing today?",
-  "@storyGreeting": {
-    "description": "Greeting headline at the top of the story tab"
+  "authPasswordHint": "Password",
+  "@authPasswordHint": {
+    "description": "Placeholder inside the password input on the login screen"
   },
-  "storyGreetingBody": "Tell me something that actually happened — it comes back as a story you can't put down.",
-  "@storyGreetingBody": {
-    "description": "Sub-headline under the story tab greeting"
+  "authNewPasswordHint": "Password",
+  "@authNewPasswordHint": {
+    "description": "Placeholder inside the new-password input on the register screen"
   },
-  "storyComposerHint": "Write down the moment you want rewritten…",
-  "@storyComposerHint": {
-    "description": "Hint inside the composer text field on the story tab"
+  "authConfirmPasswordHint": "Confirm password",
+  "@authConfirmPasswordHint": {
+    "description": "Placeholder inside the confirm-password input"
   },
-  "storyComposerSubmit": "Write my story",
-  "@storyComposerSubmit": {
-    "description": "Accessibility label and tooltip of the send button inside the composer"
+  "authPasswordRequired": "Enter your password",
+  "@authPasswordRequired": {
+    "description": "Validation error when the password field is empty"
   },
-  "storyComposerSubmitHint": "Done? Tap to write it",
-  "@storyComposerSubmitHint": {
-    "description": "Small caption at the bottom-left of the composer, explaining the icon-only send button"
+  "authConfirmPasswordRequired": "Re-enter your password",
+  "@authConfirmPasswordRequired": {
+    "description": "Validation error when the confirm-password field is empty"
   },
-  "storyComposerRemaining": "{remaining} characters left",
-  "@storyComposerRemaining": {
-    "description": "Counter under the composer, shown only when close to the length limit",
+  "authPasswordMismatch": "The two passwords don't match",
+  "@authPasswordMismatch": {
+    "description": "Validation error when the confirmation does not match the password"
+  },
+  "authPasswordWeak": "Use letters and numbers, at least 8 characters",
+  "@authPasswordWeak": {
+    "description": "Validation error when a new password does not meet the rules"
+  },
+  "authPasswordRule": "At least {min} characters, with letters and numbers.",
+  "@authPasswordRule": {
+    "description": "Helper text under the new-password field describing the rules",
     "placeholders": {
-      "remaining": {
-        "type": "int"
+      "min": {
+        "type": "int",
+        "example": "8"
       }
     }
   },
-  "storyVoiceHoldHint": "Hold to talk",
-  "@storyVoiceHoldHint": {
-    "description": "Label under the voice button telling the user to press and hold"
-  },
-  "storyVoiceReleaseHint": "Release to finish",
-  "@storyVoiceReleaseHint": {
-    "description": "Label under the voice button while the user is holding it"
-  },
-  "storyVoiceCancelHint": "Slide up to cancel",
-  "@storyVoiceCancelHint": {
-    "description": "Secondary hint shown while holding the voice button, teaching the slide-up-to-cancel gesture"
-  },
-  "storyVoiceCancelReleaseHint": "Release to cancel",
-  "@storyVoiceCancelReleaseHint": {
-    "description": "Label under the voice button once the finger slid up far enough that releasing cancels"
-  },
-  "storyVoiceListening": "Listening — go ahead…",
-  "@storyVoiceListening": {
-    "description": "Label under the voice button while speech recognition is actively listening"
-  },
-  "storyVoiceNoResult": "Didn't catch that — try again",
-  "@storyVoiceNoResult": {
-    "description": "Toast shown when a voice session ended without recognizing any words"
-  },
-  "speechPermissionDenied": "Microphone and speech recognition aren't allowed yet — turn them on in Settings to talk",
-  "@speechPermissionDenied": {
-    "description": "Toast shown when the user has denied microphone or speech recognition permission"
-  },
-  "speechUnavailable": "This device can't do speech recognition — type it out instead",
-  "@speechUnavailable": {
-    "description": "Toast shown when the device or OS has no speech recognition available"
-  },
-  "speechStart": "Voice input",
-  "@speechStart": {
-    "description": "Accessibility label for the button that starts voice input"
-  },
-  "speechStop": "Stop voice input",
-  "@speechStop": {
-    "description": "Accessibility label for the button that stops voice input"
-  },
-  "storyInspirationTitle": "Need a spark",
-  "@storyInspirationTitle": {
-    "description": "Title of the inspiration prompts section"
-  },
-  "storyInspirationShuffle": "Shuffle",
-  "@storyInspirationShuffle": {
-    "description": "Action that draws a new set of inspiration prompts"
-  },
-  "storyHistoryTitle": "Your stories",
-  "@storyHistoryTitle": {
-    "description": "Title of the generation history section"
-  },
-  "storyHistoryEmptyTitle": "Nothing here yet",
-  "@storyHistoryEmptyTitle": {
-    "description": "Empty-state title of the generation history section"
-  },
-  "storyHistoryEmptyBody": "Finished stories stay here so you can come back and tune them. Picking a spark is the easiest way to start.",
-  "@storyHistoryEmptyBody": {
-    "description": "Empty-state body of the generation history section"
-  },
-  "storyHistoryEmptyAction": "Start from a spark",
-  "@storyHistoryEmptyAction": {
-    "description": "Empty-state call to action of the generation history section"
-  },
-  "storyHistoryEmptyBackAction": "Go write one",
-  "@storyHistoryEmptyBackAction": {
-    "description": "Empty-state call to action on the full history page; goes back to the composer"
-  },
-  "storyHistoryViewAll": "See all",
-  "@storyHistoryViewAll": {
-    "description": "Action next to the history section title that opens the full list"
-  },
-  "storyHistoryLoadFailed": "Couldn't load your stories. Check your connection and retry.",
-  "@storyHistoryLoadFailed": {
-    "description": "Inline error message when the story history request fails"
-  },
-  "storyHistoryLoadingMore": "Fetching older stories…",
-  "@storyHistoryLoadingMore": {
-    "description": "Status line at the bottom of the history list while the next page loads"
-  },
-  "storyHistoryUntitled": "Untitled story",
-  "@storyHistoryUntitled": {
-    "description": "Fallback title on a history card when the story has neither a title nor a theme"
-  },
-  "storyHistoryFavorite": "Add to favourites",
-  "@storyHistoryFavorite": {
-    "description": "Accessibility label on the star button when the story is not favourited yet"
-  },
-  "storyHistoryUnfavorite": "Remove from favourites",
-  "@storyHistoryUnfavorite": {
-    "description": "Accessibility label on the star button when the story is already favourited"
-  },
-  "storyHistoryDeleteTitle": "Delete this story?",
-  "@storyHistoryDeleteTitle": {
-    "description": "Title of the confirm dialog before deleting a story from history"
-  },
-  "storyHistoryDeleteBody": "Once it's gone there's no getting it back.",
-  "@storyHistoryDeleteBody": {
-    "description": "Body of the confirm dialog before deleting a story; states that deletion is irreversible"
-  },
-  "storyHistoryDeleteConfirm": "Delete",
-  "@storyHistoryDeleteConfirm": {
-    "description": "Destructive action that deletes a story, also used as the swipe-to-delete label"
-  },
-  "storyHistoryDeleted": "Deleted",
-  "@storyHistoryDeleted": {
-    "description": "Toast shown after a story was deleted successfully"
-  },
-  "storyHistoryOpenAction": "See what you've written",
-  "@storyHistoryOpenAction": {
-    "description": "Tooltip on the generate screen's toolbar icon that opens the story history"
-  },
-  "storyHistoryEntry": "History",
-  "@storyHistoryEntry": {
-    "description": "Label of the header shortcut on the story home screen that opens the history page"
-  },
-  "storyHistoryTimeToday": "Today",
-  "@storyHistoryTimeToday": {
-    "description": "Relative timestamp on a history card for a story created today"
-  },
-  "storyHistoryTimeYesterday": "Yesterday",
-  "@storyHistoryTimeYesterday": {
-    "description": "Relative timestamp on a history card for a story created yesterday"
-  },
-  "storyHistoryTimeDaysAgo": "{days} days ago",
-  "@storyHistoryTimeDaysAgo": {
-    "description": "Relative timestamp on a history card for a story created 2–6 days ago",
-    "placeholders": {
-      "days": { "type": "int" }
-    }
-  },
-  "storyHistoryFilterAll": "All",
-  "@storyHistoryFilterAll": {
-    "description": "History filter chip that shows every story"
-  },
-  "storyHistoryFilterShort": "Short",
-  "@storyHistoryFilterShort": {
-    "description": "History filter chip and length badge for short stories"
-  },
-  "storyHistoryFilterMedium": "Medium",
-  "@storyHistoryFilterMedium": {
-    "description": "History filter chip and length badge for medium-length stories"
-  },
-  "storyHistoryFilterLong": "Long",
-  "@storyHistoryFilterLong": {
-    "description": "History filter chip and length badge for long stories"
-  },
-  "storyHistoryFilterFavorite": "Favorites",
-  "@storyHistoryFilterFavorite": {
-    "description": "History filter chip that only shows favorited stories"
-  },
-  "storyHistoryEmptyLengthTitle": "No {length} stories yet",
-  "@storyHistoryEmptyLengthTitle": {
-    "description": "Empty state title of a length filter tab in history",
-    "placeholders": { "length": { "type": "String" } }
-  },
-  "storyHistoryEmptyLengthBody": "Try another tab, or write a {length} story right now.",
-  "@storyHistoryEmptyLengthBody": {
-    "description": "Empty state body of a length filter tab in history",
-    "placeholders": { "length": { "type": "String" } }
-  },
-  "storyHistoryEmptyFavoriteTitle": "Nothing saved yet",
-  "@storyHistoryEmptyFavoriteTitle": {
-    "description": "Empty state title of the favorites tab in history"
-  },
-  "storyHistoryEmptyFavoriteBody": "Tap the star at the top right of any card and it will stay here.",
-  "@storyHistoryEmptyFavoriteBody": {
-    "description": "Empty state body of the favorites tab, explaining how to favorite a story"
-  },
-  "storyHistoryEmptyGoWrite": "Write one now",
-  "@storyHistoryEmptyGoWrite": {
-    "description": "Empty state action that takes the user back to the story creation screen"
-  },
-  "storyDetailTitle": "Story",
-  "@storyDetailTitle": {
-    "description": "App bar title of the story detail page before the real title is loaded"
-  },
-  "storyDetailWishLabel": "Your wish",
-  "@storyDetailWishLabel": {
-    "description": "Label above the original wish text on the story detail page"
-  },
-  "storyDetailLoadFailed": "Couldn't open this story. Check your connection and retry.",
-  "@storyDetailLoadFailed": {
-    "description": "Error message on the story detail page when loading fails"
-  },
-  "storyDetailEmptyContent": "This one has no text saved — it may never have finished.",
-  "@storyDetailEmptyContent": {
-    "description": "Shown on the story detail page when the story has no body text"
-  },
-  "storyDetailContinue": "Keep editing",
-  "@storyDetailContinue": {
-    "description": "Primary action on the story detail page that reopens the writing conversation"
-  },
-  "storyDetailContinueUnavailable": "This one is from an early version with no conversation saved.",
-  "@storyDetailContinueUnavailable": {
-    "description": "Explains why the keep-editing action is disabled for legacy stories"
-  },
-  "storyGenerateReplayTitle": "Replay",
-  "@storyGenerateReplayTitle": {
-    "description": "App bar title when the generate screen replays a past conversation"
-  },
-  "storyGenerateReplayEmpty": "No conversation was saved for this story.",
-  "@storyGenerateReplayEmpty": {
-    "description": "Empty state on the generate screen when a replayed conversation has nothing to show"
-  },
-  "storyGenerateReplayFailed": "Couldn't load the replay. Check your connection and retry.",
-  "@storyGenerateReplayFailed": {
-    "description": "Error message on the generate screen when loading a replay fails"
-  },
-  "storyGenerateReplayComingSoon": "Rewriting and continuing are coming soon",
-  "@storyGenerateReplayComingSoon": {
-    "description": "Bottom bar note during replay explaining that editing is not available yet"
-  },
-  "storyGenerateOutlineRevised": "Replaced — the AI reworked the outline from your notes",
-  "@storyGenerateOutlineRevised": {
-    "description": "Summary shown on a replayed outline card that was superseded by a later version"
-  },
-
-  "storyGenerateTitle": "Writing your story",
-  "@storyGenerateTitle": {
-    "description": "App bar title of the story generation page while no story title exists yet"
-  },
-  "storyGenerateIdleTitle": "What should we turn into a story?",
-  "@storyGenerateIdleTitle": {
-    "description": "Heading of the empty state shown when the page opens without a wish text"
-  },
-  "storyGenerateIdleBody": "Tell us something that actually happened. The AI asks a few questions, agrees an outline with you, then writes it up as a story you can read in one sitting.",
-  "@storyGenerateIdleBody": {
-    "description": "Body copy of the empty state explaining the generation flow"
-  },
-  "storyGenerateComposerHint": "Describe the moment you want rewritten…",
-  "@storyGenerateComposerHint": {
-    "description": "Placeholder inside the wish input on the generation page"
-  },
-  "storyGenerateStart": "Start writing",
-  "@storyGenerateStart": {
-    "description": "Primary action that kicks off generation from the wish input"
-  },
-  "storyGenerateWaitReading": "Reading what you wrote…",
-  "@storyGenerateWaitReading": {
-    "description": "Waiting phrase, understanding stage: the AI is taking in the user's story"
-  },
-  "storyGenerateWaitFeeling": "Sitting with how that felt…",
-  "@storyGenerateWaitFeeling": {
-    "description": "Waiting phrase, understanding stage: the AI is weighing the emotion behind the wish"
-  },
-  "storyGenerateWaitAngle": "Looking for the best angle…",
-  "@storyGenerateWaitAngle": {
-    "description": "Waiting phrase, understanding stage: the AI is picking the most satisfying take"
-  },
-  "storyGenerateWaitQuestion": "Thinking of a question or two…",
-  "@storyGenerateWaitQuestion": {
-    "description": "Waiting phrase, understanding stage: the AI may ask a clarifying question next"
-  },
-  "storyGenerateWaitFrame": "Building the story's frame…",
-  "@storyGenerateWaitFrame": {
-    "description": "Waiting phrase, outlining stage: the AI is drafting the structure"
-  },
-  "storyGenerateWaitBeats": "Pacing out the scenes…",
-  "@storyGenerateWaitBeats": {
-    "description": "Waiting phrase, outlining stage: the AI is arranging the beats"
-  },
-  "storyGenerateWaitTwist": "Designing the twist…",
-  "@storyGenerateWaitTwist": {
-    "description": "Waiting phrase, outlining stage: the AI is planning the turning point"
-  },
-  "storyGenerateWaitEnding": "Finding an ending that lands…",
-  "@storyGenerateWaitEnding": {
-    "description": "Waiting phrase, outlining stage: the AI is choosing the payoff"
-  },
-  "storyGenerateWaitOpening": "Choosing the opening line…",
-  "@storyGenerateWaitOpening": {
-    "description": "Waiting phrase, writing stage: the AI is picking the first sentence"
-  },
-  "storyGenerateWaitScene": "Setting the scene…",
-  "@storyGenerateWaitScene": {
-    "description": "Waiting phrase, writing stage: the AI is describing the setting"
-  },
-  "storyGenerateWaitLines": "Polishing the dialogue…",
-  "@storyGenerateWaitLines": {
-    "description": "Waiting phrase, writing stage: the AI is working on the characters' lines"
-  },
-  "storyGenerateWaitPolish": "Almost there — tightening it up…",
-  "@storyGenerateWaitPolish": {
-    "description": "Waiting phrase, writing stage: the AI is wrapping up"
-  },
-  "storyGenerateElapsed": "{seconds}s so far",
-  "@storyGenerateElapsed": {
-    "description": "Elapsed wait time shown under the waiting phrase once the wait passes a few seconds",
+  "authShowPassword": "Show password",
+  "@authShowPassword": {
+    "description": "Tooltip of the button that reveals the password"
+  },
+  "authHidePassword": "Hide password",
+  "@authHidePassword": {
+    "description": "Tooltip of the button that hides the password"
+  },
+  "authForgotPassword": "Forgot password?",
+  "@authForgotPassword": {
+    "description": "Link that starts the password recovery flow"
+  },
+  "authPasswordStrengthWeak": "Weak",
+  "@authPasswordStrengthWeak": {
+    "description": "Password strength meter label: weakest level"
+  },
+  "authPasswordStrengthFair": "Fair",
+  "@authPasswordStrengthFair": {
+    "description": "Password strength meter label: second level"
+  },
+  "authPasswordStrengthGood": "Good",
+  "@authPasswordStrengthGood": {
+    "description": "Password strength meter label: third level"
+  },
+  "authPasswordStrengthStrong": "Strong",
+  "@authPasswordStrengthStrong": {
+    "description": "Password strength meter label: strongest level"
+  },
+  "authNameHint": "What should we call you?",
+  "@authNameHint": {
+    "description": "Placeholder inside the display-name input"
+  },
+  "authNameRequired": "Enter a name",
+  "@authNameRequired": {
+    "description": "Validation error when the display-name field is empty"
+  },
+  "authPhoneHint": "Mobile number",
+  "@authPhoneHint": {
+    "description": "Placeholder inside the phone number input"
+  },
+  "authPhoneOptionalHint": "Mobile number (optional)",
+  "@authPhoneOptionalHint": {
+    "description": "Placeholder inside the phone number input when it is optional"
+  },
+  "authPhoneOptionalReason": "We'll text you if the weather forces a schedule change — email is easy to miss outdoors.",
+  "@authPhoneOptionalReason": {
+    "description": "Helper text explaining why the optional phone number is worth filling in"
+  },
+  "authPhoneRequired": "Enter your mobile number",
+  "@authPhoneRequired": {
+    "description": "Validation error when the phone field is empty"
+  },
+  "authPhoneInvalid": "That doesn't look like a Japanese mobile number",
+  "@authPhoneInvalid": {
+    "description": "Validation error when the phone number format is wrong"
+  },
+  "authChangePhone": "Change",
+  "@authChangePhone": {
+    "description": "Action that reopens the phone input after the code was sent"
+  },
+  "authSendCode": "Send code",
+  "@authSendCode": {
+    "description": "Button that sends the SMS verification code"
+  },
+  "authResendAfter": "Resend in {seconds}s",
+  "@authResendAfter": {
+    "description": "Cooldown label shown in place of the resend button",
     "placeholders": {
       "seconds": {
-        "type": "int"
+        "type": "int",
+        "example": "60"
       }
     }
   },
-  "storyGenerateStop": "Stop generating",
-  "@storyGenerateStop": {
-    "description": "Action that aborts the in-flight generation stream"
+  "authCodeSent": "Verification code sent",
+  "@authCodeSent": {
+    "description": "Toast shown after the SMS code was sent"
   },
-  "storyGenerateContinue": "Keep going",
-  "@storyGenerateContinue": {
-    "description": "Action that resumes generation after the user stopped it manually"
+  "authCodeSentTo": "Code sent to",
+  "@authCodeSentTo": {
+    "description": "Label above the masked phone number in the collapsed summary"
   },
-  "storyGenerateWishLabel": "Your wish",
-  "@storyGenerateWishLabel": {
-    "description": "Label on the timeline entry holding the user's original wish text"
+  "authCodeRequired": "Enter the verification code",
+  "@authCodeRequired": {
+    "description": "Validation error when the SMS code field is empty"
   },
-  "storyGenerateNovelLabel": "Your story",
-  "@storyGenerateNovelLabel": {
-    "description": "Label on the timeline entry holding the generated story body"
+  "authCodeInvalid": "The verification code is 6 digits",
+  "@authCodeInvalid": {
+    "description": "Validation error when the SMS code format is wrong"
   },
-  "storyGenerateClarifyLabel": "A quick question",
-  "@storyGenerateClarifyLabel": {
-    "description": "Label on the timeline entry holding the AI's clarification question"
+  "authAgreementPrefix": "I agree to the",
+  "@authAgreementPrefix": {
+    "description": "Text of the agreement checkbox, followed by the document links on the next line"
   },
-  "storyGenerateClarifySubmit": "Send answer",
-  "@storyGenerateClarifySubmit": {
-    "description": "Submit action on a clarification card"
+  "authAgreementAnd": " and ",
+  "@authAgreementAnd": {
+    "description": "Conjunction between the two agreement document links"
   },
-  "storyGenerateClarifyAnswered": "Answered: {answer}",
-  "@storyGenerateClarifyAnswered": {
-    "description": "Collapsed summary of an answered clarification card",
+  "authUserAgreement": "Terms of Service",
+  "@authUserAgreement": {
+    "description": "Name of the terms of service document"
+  },
+  "authPrivacyPolicy": "Privacy Policy",
+  "@authPrivacyPolicy": {
+    "description": "Name of the privacy policy document"
+  },
+  "authAgreementRequired": "Please accept the terms to continue",
+  "@authAgreementRequired": {
+    "description": "Validation error shown when the agreement checkbox is not ticked"
+  },
+  "authTerms": "Terms of Service",
+  "@authTerms": {
+    "description": "Account screen row that opens the terms of service"
+  },
+  "authPrivacy": "Privacy Policy",
+  "@authPrivacy": {
+    "description": "Account screen row that opens the privacy policy"
+  },
+  "authErrorCredentials": "Email or password is incorrect",
+  "@authErrorCredentials": {
+    "description": "Error shown when the email/password pair was rejected"
+  },
+  "authErrorCodeIncorrect": "That verification code isn't right",
+  "@authErrorCodeIncorrect": {
+    "description": "Error shown when the SMS code was rejected"
+  },
+  "authErrorCodeExpired": "That code expired. Send a new one.",
+  "@authErrorCodeExpired": {
+    "description": "Error shown when the SMS code is no longer valid"
+  },
+  "authErrorEmailTaken": "This email is already registered. Sign in instead?",
+  "@authErrorEmailTaken": {
+    "description": "Error shown when registering with an email that already exists"
+  },
+  "authErrorPhoneTaken": "This number is linked to another account",
+  "@authErrorPhoneTaken": {
+    "description": "Error shown when registering with a phone number that already exists"
+  },
+  "authErrorAccountDisabled": "This account is suspended. Contact us to reactivate it.",
+  "@authErrorAccountDisabled": {
+    "description": "Error shown when the account is disabled"
+  },
+  "authMockTitle": "Demo account (mock backend)",
+  "@authMockTitle": {
+    "description": "Title of the development-only demo credentials card"
+  },
+  "authMockSmsHint": "Any Japanese mobile number works; the SMS code is always {code}.",
+  "@authMockSmsHint": {
+    "description": "Hint explaining how the mock SMS login works",
     "placeholders": {
-      "answer": {
-        "type": "String"
+      "code": {
+        "type": "String",
+        "example": "123456"
       }
     }
   },
-  "storyGenerateClarifyCustomHint": "Add anything else you want…",
-  "@storyGenerateClarifyCustomHint": {
-    "description": "Fallback placeholder for the free-text field on a clarification card"
+  "authMockFill": "Fill it in",
+  "@authMockFill": {
+    "description": "Button that fills the demo credentials into the login form"
   },
-  "storyGenerateOutlineTitle": "Story outline",
-  "@storyGenerateOutlineTitle": {
-    "description": "Title of the outline card"
+  "flightsTitle": "Take off",
+  "@flightsTitle": {
+    "description": "Flights tab headline"
   },
-  "storyGenerateOutlineEnding": "Ending",
-  "@storyGenerateOutlineEnding": {
-    "description": "Label marking the ending row of the outline"
+  "flightsSubtitle": "Drop zones, aircraft and altitudes across Japan.",
+  "@flightsSubtitle": {
+    "description": "Flights tab supporting copy"
   },
-  "storyGenerateOutlineEmpty": "No outline came back this time — you can let the AI start writing anyway.",
-  "@storyGenerateOutlineEmpty": {
-    "description": "Shown when the outline payload has no usable content"
+  "flightsEmptyTitle": "Routes are almost ready",
+  "@flightsEmptyTitle": {
+    "description": "Flights tab empty state headline"
   },
-  "storyGenerateOutlineConfirm": "Looks good",
-  "@storyGenerateOutlineConfirm": {
-    "description": "Primary action confirming the outline so writing can start"
+  "flightsEmptyDescription": "We're finishing the drop zone schedule. Leave your email and we'll tell you the moment booking opens.",
+  "@flightsEmptyDescription": {
+    "description": "Flights tab empty state description"
   },
-  "storyGenerateOutlineModify": "Change it",
-  "@storyGenerateOutlineModify": {
-    "description": "Secondary action asking the AI to revise the outline"
+  "flightsEmptyAction": "Notify me",
+  "@flightsEmptyAction": {
+    "description": "Flights tab empty state action button"
   },
-  "storyGenerateOutlineFeedbackHint": "What should change?",
-  "@storyGenerateOutlineFeedbackHint": {
-    "description": "Placeholder of the outline feedback field"
+  "bookingsTitle": "Your jumps",
+  "@bookingsTitle": {
+    "description": "Bookings tab headline"
   },
-  "storyGenerateOutlineConfirmed": "Outline confirmed — writing now",
-  "@storyGenerateOutlineConfirmed": {
-    "description": "Collapsed summary after the outline was confirmed"
+  "bookingsSubtitle": "Upcoming jumps, weather calls and your jump log.",
+  "@bookingsSubtitle": {
+    "description": "Bookings tab supporting copy"
   },
-  "storyGenerateOutlineModified": "Revision requested: {feedback}",
-  "@storyGenerateOutlineModified": {
-    "description": "Collapsed summary after outline feedback was submitted",
-    "placeholders": {
-      "feedback": {
-        "type": "String"
-      }
-    }
+  "bookingsEmptyTitle": "No bookings yet",
+  "@bookingsEmptyTitle": {
+    "description": "Bookings tab empty state headline"
   },
-  "storyGenerateResume": "Pick it back up",
-  "@storyGenerateResume": {
-    "description": "Action shown when the backend reports an unfinished session for today"
+  "bookingsEmptyDescription": "Once you book a jump it shows up here, with the weather call and your meeting time.",
+  "@bookingsEmptyDescription": {
+    "description": "Bookings tab empty state description"
   },
-  "storyGenerateResumeHint": "You already have an unfinished story today — let's finish that one.",
-  "@storyGenerateResumeHint": {
-    "description": "Explanation shown alongside the resume action"
+  "bookingsEmptyAction": "Find a jump",
+  "@bookingsEmptyAction": {
+    "description": "Bookings tab empty state action button"
   },
-  "storyGenerateReadFull": "Read it",
-  "@storyGenerateReadFull": {
-    "description": "Action opening the finished story in the reader"
+  "accountTitle": "Account",
+  "@accountTitle": {
+    "description": "Account tab headline"
   },
-  "storyGenerateWriteAnother": "Write another",
-  "@storyGenerateWriteAnother": {
-    "description": "Action returning to the story page to start a new generation"
-  },
-  "storyGenerateLeaveTitle": "Leave and lose this one?",
-  "@storyGenerateLeaveTitle": {
-    "description": "Title of the confirm dialog shown when leaving mid-generation"
-  },
-  "storyGenerateLeaveBody": "The AI is still writing. Going back now discards this story.",
-  "@storyGenerateLeaveBody": {
-    "description": "Body of the confirm dialog shown when leaving mid-generation"
-  },
-  "storyGenerateLeaveConfirm": "Leave",
-  "@storyGenerateLeaveConfirm": {
-    "description": "Confirm action of the leave-mid-generation dialog"
-  },
-
-  "trackTitle": "Your track",
-  "@trackTitle": {
-    "description": "App bar title of the track module"
-  },
-  "trackEmptyTitle": "Start with one entry",
-  "@trackEmptyTitle": {
-    "description": "Empty-state headline in the track module"
-  },
-  "trackEmptyBody": "Your track is the raw material for every story: write down what actually happened, and the story gets a real backbone.",
-  "@trackEmptyBody": {
-    "description": "Empty-state body in the track module, explaining that entries feed story generation"
-  },
-  "trackGreetingBody": "Write down what actually happened — when, how it felt, how it turned out. This is what stories are made of.",
-  "@trackGreetingBody": {
-    "description": "Sub-headline at the top of the track tab"
-  },
-  "trackFilterAll": "All",
-  "@trackFilterAll": {
-    "description": "Filter chip that shows every track entry"
-  },
-  "trackTagChildhood": "Childhood",
-  "@trackTagChildhood": {
-    "description": "Track tag"
-  },
-  "trackTagHighlight": "Highlight",
-  "@trackTagHighlight": {
-    "description": "Track tag"
-  },
-  "trackTagLowPoint": "Low point",
-  "@trackTagLowPoint": {
-    "description": "Track tag"
-  },
-  "trackTagGoodMoment": "Good moment",
-  "@trackTagGoodMoment": {
-    "description": "Track tag"
-  },
-  "trackOutcomePrefix": "Then",
-  "@trackOutcomePrefix": {
-    "description": "Prefix of the outcome line on a track card"
-  },
-  "trackOutcomePending": "No outcome yet",
-  "@trackOutcomePending": {
-    "description": "Shown in place of the outcome when the entry has none"
-  },
-  "trackAddAction": "Add one",
-  "@trackAddAction": {
-    "description": "Floating action button that records a new life event"
-  },
-  "trackLoadFailed": "Couldn't load your tracks. Check your connection and retry.",
-  "@trackLoadFailed": {
-    "description": "Inline error message when the track list request fails"
-  },
-  "trackFilteredEmptyTitle": "Nothing under this tag",
-  "@trackFilteredEmptyTitle": {
-    "description": "Empty-state title when the selected tag has no entries"
-  },
-  "trackFilteredEmptyBody": "Try another tag, or add one under this tag.",
-  "@trackFilteredEmptyBody": {
-    "description": "Empty-state body when the selected tag has no entries"
-  },
-  "trackFilteredEmptyClear": "See all",
-  "@trackFilteredEmptyClear": {
-    "description": "Action that clears the tag filter"
-  },
-  "trackEmptyAction": "Add your first entry",
-  "@trackEmptyAction": {
-    "description": "Empty-state call to action in the track module"
-  },
-  "userTitle": "You",
-  "@userTitle": {
-    "description": "App bar title of the user module"
-  },
-  "userEmptyTitle": "Finish your setup",
-  "@userEmptyTitle": {
-    "description": "Empty-state headline in the user module"
-  },
-  "userEmptyBody": "Nickname, story style, intensity — the clearer your setup, the more the stories read like they were written for you.",
-  "@userEmptyBody": {
-    "description": "Empty-state body in the user module"
-  },
-  "userEmptyAction": "Open settings",
-  "@userEmptyAction": {
-    "description": "Empty-state call to action in the user module"
-  },
-
-  "userProfileComplete": "Your profile is complete — stories will fit you better",
-  "@userProfileComplete": {
-    "description": "Subtitle under the nickname when every profile field is filled"
-  },
-  "userProfileCompleteness": "Profile {percent}% complete — fill it in for stories that feel yours",
-  "@userProfileCompleteness": {
-    "description": "Subtitle under the nickname showing how much of the profile is filled",
-    "placeholders": {
-      "percent": {
-        "type": "int"
-      }
-    }
-  },
-  "userProfileLoadFailed": "Couldn't load your profile. Check your connection and retry.",
-  "@userProfileLoadFailed": {
-    "description": "Inline error message when the profile request fails"
-  },
-  "userAwakeningLevel": "Awakening level",
-  "@userAwakeningLevel": {
-    "description": "Label of the awakening level metric card"
-  },
-  "userAwakeningLevelValue": "Lv.{level}",
-  "@userAwakeningLevelValue": {
-    "description": "Formatted awakening level value",
+  "accountLicense": "License {level}",
+  "@accountLicense": {
+    "description": "Badge showing the user's skydiving license level",
     "placeholders": {
       "level": {
-        "type": "int"
+        "type": "String",
+        "example": "B"
       }
     }
   },
-  "userAwakeningCaption": "{percent}% to the next level",
-  "@userAwakeningCaption": {
-    "description": "Caption under the awakening level progress bar",
+  "accountLicenseNone": "Tandem / first jump",
+  "@accountLicenseNone": {
+    "description": "Badge shown when the user has no skydiving license yet"
+  },
+  "accountTotalJumps": "{count, plural, =0{No jumps logged} =1{1 jump} other{{count} jumps}}",
+  "@accountTotalJumps": {
+    "description": "Badge showing how many jumps the user has logged",
     "placeholders": {
-      "percent": {
-        "type": "int"
+      "count": {
+        "type": "int",
+        "example": "42"
       }
     }
   },
-  "userStarAffinity": "Star affinity",
-  "@userStarAffinity": {
-    "description": "Label of the star affinity metric card"
+  "accountAppearance": "Appearance",
+  "@accountAppearance": {
+    "description": "Section title for the light/dark theme setting"
   },
-  "userStarAffinityCaption": "Higher affinity, sharper plot twists",
-  "@userStarAffinityCaption": {
-    "description": "Caption under the star affinity progress bar"
+  "accountAppearanceSystem": "Match device",
+  "@accountAppearanceSystem": {
+    "description": "Theme option that follows the device light/dark setting"
   },
-  "userMetricExplainHowTitle": "How to raise it",
-  "@userMetricExplainHowTitle": {
-    "description": "Sub-heading in the metric explainer sheet, above the how-to text"
+  "accountAppearanceSystemHint": "Follows your device's light and dark schedule",
+  "@accountAppearanceSystemHint": {
+    "description": "Description of the 'match device' theme option"
   },
-  "userAwakeningExplainWhat": "Awakening level tracks how deeply you turn lived moments into stories: the more concrete your tracks and the bolder the rewrite, the higher it goes.",
-  "@userAwakeningExplainWhat": {
-    "description": "Explanation of what the awakening level means"
+  "accountAppearanceLight": "Daylight",
+  "@accountAppearanceLight": {
+    "description": "Light theme option name, themed after a clear daytime sky"
   },
-  "userAwakeningExplainHow": "Add a track with real detail, or take another pass at an older story — both push the current level forward.",
-  "@userAwakeningExplainHow": {
-    "description": "Explanation of how to raise the awakening level"
+  "accountAppearanceDark": "Dusk",
+  "@accountAppearanceDark": {
+    "description": "Dark theme option name, themed after a high-altitude sunset"
   },
-  "userStarAffinityExplainWhat": "Affinity measures how well your setup matches the way stories get written: a fuller profile and clearer style preferences tell the AI which direction feels good to you.",
-  "@userStarAffinityExplainWhat": {
-    "description": "Explanation of what star affinity means"
+  "accountLanguage": "Language",
+  "@accountLanguage": {
+    "description": "Section title for the interface language setting"
   },
-  "userStarAffinityExplainHow": "Fill in your profile (zodiac, work and interests especially), then give feedback on a few stories — affinity follows.",
-  "@userStarAffinityExplainHow": {
-    "description": "Explanation of how to raise star affinity"
+  "accountLanguageSystem": "Match device",
+  "@accountLanguageSystem": {
+    "description": "Language option that follows the device language"
   },
-  "userPercentValue": "{percent}%",
-  "@userPercentValue": {
-    "description": "A bare percentage value",
+  "accountAbout": "About",
+  "@accountAbout": {
+    "description": "Section title for profile editing and legal documents"
+  },
+  "accountEditProfile": "Edit profile",
+  "@accountEditProfile": {
+    "description": "Row that opens the profile editing screen"
+  },
+  "accountLogout": "Sign out",
+  "@accountLogout": {
+    "description": "Button and dialog action that signs the user out"
+  },
+  "accountLogoutConfirmTitle": "Sign out?",
+  "@accountLogoutConfirmTitle": {
+    "description": "Title of the sign-out confirmation dialog"
+  },
+  "accountLogoutConfirmBody": "You'll need to sign in again to see your bookings.",
+  "@accountLogoutConfirmBody": {
+    "description": "Body of the sign-out confirmation dialog"
+  },
+  "weatherStatusGo": "Clear to jump",
+  "@weatherStatusGo": {
+    "description": "Weather card headline when the operator has cleared the day for jumping"
+  },
+  "weatherStatusMarginal": "Marginal — decided on site",
+  "@weatherStatusMarginal": {
+    "description": "Weather card headline when wind or cloud base is borderline and the call is made at the drop zone"
+  },
+  "weatherStatusHold": "Grounded today",
+  "@weatherStatusHold": {
+    "description": "Weather card headline when the operator has grounded the day"
+  },
+  "weatherWind": "Wind {speed} m/s",
+  "@weatherWind": {
+    "description": "Ground wind speed on the weather card; skydiving reads m/s, not Beaufort",
     "placeholders": {
-      "percent": {
-        "type": "int"
+      "speed": {
+        "type": "String",
+        "example": "3.4"
       }
     }
   },
-  "userProfileSection": "Profile",
-  "@userProfileSection": {
-    "description": "Title of the personal profile card"
-  },
-  "userProfileEdit": "Edit",
-  "@userProfileEdit": {
-    "description": "Action in the profile card header that opens profile settings"
-  },
-  "userFieldEmpty": "Not set",
-  "@userFieldEmpty": {
-    "description": "Placeholder for a profile field the user has not filled in"
-  },
-  "userFieldGender": "Gender",
-  "@userFieldGender": {
-    "description": "Profile field label"
-  },
-  "userFieldAge": "Age",
-  "@userFieldAge": {
-    "description": "Profile field label"
-  },
-  "userAgeValue": "{age}",
-  "@userAgeValue": {
-    "description": "Formatted age value",
+  "weatherTemperature": "{degrees}°C",
+  "@weatherTemperature": {
+    "description": "Ground temperature on the weather card",
     "placeholders": {
-      "age": {
-        "type": "int"
+      "degrees": {
+        "type": "int",
+        "example": "21"
       }
     }
   },
-  "userFieldBirthday": "Birthday",
-  "@userFieldBirthday": {
-    "description": "Profile field label"
-  },
-  "userFieldZodiac": "Zodiac",
-  "@userFieldZodiac": {
-    "description": "Profile field label"
-  },
-  "userFieldCity": "City",
-  "@userFieldCity": {
-    "description": "Profile field label"
-  },
-  "userFieldOccupation": "Occupation",
-  "@userFieldOccupation": {
-    "description": "Profile field label"
-  },
-  "userFieldIndustry": "Industry",
-  "@userFieldIndustry": {
-    "description": "Profile field label"
-  },
-  "userFieldCompany": "Company",
-  "@userFieldCompany": {
-    "description": "Profile field label"
-  },
-  "userFieldHobbies": "Interests",
-  "@userFieldHobbies": {
-    "description": "Profile field label for the hobby chips"
-  },
-  "userActionsSection": "More",
-  "@userActionsSection": {
-    "description": "Section title above the action list in the user page"
-  },
-  "userProfileSettings": "Profile settings",
-  "@userProfileSettings": {
-    "description": "Action that opens the profile settings page; also its page title"
-  },
-  "userFieldMbti": "MBTI",
-  "@userFieldMbti": {
-    "description": "Profile field label for the MBTI personality type"
-  },
-  "userFieldPersonalityTags": "Personality tags",
-  "@userFieldPersonalityTags": {
-    "description": "Profile field label for the user's personality tags"
-  },
-  "userFieldIdealLife": "Ideal life",
-  "@userFieldIdealLife": {
-    "description": "Profile field label for the user's free-text description of the life they want"
-  },
-  "userFieldNickname": "Nickname",
-  "@userFieldNickname": {
-    "description": "Profile field label for the display name"
-  },
-  "userPreferencesSection": "Preferences",
-  "@userPreferencesSection": {
-    "description": "Section header above the language and appearance settings"
-  },
-  "userSettingLanguage": "Language",
-  "@userSettingLanguage": {
-    "description": "Settings row that opens the interface language picker"
-  },
-  "userSettingTheme": "Appearance",
-  "@userSettingTheme": {
-    "description": "Settings row that opens the light/dark theme picker"
-  },
-  "userLanguageSystem": "System default",
-  "@userLanguageSystem": {
-    "description": "Language option meaning follow the phone's system language"
-  },
-  "userLanguageZh": "简体中文",
-  "@userLanguageZh": {
-    "description": "Language option for Simplified Chinese, always written in its own language"
-  },
-  "userLanguageEn": "English",
-  "@userLanguageEn": {
-    "description": "Language option for English, always written in its own language"
-  },
-  "userThemeDark": "Dark",
-  "@userThemeDark": {
-    "description": "Appearance option for the dark theme"
-  },
-  "userThemeLight": "Light",
-  "@userThemeLight": {
-    "description": "Appearance option for the light theme"
-  },
-  "userProfileEditIntro": "The more you fill in, the more the stories sound like they were written for you.",
-  "@userProfileEditIntro": {
-    "description": "Intro line at the top of the profile edit form"
-  },
-  "userProfileEditSave": "Save",
-  "@userProfileEditSave": {
-    "description": "Primary action that submits the profile edit form"
-  },
-  "userProfileEditSaved": "Profile updated",
-  "@userProfileEditSaved": {
-    "description": "Toast shown after the profile was saved successfully"
-  },
-  "userProfileEditNicknameRequired": "Pick a nickname first",
-  "@userProfileEditNicknameRequired": {
-    "description": "Validation error when the nickname field is left empty"
-  },
-  "userProfileEditBirthdayUnset": "Pick a date",
-  "@userProfileEditBirthdayUnset": {
-    "description": "Placeholder on the birthday row when no date has been chosen"
-  },
-  "userProfileEditBirthdayDerived": "{age} yrs · {zodiac}",
-  "@userProfileEditBirthdayDerived": {
-    "description": "Read-only hint under the birthday row showing the age and zodiac derived from it",
+  "weatherObservedAt": "at {time}",
+  "@weatherObservedAt": {
+    "description": "When the weather reading was taken, shown next to the status",
     "placeholders": {
-      "age": {
-        "type": "int"
-      },
-      "zodiac": {
-        "type": "String"
+      "time": {
+        "type": "String",
+        "example": "14:32"
       }
     }
-  },
-  "userProfileEditTagHint": "Type one, press enter to add",
-  "@userProfileEditTagHint": {
-    "description": "Hint inside the tag input for hobbies and personality tags"
-  },
-  "userProfileEditTagRemove": "Remove {tag}",
-  "@userProfileEditTagRemove": {
-    "description": "Accessibility label on a tag chip's delete button",
-    "placeholders": {
-      "tag": {
-        "type": "String"
-      }
-    }
-  },
-  "userProfileEditIdealLifeHint": "What does the life you want look like? Tell the AI in a few lines.",
-  "@userProfileEditIdealLifeHint": {
-    "description": "Hint inside the free-text ideal life field"
-  },
-  "userProfileEditMbtiUnset": "Not set",
-  "@userProfileEditMbtiUnset": {
-    "description": "Placeholder on the MBTI picker when nothing is selected"
-  },
-  "userProfileEditNoProfile": "This account has no profile yet, so it can't be saved",
-  "@userProfileEditNoProfile": {
-    "description": "Message shown when the profile has no backend id and therefore cannot be updated"
-  },
-  "userProfileEditLeaveTitle": "Discard your changes?",
-  "@userProfileEditLeaveTitle": {
-    "description": "Title of the confirm dialog shown when leaving the profile form with unsaved edits"
-  },
-  "userProfileEditLeaveBody": "You've changed a few things but haven't saved. Going back now loses them.",
-  "@userProfileEditLeaveBody": {
-    "description": "Body of the confirm dialog shown when leaving the profile form with unsaved edits"
-  },
-  "userProfileEditLeaveConfirm": "Discard",
-  "@userProfileEditLeaveConfirm": {
-    "description": "Destructive action that leaves the profile form and drops unsaved edits"
-  },
-  "userGenderMale": "Male",
-  "@userGenderMale": {
-    "description": "Gender option"
-  },
-  "userGenderFemale": "Female",
-  "@userGenderFemale": {
-    "description": "Gender option"
-  },
-  "userGenderOther": "Other",
-  "@userGenderOther": {
-    "description": "Gender option for anything outside male/female"
-  },
-  "userSwitchAccount": "Switch account",
-  "@userSwitchAccount": {
-    "description": "Action for switching between multiple accounts"
-  },
-  "userContactDeveloper": "Talk to the developer",
-  "@userContactDeveloper": {
-    "description": "Action that opens a chat with the developer"
-  },
-  "userLogoutConfirmTitle": "Log out?",
-  "@userLogoutConfirmTitle": {
-    "description": "Title of the log out confirmation dialog"
-  },
-  "userLogoutConfirmBody": "You'll need to sign in with your phone number again. Your tracks and stories stay put.",
-  "@userLogoutConfirmBody": {
-    "description": "Body of the log out confirmation dialog"
-  },
-  "homeLogout": "Log out",
-  "@homeLogout": {
-    "description": "Tooltip for the log out action in the home app bar"
-  },
-  "homeLogoutFailed": "Log out failed. Please try again.",
-  "@homeLogoutFailed": {
-    "description": "Toast message shown when logging out fails"
-  },
-
-  "homeStoryQuickTitle": "Quick start",
-  "@homeStoryQuickTitle": {
-    "description": "Title of the sheet opened by long-pressing the raised story tab"
-  },
-  "homeStoryQuickNew": "New story",
-  "@homeStoryQuickNew": {
-    "description": "Quick action that starts writing a brand new story"
-  },
-  "homeStoryQuickContinue": "Resume last draft",
-  "@homeStoryQuickContinue": {
-    "description": "Quick action that reopens the most recent unfinished story"
-  },
-
-  "routeNotFound": "Page not found",
-  "@routeNotFound": {
-    "description": "Message shown by the router error page for an unknown route"
   }
 }

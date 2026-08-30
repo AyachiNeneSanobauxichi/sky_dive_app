@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "package:happy_os/core/settings/index.dart";
-import "package:happy_os/core/theme/index.dart";
+import "package:sky_dive/core/settings/index.dart";
+import "package:sky_dive/core/theme/index.dart";
 
 /// 切换语言 / 深浅色时的整屏过渡。
 ///
@@ -14,9 +14,9 @@ import "package:happy_os/core/theme/index.dart";
 /// 新内容从透明淡入，底下垫一层**新主题的画布色**。用户看到的是"屏幕在新底色上
 /// 重新长出来"，而不是两套界面互相穿透。
 ///
-/// 顺带把 `HappyStarfieldBackground` 也一起盖住了：星野在深浅两色下是**结构性**
-/// 不同的（深色才有星点层、浅色多一团云絮），颜色插值补不了这个差，
-/// 整屏淡入才是唯一能把它一起带过去的做法。
+/// 顺带把 `SkyBackground` 也一起盖住了：天幕在深浅两色下是**结构性**
+/// 不同的（深色才有星点层与地平线余晖，浅色的云是白的、深色的云是暗的），
+/// 颜色插值补不了这个差，整屏淡入才是唯一能把它一起带过去的做法。
 ///
 /// 系统开了"减弱动态效果"时直接返回子树：过渡是氛围，不是信息。
 class AppSettingsTransition extends StatefulWidget {
@@ -40,14 +40,14 @@ class _AppSettingsTransitionState extends State<AppSettingsTransition>
   /// 起始值给 1：首帧就是完整不透明的，冷启动不该先淡入一次
   /// ——那会让每次打开 app 都慢半拍。
   late final AnimationController _controller = AnimationController(
-    duration: HappyMotion.normal,
+    duration: SkyMotion.normal,
     vsync: this,
     value: 1,
   );
 
   late final Animation<double> _opacity = CurvedAnimation(
     parent: _controller,
-    curve: HappyMotion.entrance,
+    curve: SkyMotion.entrance,
   );
 
   @override
@@ -70,7 +70,7 @@ class _AppSettingsTransitionState extends State<AppSettingsTransition>
 
     return ColoredBox(
       // 垫的是**新主题**的画布色：淡入过程中露出来的底不能还是旧主题的黑，
-      // 否则从深色切浅色会先闪一下黑。
+      // 否则从深色切浅色会先闪一下深蓝。
       color: Theme.of(context).scaffoldBackgroundColor,
       child: FadeTransition(opacity: _opacity, child: widget.child),
     );

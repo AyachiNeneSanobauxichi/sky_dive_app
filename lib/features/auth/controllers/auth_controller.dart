@@ -2,33 +2,41 @@ import "dart:async";
 import "dart:convert";
 
 import "package:flutter/painting.dart" show PaintingBinding;
-import "package:happy_os/core/network/index.dart";
-import "package:happy_os/core/providers/index.dart";
-import "package:happy_os/core/storage/index.dart";
-import "package:happy_os/features/auth/data/index.dart";
-import "package:happy_os/features/auth/domain/index.dart";
+import "package:sky_dive/core/network/index.dart";
+import "package:sky_dive/core/providers/index.dart";
+import "package:sky_dive/core/storage/index.dart";
+import "package:sky_dive/features/auth/data/index.dart";
+import "package:sky_dive/features/auth/domain/index.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
 part "auth_controller.g.dart";
 
-/// Auth 仓库 DI：组装 DataSource（依赖全局 DioClient）。
+/// Auth 数据源 DI。
+///
+/// ⚠️ 当前装配的是 **mock**（后端未就绪）。接真后端时把这里换成
+/// `AuthRemoteDataSource(ref.watch(dioClientProvider))`，并删除 `data/mock/` 整个目录。
+/// 这是整条认证链路上**唯一**需要改的一行。
+@Riverpod(keepAlive: true)
+AuthDataSource authDataSource(Ref ref) => AuthMockDataSource();
+
+/// Auth 仓库 DI。
 @Riverpod(keepAlive: true)
 AuthRepository authRepository(Ref ref) =>
-    AuthRepository(AuthRemoteDataSource(ref.watch(dioClientProvider)));
+    AuthRepository(ref.watch(authDataSourceProvider));
 
-/// 全局登录态控制器（v2）。
+/// 全局登录态控制器。
 ///
 /// - `AsyncLoading`（仅冷启动 [build] 期间）：登录态未定，路由停在 splash。
 /// - `AsyncData(AuthState)`：已定态，驱动路由守卫重定向。
 ///
-/// 登录/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由页面
-/// 各自的本地标记承载；登录失败以异常上抛，页面本地捕获提示。
+/// 登录/注册/登出**不**把本 provider 置 loading，以免误触发 splash——按钮 loading 由
+/// 页面各自的本地标记承载；失败以异常上抛，页面本地捕获提示。
 ///
 /// keepAlive 必需：autoDispose 会在无监听者时重跑 [build] 的静默刷新流程，
 /// 造成登录态抖动甚至误登出。
 @Riverpod(keepAlive: true)
 class AuthController extends _$AuthController {
-  /// 等服务端确认登出的上限。这是业务等待而非动效时长，故不取 `HappyMotion`。
+  /// 等服务端确认登出的上限。这是业务等待而非动效时长，故不取 `SkyMotion`。
   /// 取值短于 DioClient 的 15 秒超时——见 [logout] 的说明。
   static const Duration _serverLogoutTimeout = Duration(seconds: 5);
 
@@ -67,22 +75,39 @@ class AuthController extends _$AuthController {
     }
   }
 
-  /// 手机号验证码登录（v3）：一步完成「校验 + 落地会话」。
-  ///
-  /// 失败抛出 [Failure]（由页面本地捕获提示），不污染全局 [state]——否则登录失败
-  /// 会把路由打回 splash，用户已填的手机号和验证码全丢。
-  Future<void> login({required String phone, required String code}) async =>
-      completeSession(await authenticate(phone: phone, code: code));
+  // ───────────────────────── 校验（不改登录态） ─────────────────────────
+  //
+  // 「拿到会话」和「落地会话」拆成两步，是为了给页面留出"成功确认"的时间：
+  // 登录态一翻转，路由守卫立刻换页——用户刚敲完最后一位就被"啪"地弹走，
+  // 没有任何成果确认。页面拿到会话后可以先播一段确认动效，再调 [completeSession]。
+  //
+  // 失败一律抛 [Failure]（由页面本地捕获提示），**不污染全局 [state]**：
+  // 否则登录失败会把路由打回 splash，用户已填的邮箱和密码全丢。
 
-  /// 只校验手机号 + 验证码，拿到会话但**不改登录态**。
-  ///
-  /// 拆出这一步是为了给页面留出"成功确认"的时间：登录态一翻转，路由守卫立刻换页，
-  /// 用户刚填完最后一位就被"啪"地弹走，没有任何成果确认。页面拿到会话后可以先播
-  /// 一段确认动效，再调 [completeSession]。
-  Future<AuthSession> authenticate({
+  /// 邮箱 + 密码校验。
+  Future<AuthSession> authenticateWithEmail({
+    required String email,
+    required String password,
+  }) => _repo.loginWithEmail(email: email, password: password);
+
+  /// 手机号 + 验证码校验。未注册手机号由服务端直接建号。
+  Future<AuthSession> authenticateWithPhone({
     required String phone,
     required String code,
-  }) => _repo.login(phone: phone, code: code);
+  }) => _repo.loginWithSms(phone: phone, code: code);
+
+  /// 邮箱注册。成功即返回可用会话，无需再登录一次。
+  Future<AuthSession> registerAccount({
+    required String email,
+    required String password,
+    required String displayName,
+    String? phone,
+  }) => _repo.register(
+    email: email,
+    password: password,
+    displayName: displayName,
+    phone: phone,
+  );
 
   /// 落地会话：accessToken 写内存、refreshToken + 用户快照落盘，置为已登录态。
   ///
@@ -98,7 +123,7 @@ class AuthController extends _$AuthController {
     state = AsyncData(AuthState.authenticated(session.user));
   }
 
-  /// 登出（v3）：请求后端吊销会话（尽力而为、有等待上限），无论成败都清空本地会话与
+  /// 登出：请求后端吊销会话（尽力而为、有等待上限），无论成败都清空本地会话与
   /// 缓存并置为未登录。
   ///
   /// 三个刻意的取舍：
@@ -141,15 +166,15 @@ class AuthController extends _$AuthController {
     }
   }
 
-  /// 清空本地会话与缓存（v3「需要清空缓存」）。
+  /// 清空本地会话与缓存。
   ///
   /// 覆盖三类残留：
   /// 1. 内存态 accessToken；
-  /// 2. 安全存储里的 refreshToken 与用户快照（`deleteAll`）；
+  /// 2. 安全存储里的 refreshToken 与用户快照（`clear`）；
   /// 3. 图片解码缓存——同一台设备换个账号登录，不该在别人的页面上闪出上一个人的头像。
   ///
-  /// 各页面的数据缓存（档案 / 灵感 / 轨迹 / 历史）不用在这里逐个清：它们的 controller
-  /// 都是 autoDispose，登出触发重定向后整个 shell 卸载，无监听者即销毁，下次登录重新取数。
+  /// 各页面的数据缓存不用在这里逐个清：业务 controller 都是 autoDispose，
+  /// 登出触发重定向后整个 shell 卸载，无监听者即销毁，下次登录重新取数。
   // TODO(auth): cached_network_image 的**磁盘**缓存清不掉——需要 flutter_cache_manager
   //   进 pubspec（属工程配置，须人工确认）。头像字段目前后端还没下发，等真有头像再补。
   Future<void> _clearSession() async {
@@ -163,19 +188,18 @@ class AuthController extends _$AuthController {
   /// 用户快照持久化：User 是纯领域实体（无 JSON 耦合），这里手动序列化。
   ///
   /// 冷启动只有这份快照能还原「已登录」界面（accessToken 只在内存，重启后拿不回
-  /// 登录响应里的 userInfo），所以实体加字段时这里必须同步补——漏存 memberLevel，
-  /// 重启后会员就被当成免费用户。
-  String _encodeUser(User user) => jsonEncode({
+  /// 登录响应里的 userInfo），所以实体加字段时这里必须同步补——漏存 licenseLevel，
+  /// 重启后持证跳伞员就被当成体验客，首页会给他推错航线。
+  String _encodeUser(User user) => jsonEncode(<String, dynamic>{
     "id": user.id,
+    "displayName": user.displayName,
+    "email": user.email,
     "phone": user.phone,
-    "account": user.account,
-    "username": user.username,
-    "nickname": user.nickname,
-    "status": user.status,
-    "memberLevel": user.memberLevel,
-    "totalDays": user.totalDays,
-    "lastActiveTime": user.lastActiveTime?.toIso8601String(),
-    "createTime": user.createTime?.toIso8601String(),
+    "avatarUrl": user.avatarUrl,
+    "licenseLevel": user.licenseLevel,
+    "totalJumps": user.totalJumps,
+    "createdAt": user.createdAt?.toIso8601String(),
+    "lastActiveAt": user.lastActiveAt?.toIso8601String(),
   });
 
   Future<User?> _readPersistedUser() async {
@@ -184,23 +208,20 @@ class AuthController extends _$AuthController {
     try {
       final map = jsonDecode(raw) as Map<String, dynamic>;
       final id = map["id"] as String?;
-      final phone = map["phone"] as String?;
-      // id + 手机号是身份锚点，缺了就当快照失效——旧版本只存 phone/nickname 的快照
-      // 正好在这里被判废，用户重新登录一次即可拿到完整 userInfo，不会带着半个实体跑。
-      if (id == null || phone == null) return null;
+      final displayName = map["displayName"] as String?;
+      // id + 显示名是最小可展示身份：缺了就当快照失效，用户重新登录一次即可拿到
+      // 完整 userInfo，不会带着半个实体跑。
+      if (id == null || displayName == null) return null;
       return User(
         id: id,
-        phone: phone,
-        account: map["account"] as String?,
-        username: map["username"] as String?,
-        nickname: map["nickname"] as String?,
-        status: (map["status"] as num?)?.toInt(),
-        memberLevel: map["memberLevel"] as String?,
-        totalDays: (map["totalDays"] as num?)?.toInt() ?? 0,
-        lastActiveTime: DateTime.tryParse(
-          map["lastActiveTime"] as String? ?? "",
-        ),
-        createTime: DateTime.tryParse(map["createTime"] as String? ?? ""),
+        displayName: displayName,
+        email: map["email"] as String?,
+        phone: map["phone"] as String?,
+        avatarUrl: map["avatarUrl"] as String?,
+        licenseLevel: map["licenseLevel"] as String?,
+        totalJumps: (map["totalJumps"] as num?)?.toInt() ?? 0,
+        createdAt: DateTime.tryParse(map["createdAt"] as String? ?? ""),
+        lastActiveAt: DateTime.tryParse(map["lastActiveAt"] as String? ?? ""),
       );
     } on Object {
       return null;
