@@ -53,6 +53,34 @@ final List<RouteBase> appRoutes = [
             name: RouteName.flights,
             path: RoutePath.flights,
             builder: (context, state) => const FlightScreen(),
+            // 航线详情 / 新建 / 编辑作为**子路由**挂在这里，而不是弹层：
+            // 1. 可深链接（推送点进来直达某条航线、分享给同事）；
+            // 2. 沿用本分支的返回栈，切到别的 tab 再回来还停在原页；
+            // 3. 底部 tab 栏保持可见——排班的人常常要在航线与预约之间来回跳。
+            routes: <RouteBase>[
+              // "new" 必须排在 ":loadId" 前面，否则会被当成一个 id 吃掉。
+              GoRoute(
+                name: RouteName.loadCreate,
+                path: RoutePath.loadCreateSegment,
+                builder: (context, state) => const LoadFormScreen(),
+              ),
+              GoRoute(
+                name: RouteName.loadDetail,
+                path: RoutePath.loadDetailSegment,
+                builder: (context, state) => LoadDetailScreen(
+                  loadId: state.pathParameters[RouteParam.loadId]!,
+                ),
+                routes: <RouteBase>[
+                  GoRoute(
+                    name: RouteName.loadEdit,
+                    path: RoutePath.loadEditSegment,
+                    builder: (context, state) => LoadFormScreen(
+                      loadId: state.pathParameters[RouteParam.loadId],
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),

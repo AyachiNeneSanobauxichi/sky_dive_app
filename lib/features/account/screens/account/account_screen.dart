@@ -64,15 +64,67 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     // 所以这里不解锁按钮——马上就要换页了。
   }
 
+  /// 外观：打开二级选择菜单。
+  Future<void> _onPickAppearance() async {
+    final l10n = AppLocalizations.of(context);
+    final notifier = ref.read(appSettingsControllerProvider.notifier);
+    final current = ref.read(appSettingsControllerProvider).themeMode;
+
+    await showAccountChoiceSheet(
+      context,
+      title: l10n.accountAppearance,
+      optionsBuilder: (sheetContext) => <Widget>[
+        for (final mode in _appearanceModes)
+          AccountOptionTile(
+            icon: _appearanceIcon(mode),
+            label: _appearanceLabel(mode, l10n),
+            description: mode == ThemeMode.system
+                ? l10n.accountAppearanceSystemHint
+                : null,
+            isSelected: current == mode,
+            onTap: () {
+              notifier.setThemeMode(mode);
+              // 选完即关：主题会当场整屏过渡，结果自己就是最好的反馈。
+              Navigator.of(sheetContext).pop();
+            },
+          ),
+      ],
+    );
+  }
+
+  /// 语言：打开二级选择菜单。
+  Future<void> _onPickLanguage() async {
+    final l10n = AppLocalizations.of(context);
+    final notifier = ref.read(appSettingsControllerProvider.notifier);
+    final current = ref.read(appSettingsControllerProvider).locale;
+
+    await showAccountChoiceSheet(
+      context,
+      title: l10n.accountLanguage,
+      optionsBuilder: (sheetContext) => <Widget>[
+        for (final option in AppLanguageOption.values)
+          AccountOptionTile(
+            icon: option.locale == null
+                ? LucideIcons.smartphone
+                : LucideIcons.languages,
+            label: option.label(l10n),
+            isSelected: current?.languageCode == option.locale?.languageCode,
+            onTap: () {
+              notifier.setLocale(option.locale);
+              Navigator.of(sheetContext).pop();
+            },
+          ),
+      ],
+    );
+  }
+
   void _onComingSoon() =>
       SkyToast.info(context, AppLocalizations.of(context).commonComingSoon);
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final settings = ref.watch(appSettingsControllerProvider);
-    final settingsNotifier = ref.read(appSettingsControllerProvider.notifier);
     final user = ref.watch(authControllerProvider).asData?.value.userOrNull;
 
     return SafeArea(
@@ -84,9 +136,8 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
           SkySemanticSpacing.sectionGap,
         ),
         children: <Widget>[
-          Text(l10n.accountTitle, style: theme.textTheme.displaySmall),
-          const SizedBox(height: SkySemanticSpacing.sectionGap),
-
+          // 这一页刻意**不放页面标题**：底部 tab 已经写着"我的"，再来一个
+          // 大标题是同一句话说两遍，还把身份卡压到了首屏之外。
           // user 为 null 只可能出现在"守卫还没把人踢走"的那一两帧，
           // 用骨架占位而不是空白，避免整块内容闪一下。
           if (user != null)
@@ -96,36 +147,21 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
           const SizedBox(height: SkySemanticSpacing.sectionGap),
 
           AccountSection(
-            title: l10n.accountAppearance,
+            title: l10n.accountPreferences,
             children: <Widget>[
-              for (final mode in _appearanceModes)
-                AccountOptionTile(
-                  icon: _appearanceIcon(mode),
-                  label: _appearanceLabel(mode, l10n),
-                  description: mode == ThemeMode.system
-                      ? l10n.accountAppearanceSystemHint
-                      : null,
-                  isSelected: settings.themeMode == mode,
-                  onTap: () => settingsNotifier.setThemeMode(mode),
-                ),
-            ],
-          ),
-          const SizedBox(height: SkySemanticSpacing.sectionGap),
-
-          AccountSection(
-            title: l10n.accountLanguage,
-            children: <Widget>[
-              for (final option in AppLanguageOption.values)
-                AccountOptionTile(
-                  icon: option.locale == null
-                      ? LucideIcons.smartphone
-                      : LucideIcons.languages,
-                  label: option.label(l10n),
-                  isSelected:
-                      settings.locale?.languageCode ==
-                      option.locale?.languageCode,
-                  onTap: () => settingsNotifier.setLocale(option.locale),
-                ),
+              // 收进二级菜单，但**当前值留在行尾**：不点进去也知道现在是哪一档。
+              AccountOptionTile(
+                icon: _appearanceIcon(settings.themeMode),
+                label: l10n.accountAppearance,
+                value: _appearanceLabel(settings.themeMode, l10n),
+                onTap: _onPickAppearance,
+              ),
+              AccountOptionTile(
+                icon: LucideIcons.languages,
+                label: l10n.accountLanguage,
+                value: _languageOptionOf(settings.locale).label(l10n),
+                onTap: _onPickLanguage,
+              ),
             ],
           ),
           const SizedBox(height: SkySemanticSpacing.sectionGap),
@@ -163,6 +199,15 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       ),
     ).animate().fadeIn(duration: SkyMotion.normal, curve: SkyMotion.standard);
   }
+}
+
+/// 当前 locale 对应的语言选项。`null`（跟随系统）以及认不出的 locale 都归到
+/// [AppLanguageOption.system]——设置里显示的必须是"实际生效的那一项"。
+AppLanguageOption _languageOptionOf(Locale? locale) {
+  for (final option in AppLanguageOption.values) {
+    if (option.locale?.languageCode == locale?.languageCode) return option;
+  }
+  return AppLanguageOption.system;
 }
 
 /// 外观三档。用列表常量而不是 `ThemeMode.values`：`ThemeMode` 的枚举顺序是

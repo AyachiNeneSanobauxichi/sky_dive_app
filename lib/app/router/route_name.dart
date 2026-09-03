@@ -11,6 +11,11 @@ abstract final class RouteName {
   static const flights = "flights";
   static const bookings = "bookings";
   static const account = "account";
+
+  /// 航线子页面。挂在 flights 分支下，因此保留底部 tab 与该分支的独立返回栈。
+  static const loadCreate = "loadCreate";
+  static const loadDetail = "loadDetail";
+  static const loadEdit = "loadEdit";
 }
 
 abstract final class RoutePath {
@@ -32,9 +37,24 @@ abstract final class RoutePath {
   static const bookings = "/bookings";
   static const account = "/account";
 
+  /// 航线子路由的**相对**路径段。完整深链接分别是：
+  /// `/flights/new`、`/flights/:loadId`、`/flights/:loadId/edit`。
+  ///
+  /// ⚠️ 注册顺序上 [loadCreateSegment] 必须排在 [loadDetailSegment] **前面**，
+  /// 否则 `/flights/new` 会被 `:loadId` 当成一个 id 吃掉，永远进不了新建页。
+  static const loadCreateSegment = "new";
+  static const loadDetailSegment = ":loadId";
+  static const loadEditSegment = "edit";
+
   /// 登录后落地的默认 tab（= 第一个分支）。守卫与登录成功跳转都用它，
   /// 这样以后调整"首屏是哪个 tab"只改这一行。
   static const home = flights;
+}
+
+/// 路径参数名。和路径常量一样集中定义，避免声明方与解析方各写一个字符串写错。
+abstract final class RouteParam {
+  /// 航线 id（`/flights/:loadId`）。
+  static const loadId = "loadId";
 }
 
 /// 查询参数名。和路径一样集中定义，避免调用方与解析方各写一个字符串写错。

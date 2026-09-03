@@ -18,7 +18,8 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 class MockCredentialsHint extends StatelessWidget {
   const MockCredentialsHint({super.key, required this.onFill});
 
-  final VoidCallback onFill;
+  /// 一键填入某个演示账号（入参是邮箱，密码两个账号相同）。
+  final ValueChanged<String> onFill;
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +56,22 @@ class MockCredentialsHint extends StatelessWidget {
             ],
           ),
           const SizedBox(height: SkySpacing.s8),
-          // 账号密码用等宽数字档位的正文，方便手动照抄。
+          // 两个演示账号成对给：角色由后端下发之后，"客人视角"和"运营视角"
+          // 只能靠换账号登录来验，少给一个就等于有一套界面没人看得到。
+          _AccountRow(
+            roleLabel: l10n.authMockRoleCustomer,
+            email: AuthMockDataSource.demoEmail,
+            onFill: () => onFill(AuthMockDataSource.demoEmail),
+          ),
+          const SizedBox(height: SkySpacing.s4),
+          _AccountRow(
+            roleLabel: l10n.authMockRoleStaff,
+            email: AuthMockDataSource.demoStaffEmail,
+            onFill: () => onFill(AuthMockDataSource.demoStaffEmail),
+          ),
+          const SizedBox(height: SkySpacing.s8),
           SelectableText(
-            "${AuthMockDataSource.demoEmail}\n${AuthMockDataSource.demoPassword}",
+            AuthMockDataSource.demoPassword,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurface,
             ),
@@ -69,23 +83,62 @@ class MockCredentialsHint extends StatelessWidget {
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: SkySpacing.s8),
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: SizedBox(
-              height: SkyControlSize.minTapTarget,
-              child: SkyButton(
-                label: l10n.authMockFill,
-                variant: SkyButtonVariant.secondary,
-                size: SkyButtonSize.small,
-                isFullWidth: false,
-                icon: LucideIcons.wandSparkles,
-                onPressed: onFill,
-              ),
-            ),
-          ),
         ],
       ),
+    );
+  }
+}
+
+/// 一行演示账号：角色 + 邮箱 + 一键填入。
+class _AccountRow extends StatelessWidget {
+  const _AccountRow({
+    required this.roleLabel,
+    required this.email,
+    required this.onFill,
+  });
+
+  final String roleLabel;
+  final String email;
+  final VoidCallback onFill;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                roleLabel,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              SelectableText(
+                email,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: SkyControlSize.minTapTarget,
+          child: SkyButton(
+            label: l10n.authMockFill,
+            variant: SkyButtonVariant.secondary,
+            size: SkyButtonSize.small,
+            isFullWidth: false,
+            icon: LucideIcons.wandSparkles,
+            onPressed: onFill,
+          ),
+        ),
+      ],
     );
   }
 }

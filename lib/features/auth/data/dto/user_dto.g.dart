@@ -14,6 +14,7 @@ _UserDto _$UserDtoFromJson(Map<String, dynamic> json) => _UserDto(
   avatarUrl: json['avatarUrl'] as String?,
   licenseLevel: json['licenseLevel'] as String?,
   totalJumps: (json['totalJumps'] as num?)?.toInt() ?? 0,
+  role: json['role'] as String?,
   createdAt: json['createdAt'] as String?,
   lastActiveAt: json['lastActiveAt'] as String?,
 );
@@ -26,6 +27,7 @@ Map<String, dynamic> _$UserDtoToJson(_UserDto instance) => <String, dynamic>{
   'avatarUrl': instance.avatarUrl,
   'licenseLevel': instance.licenseLevel,
   'totalJumps': instance.totalJumps,
+  'role': instance.role,
   'createdAt': instance.createdAt,
   'lastActiveAt': instance.lastActiveAt,
 };

@@ -350,10 +350,6 @@
   "@bookingsEmptyAction": {
     "description": "Bookings tab empty state action button"
   },
-  "accountTitle": "Account",
-  "@accountTitle": {
-    "description": "Account tab headline"
-  },
   "accountLicense": "License {level}",
   "@accountLicense": {
     "description": "Badge showing the user's skydiving license level",
@@ -467,5 +463,447 @@
         "example": "14:32"
       }
     }
+  },
+  "commonDelete": "Delete",
+  "@commonDelete": {
+    "description": "Generic delete action"
+  },
+  "loadSearchHint": "Call sign, drop zone or aircraft",
+  "@loadSearchHint": {
+    "description": "Placeholder of the load list search field"
+  },
+  "loadSearchClear": "Clear search",
+  "@loadSearchClear": {
+    "description": "Tooltip of the button that clears the search field"
+  },
+  "loadSortEarliest": "Earliest",
+  "@loadSortEarliest": {
+    "description": "Sort chip: departures from earliest to latest"
+  },
+  "loadSortLatest": "Latest",
+  "@loadSortLatest": {
+    "description": "Sort chip: departures from latest to earliest"
+  },
+  "loadCreateAction": "New load",
+  "@loadCreateAction": {
+    "description": "Button that opens the create-load form"
+  },
+  "loadResultCount": "{count, plural, =0{No loads} =1{1 load} other{{count} loads}}",
+  "@loadResultCount": {
+    "description": "How many loads match the current search",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "loadRoleCustomers": "Jumpers",
+  "@loadRoleCustomers": {
+    "description": "Label for the customer seats of a load"
+  },
+  "loadRolePhotographers": "Photographers",
+  "@loadRolePhotographers": {
+    "description": "Label for the photographer seats of a load"
+  },
+  "loadSeats": "{filled}/{capacity}",
+  "@loadSeats": {
+    "description": "Filled seats over the capacity of one role",
+    "placeholders": {
+      "filled": {
+        "type": "num"
+      },
+      "capacity": {
+        "type": "num"
+      }
+    }
+  },
+  "loadSeatsLeft": "{count, plural, =0{Full} =1{1 seat left} other{{count} seats left}}",
+  "@loadSeatsLeft": {
+    "description": "How many seats of one role are still free",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "loadAltitude": "{feet} ft",
+  "@loadAltitude": {
+    "description": "Exit altitude in feet",
+    "placeholders": {
+      "feet": {
+        "type": "String"
+      }
+    }
+  },
+  "loadDeparted": "Departed",
+  "@loadDeparted": {
+    "description": "Badge on a load whose departure time has passed"
+  },
+  "loadFullBadge": "Full",
+  "@loadFullBadge": {
+    "description": "Badge on a load with no customer seats left"
+  },
+  "loadDayToday": "Today",
+  "@loadDayToday": {
+    "description": "Date chip for a load departing today"
+  },
+  "loadDayTomorrow": "Tomorrow",
+  "@loadDayTomorrow": {
+    "description": "Date chip for a load departing tomorrow"
+  },
+  "loadEmptyTitle": "The board is empty",
+  "@loadEmptyTitle": {
+    "description": "Empty state title for admins when no load exists"
+  },
+  "loadEmptyDescription": "Add the first load: pick a drop zone, a departure time, and how many jumpers and photographers fit on board.",
+  "@loadEmptyDescription": {
+    "description": "Empty state description for admins when no load exists"
+  },
+  "loadEmptyAction": "Add a load",
+  "@loadEmptyAction": {
+    "description": "Empty state action for admins"
+  },
+  "loadSearchEmptyTitle": "Nothing matches that",
+  "@loadSearchEmptyTitle": {
+    "description": "Empty state title when the search returns nothing"
+  },
+  "loadSearchEmptyDescription": "Try another call sign, drop zone or aircraft — or clear the search to see everything.",
+  "@loadSearchEmptyDescription": {
+    "description": "Empty state description when the search returns nothing"
+  },
+  "loadManifestTitle": "Manifest",
+  "@loadManifestTitle": {
+    "description": "Section title of the people assigned to a load"
+  },
+  "loadManifestEmptyCustomers": "No jumpers yet",
+  "@loadManifestEmptyCustomers": {
+    "description": "Shown when no customer is assigned to a load"
+  },
+  "loadManifestEmptyPhotographers": "No photographer yet",
+  "@loadManifestEmptyPhotographers": {
+    "description": "Shown when no photographer is assigned to a load"
+  },
+  "loadAddCustomer": "Add jumper",
+  "@loadAddCustomer": {
+    "description": "Action that assigns a customer to a load"
+  },
+  "loadAddPhotographer": "Add photographer",
+  "@loadAddPhotographer": {
+    "description": "Action that assigns a photographer to a load"
+  },
+  "loadRemoveParticipant": "Take off this load",
+  "@loadRemoveParticipant": {
+    "description": "Tooltip of the button that unassigns someone from a load"
+  },
+  "loadRemoveSuccess": "{name} is off {code}.",
+  "@loadRemoveSuccess": {
+    "description": "Toast after someone was unassigned",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "loadAssignSuccess": "{name} is on {code}.",
+  "@loadAssignSuccess": {
+    "description": "Toast after someone was assigned",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "loadPickCustomerTitle": "Add a jumper",
+  "@loadPickCustomerTitle": {
+    "description": "Title of the customer picker sheet"
+  },
+  "loadPickPhotographerTitle": "Add a photographer",
+  "@loadPickPhotographerTitle": {
+    "description": "Title of the photographer picker sheet"
+  },
+  "loadPickSearchHint": "Search by name",
+  "@loadPickSearchHint": {
+    "description": "Placeholder of the people picker search field"
+  },
+  "loadPickEmptyTitle": "Nobody left to add",
+  "@loadPickEmptyTitle": {
+    "description": "Empty state title of the people picker"
+  },
+  "loadPickEmptyDescription": "Everyone available for this role is already on this load.",
+  "@loadPickEmptyDescription": {
+    "description": "Empty state description of the people picker"
+  },
+  "loadEditTooltip": "Edit load",
+  "@loadEditTooltip": {
+    "description": "Tooltip of the edit-load button"
+  },
+  "loadDeleteTooltip": "Delete load",
+  "@loadDeleteTooltip": {
+    "description": "Tooltip of the delete-load button"
+  },
+  "loadDeleteConfirmTitle": "Delete {code}?",
+  "@loadDeleteConfirmTitle": {
+    "description": "Confirm dialog title before deleting a load",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "loadDeleteConfirmBody": "{count, plural, =0{Nobody is on this load yet, so nothing else changes.} =1{1 person is on the manifest and will lose their seat.} other{{count} people are on the manifest and will lose their seats.}}",
+  "@loadDeleteConfirmBody": {
+    "description": "Confirm dialog body before deleting a load",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "loadDeleteSuccess": "{code} deleted.",
+  "@loadDeleteSuccess": {
+    "description": "Toast after a load was deleted",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "loadFormCreateTitle": "New load",
+  "@loadFormCreateTitle": {
+    "description": "Title of the create-load form"
+  },
+  "loadFormEditTitle": "Edit {code}",
+  "@loadFormEditTitle": {
+    "description": "Title of the edit-load form",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "loadFormCode": "Call sign",
+  "@loadFormCode": {
+    "description": "Label of the load call sign field"
+  },
+  "loadFormCodeHint": "L-204",
+  "@loadFormCodeHint": {
+    "description": "Example value of the load call sign field"
+  },
+  "loadFormCodeRequired": "Give this load a call sign.",
+  "@loadFormCodeRequired": {
+    "description": "Validation error when the call sign is empty"
+  },
+  "loadFormDropZone": "Drop zone",
+  "@loadFormDropZone": {
+    "description": "Label of the drop zone picker"
+  },
+  "loadFormDropZoneRequired": "Pick a drop zone.",
+  "@loadFormDropZoneRequired": {
+    "description": "Validation error when no drop zone is picked"
+  },
+  "loadFormDeparture": "Departure",
+  "@loadFormDeparture": {
+    "description": "Label of the departure date and time pickers"
+  },
+  "loadFormAircraft": "Aircraft",
+  "@loadFormAircraft": {
+    "description": "Label of the aircraft field"
+  },
+  "loadFormAircraftHint": "Cessna 208B",
+  "@loadFormAircraftHint": {
+    "description": "Example value of the aircraft field"
+  },
+  "loadFormAircraftRequired": "Which aircraft is flying?",
+  "@loadFormAircraftRequired": {
+    "description": "Validation error when the aircraft is empty"
+  },
+  "loadFormAltitude": "Exit altitude",
+  "@loadFormAltitude": {
+    "description": "Label of the exit altitude picker"
+  },
+  "loadFormCapacity": "Seats",
+  "@loadFormCapacity": {
+    "description": "Section label of the two capacity steppers"
+  },
+  "loadFormCapacityHint": "How many people fit on this load.",
+  "@loadFormCapacityHint": {
+    "description": "Helper text under the capacity steppers"
+  },
+  "loadFormCapacityMin": "{count, plural, =1{1 person is already assigned.} other{{count} people are already assigned.}}",
+  "@loadFormCapacityMin": {
+    "description": "Helper text explaining why a capacity cannot be lowered further",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "loadCapacityDecrease": "One seat fewer",
+  "@loadCapacityDecrease": {
+    "description": "Tooltip of the minus button of a capacity stepper"
+  },
+  "loadCapacityIncrease": "One seat more",
+  "@loadCapacityIncrease": {
+    "description": "Tooltip of the plus button of a capacity stepper"
+  },
+  "loadFormSubmitCreate": "Add load",
+  "@loadFormSubmitCreate": {
+    "description": "Submit button of the create-load form"
+  },
+  "loadFormSubmitSave": "Save changes",
+  "@loadFormSubmitSave": {
+    "description": "Submit button of the edit-load form"
+  },
+  "loadCreateSuccess": "{code} is on the board.",
+  "@loadCreateSuccess": {
+    "description": "Toast after a load was created",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "loadUpdateSuccess": "{code} updated.",
+  "@loadUpdateSuccess": {
+    "description": "Toast after a load was edited",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "loadErrorFull": "This load is full. Free a seat or raise the limit first.",
+  "@loadErrorFull": {
+    "description": "Error when assigning someone to a load with no seat left"
+  },
+  "loadErrorAlreadyAssigned": "They're already on this load.",
+  "@loadErrorAlreadyAssigned": {
+    "description": "Error when assigning someone who is already on the load"
+  },
+  "loadErrorNotFound": "That load is gone — someone removed it.",
+  "@loadErrorNotFound": {
+    "description": "Error when the load was deleted by someone else"
+  },
+  "loadErrorCapacityBelowAssigned": "The limit can't be lower than the people already assigned.",
+  "@loadErrorCapacityBelowAssigned": {
+    "description": "Error when the capacity is set below the assigned count"
+  },
+  "commonUndo": "Undo",
+  "@commonUndo": {
+    "description": "Action on a toast that reverts what just happened"
+  },
+  "commonDiscard": "Discard",
+  "@commonDiscard": {
+    "description": "Confirm action that throws away unsaved input"
+  },
+  "authMockRoleCustomer": "Customer",
+  "@authMockRoleCustomer": {
+    "description": "Label of the demo customer account in the mock credentials hint"
+  },
+  "authMockRoleStaff": "Staff · can manifest",
+  "@authMockRoleStaff": {
+    "description": "Label of the demo staff account in the mock credentials hint"
+  },
+  "loadFormDiscardTitle": "Discard this load?",
+  "@loadFormDiscardTitle": {
+    "description": "Confirm dialog title when leaving the load form with unsaved input"
+  },
+  "loadFormDiscardBody": "What you filled in won't be saved.",
+  "@loadFormDiscardBody": {
+    "description": "Confirm dialog body when leaving the load form with unsaved input"
+  },
+  "loadDetailGoneTitle": "This load is gone",
+  "@loadDetailGoneTitle": {
+    "description": "Empty state title when the opened load no longer exists"
+  },
+  "loadDetailGoneDescription": "Someone took it off the board while you were here. Head back to see what's still flying.",
+  "@loadDetailGoneDescription": {
+    "description": "Empty state description when the opened load no longer exists"
+  },
+  "loadDetailBackToList": "Back to loads",
+  "@loadDetailBackToList": {
+    "description": "Action that returns from the load detail page to the list"
+  },
+  "loadDetailTitle": "Load {code}",
+  "@loadDetailTitle": {
+    "description": "Accessibility label of the load detail page",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "loadSeatsUnavailable": "Not offered",
+  "@loadSeatsUnavailable": {
+    "description": "Shown for a role whose capacity on this load is zero"
+  },
+  "loadReorderTooltip": "Drag to reorder boarding order",
+  "@loadReorderTooltip": {
+    "description": "Tooltip / semantics label of the drag handle in the manifest"
+  },
+  "loadSwipeToRemove": "Swipe left to take someone off this load",
+  "@loadSwipeToRemove": {
+    "description": "Hint shown above the manifest explaining the swipe shortcut"
+  },
+  "bookingActionBook": "Book a seat",
+  "@bookingActionBook": {
+    "description": "Primary action that books the current user onto a load"
+  },
+  "bookingActionCancel": "Cancel booking",
+  "@bookingActionCancel": {
+    "description": "Action that cancels the current user's seat on a load"
+  },
+  "bookingBookedBadge": "Booked",
+  "@bookingBookedBadge": {
+    "description": "Badge on a load the current user already booked"
+  },
+  "bookingBookSuccess": "You're on {code}. See you at the drop zone.",
+  "@bookingBookSuccess": {
+    "description": "Toast after a successful booking",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingCancelSuccess": "Your seat on {code} is released.",
+  "@bookingCancelSuccess": {
+    "description": "Toast after cancelling a booking",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingCancelConfirmTitle": "Cancel your seat on {code}?",
+  "@bookingCancelConfirmTitle": {
+    "description": "Confirm dialog title before cancelling a booking",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingCancelConfirmBody": "The seat goes straight back to the board — someone else can take it.",
+  "@bookingCancelConfirmBody": {
+    "description": "Confirm dialog body before cancelling a booking"
+  },
+  "bookingErrorFull": "That load just filled up. Pick another one — there's usually a next lift.",
+  "@bookingErrorFull": {
+    "description": "Customer-facing message when a booking fails because the load is full"
+  },
+  "bookingUpcoming": "Upcoming",
+  "@bookingUpcoming": {
+    "description": "Status chip on a booking that has not departed yet"
+  },
+  "accountPreferences": "Preferences",
+  "@accountPreferences": {
+    "description": "Section title grouping the appearance and language settings rows"
   }
 }

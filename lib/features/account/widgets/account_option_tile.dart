@@ -6,7 +6,8 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 /// 设置分组里的一行。
 ///
 /// 两种用法由 [isSelected] 区分：
-/// - 传 `null`：普通跳转行，右侧是箭头（条款、隐私政策…）。
+/// - 传 `null`：普通跳转行，右侧是箭头（条款、隐私政策…）；带 [value] 时
+///   箭头前还会显示当前值（"外观 · 跟随系统"），点进去才是二级选择菜单。
 /// - 传 `true` / `false`：单选行，右侧是对勾。
 ///
 /// 单选行**选中时仍可点**：点已选中项什么都不会变，但把它禁用掉会让人以为
@@ -18,6 +19,7 @@ class AccountOptionTile extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.description,
+    this.value,
     this.isSelected,
     this.isDestructive = false,
   });
@@ -27,6 +29,10 @@ class AccountOptionTile extends StatelessWidget {
 
   /// 副标题。用于解释这一项意味着什么（如"跟随手机的昼夜设置"）。
   final String? description;
+
+  /// 行尾的当前值（跳转行专用）。收进二级菜单的设置项**必须**把当前值留在
+  /// 一级页面上，否则用户得点进去才知道自己现在选的是什么。
+  final String? value;
 
   final VoidCallback onTap;
 
@@ -87,6 +93,16 @@ class AccountOptionTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: SkySemanticSpacing.itemGap),
+              if (value != null)
+                Padding(
+                  padding: const EdgeInsets.only(right: SkySpacing.s6),
+                  child: Text(
+                    value!,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
               _Trailing(isSelected: selected, isDestructive: isDestructive),
             ],
           ),

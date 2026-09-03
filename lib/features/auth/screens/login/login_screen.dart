@@ -329,10 +329,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       SkyToast.info(context, AppLocalizations.of(context).commonComingSoon);
 
   /// 一键填入演示账号（仅 mock 期间）。
-  void _onFillDemoAccount() {
+  void _onFillDemoAccount(String email) {
     setState(() {
       _method = AuthMethod.email;
-      _emailController.text = AuthMockDataSource.demoEmail;
+      _emailController.text = email;
       _passwordController.text = AuthMockDataSource.demoPassword;
       _showEmailError = false;
       _emailErrorText = null;

@@ -198,6 +198,7 @@ class AuthController extends _$AuthController {
     "avatarUrl": user.avatarUrl,
     "licenseLevel": user.licenseLevel,
     "totalJumps": user.totalJumps,
+    "role": user.role.raw,
     "createdAt": user.createdAt?.toIso8601String(),
     "lastActiveAt": user.lastActiveAt?.toIso8601String(),
   });
@@ -220,6 +221,9 @@ class AuthController extends _$AuthController {
         avatarUrl: map["avatarUrl"] as String?,
         licenseLevel: map["licenseLevel"] as String?,
         totalJumps: (map["totalJumps"] as num?)?.toInt() ?? 0,
+        // 快照里没有 role（旧版本存的）时降级成客人：宁可让运营重新登录一次，
+        // 也不能凭一份读不懂的快照把排班权限发出去。
+        role: UserRole.fromRaw(map["role"] as String?),
         createdAt: DateTime.tryParse(map["createdAt"] as String? ?? ""),
         lastActiveAt: DateTime.tryParse(map["lastActiveAt"] as String? ?? ""),
       );

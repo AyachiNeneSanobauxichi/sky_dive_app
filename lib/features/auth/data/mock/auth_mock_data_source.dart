@@ -39,6 +39,18 @@ class AuthMockDataSource implements AuthDataSource {
       licenseLevel: "b",
       totalJumps: 42,
     ),
+    // 运营账号：登录后能看到排班入口（新建 / 编辑 / 删除航线、排名单）。
+    // 客人账号看到的是同一份列表，只是没有那些入口。
+    _MockAccount(
+      id: "u_10003",
+      email: demoStaffEmail,
+      password: demoPassword,
+      displayName: "Aya Manifest",
+      phone: "09098765432",
+      licenseLevel: "d",
+      totalJumps: 1280,
+      role: UserRole.staff,
+    ),
     _MockAccount(
       id: "u_10002",
       email: "blocked@skydive.jp",
@@ -59,6 +71,11 @@ class AuthMockDataSource implements AuthDataSource {
 
   /// 演示账号。登录页在 mock 开启时会把它显示出来，省掉"先注册才能看页面"。
   static const String demoEmail = "demo@skydive.jp";
+
+  /// 演示**运营**账号（能排班）。两个视角都要能被随手验一遍，
+  /// 所以演示账号必须成对给，不能只给客人那个。
+  static const String demoStaffEmail = "staff@skydive.jp";
+
   static const String demoPassword = "skydive2026";
 
   /// 万能验证码。真实后端当然不会有这种东西。
@@ -204,6 +221,7 @@ class AuthMockDataSource implements AuthDataSource {
         "avatarUrl": null,
         "licenseLevel": account.licenseLevel,
         "totalJumps": account.totalJumps,
+        "role": account.role.raw,
         "createdAt": account.createdAt.toIso8601String(),
         "lastActiveAt": now.toIso8601String(),
       },
@@ -240,6 +258,7 @@ class _MockAccount {
     this.phone,
     this.licenseLevel,
     this.totalJumps = 0,
+    this.role = UserRole.customer,
     this.isDisabled = false,
   }) : createdAt = DateTime.now();
 
@@ -252,6 +271,7 @@ class _MockAccount {
   final String? phone;
   final String? licenseLevel;
   final int totalJumps;
+  final UserRole role;
   final bool isDisabled;
   final DateTime createdAt;
 }

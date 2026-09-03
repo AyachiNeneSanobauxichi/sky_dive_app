@@ -21,6 +21,9 @@ abstract class UserDto with _$UserDto {
     String? avatarUrl,
     String? licenseLevel,
     @Default(0) int totalJumps,
+
+    /// 角色原始值（`customer` / `staff`）。缺失时降级为客人（最小权限）。
+    String? role,
     String? createdAt,
     String? lastActiveAt,
   }) = _UserDto;
@@ -36,6 +39,7 @@ abstract class UserDto with _$UserDto {
     avatarUrl: avatarUrl,
     licenseLevel: licenseLevel,
     totalJumps: totalJumps,
+    role: UserRole.fromRaw(role),
     createdAt: parseServerTime(createdAt),
     lastActiveAt: parseServerTime(lastActiveAt),
   );

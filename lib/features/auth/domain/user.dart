@@ -1,4 +1,5 @@
 import "package:freezed_annotation/freezed_annotation.dart";
+import "package:sky_dive/features/auth/domain/user_role.dart";
 
 part "user.freezed.dart";
 
@@ -37,6 +38,10 @@ abstract class User with _$User {
     /// 累计跳伞次数。老客要看到这个数字，这是他们的资历。
     @Default(0) int totalJumps,
 
+    /// 账号角色。决定排班入口给不给他看（见 [UserRole]）。
+    /// 缺省是客人：后端没下发角色时不该凭空多出一个运营。
+    @Default(UserRole.customer) UserRole role,
+
     /// 注册时间 / 最近活跃时间（后端以 ISO-8601 下发，解析失败则为 null）。
     DateTime? createdAt,
     DateTime? lastActiveAt,
@@ -46,6 +51,9 @@ abstract class User with _$User {
 
   /// 找回账号 / 客服联系时优先用哪个标识。展示态也用它当副标题。
   String? get primaryIdentifier => email ?? phone;
+
+  /// 能否排班（航线增删改 + 名单分配）。
+  bool get canManageLoads => role.canManageLoads;
 
   /// 是否已经是持证跳伞员（决定首页给他看体验跳还是自由跳的航线）。
   bool get isLicensed =>
