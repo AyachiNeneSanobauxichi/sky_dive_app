@@ -13,10 +13,25 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 ///
 /// 需要逐个数座位的是详情页——那里空间够、也有标题给上下文，点阵留在
 /// [LoadCapacityMeter]。
+///
+/// ## 两种视角说两种话
+/// 客人问的是"还能不能约"，所以给结论：「还剩 5 位」。运营排班问的是"这班坐了
+/// 几个、派了几个摄影师"，占用量才是他们要的，所以给分数式：`3/8`、`1/2`
+/// （航空排班的标准写法）。两个视角**各自内部一致**，不混着用——一行里一半结论
+/// 一半分数是最难读的组合。
 class LoadSeatSummary extends StatelessWidget {
-  const LoadSeatSummary({super.key, required this.load, this.isMuted = false});
+  const LoadSeatSummary({
+    super.key,
+    required this.load,
+    this.isAdmin = false,
+    this.isMuted = false,
+  });
 
   final Load load;
+
+  /// 运营视角。见类文档"两种视角说两种话"。
+  final bool isAdmin;
+
   final bool isMuted;
 
   @override
@@ -29,6 +44,8 @@ class LoadSeatSummary extends StatelessWidget {
     // 满员和"就剩一两位"都走强调色：一个是"约不上了"、一个是"要抢"，两种都得从
     // "还有很多"里跳出来。区分这两者靠文案本身（「已满」对「还剩 1 位」），
     // 不再多占一个颜色——一屏最多一处重音。
+    //
+    // 颜色**不分视角**：写成 `7/8` 的时候运营同样需要"这班快满了"一眼可见。
     final isTight = seatsLeft <= LoadRules.scarceSeats;
     final accent = isMuted
         ? scheme.onSurfaceVariant
@@ -49,7 +66,12 @@ class LoadSeatSummary extends StatelessWidget {
         const SizedBox(width: SkySpacing.s6),
         Flexible(
           child: Text(
-            l10n.loadSeatsLeft(seatsLeft),
+            isAdmin
+                ? l10n.loadSeats(
+                    load.assignedCountOf(ParticipantRole.customer),
+                    load.customerCapacity,
+                  )
+                : l10n.loadSeatsLeft(seatsLeft),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.labelMedium?.copyWith(color: accent),
@@ -66,12 +88,15 @@ class LoadSeatSummary extends StatelessWidget {
             color: scheme.onSurfaceVariant,
           ),
           const SizedBox(width: SkySpacing.s4),
-          // 也说结论（"摄影 2 位"）而不是 `0/2`：顾客位已经改成"还剩 N 位"之后，
-          // 这里若还留着分数式，就成了这一行里唯一要做减法的地方。
           Text(
-            l10n.loadPhotographerSeatsLeft(
-              load.seatsLeftOf(ParticipantRole.photographer),
-            ),
+            isAdmin
+                ? l10n.loadSeats(
+                    load.assignedCountOf(ParticipantRole.photographer),
+                    photographerCapacity,
+                  )
+                : l10n.loadPhotographerSeatsLeft(
+                    load.seatsLeftOf(ParticipantRole.photographer),
+                  ),
             style: theme.textTheme.labelSmall?.copyWith(
               color: scheme.onSurfaceVariant,
             ),

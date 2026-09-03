@@ -8,13 +8,14 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 /// 用文字按钮而不是一整块可点的行：它是**次要**入口，长得像一条内容行反而会抢走
 /// "还能约的班次"的注意力。展开状态由箭头方向交代（下 = 还能展开，上 = 可收起）。
 ///
-/// 左边那截虚线见 [_TimelineBreak]。
+/// 左边那截虚线见 [_TimelineBreak]，由 [hasTimelineBreak] 决定画不画。
 class LoadDepartedToggle extends StatelessWidget {
   const LoadDepartedToggle({
     super.key,
     required this.count,
     required this.isExpanded,
     required this.onToggle,
+    this.hasTimelineBreak = true,
   });
 
   /// 这一天有几班已经飞走了。
@@ -23,14 +24,23 @@ class LoadDepartedToggle extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback onToggle;
 
+  /// 是否画左侧的时间断点虚线。
+  ///
+  /// 只有当列表本来按**时刻由早到晚**排时，把已起飞的搬到段末才制造了一个断点。
+  /// "最晚优先"下它们本来就在末尾、时间线是连续的，那条虚线就成了凭空多出来的
+  /// 装饰——所以交给调用方按当前排序方向决定。
+  final bool hasTimelineBreak;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
     return Row(
       children: <Widget>[
-        const _TimelineBreak(),
-        const SizedBox(width: SkySemanticSpacing.labelGap),
+        if (hasTimelineBreak) ...<Widget>[
+          const _TimelineBreak(),
+          const SizedBox(width: SkySemanticSpacing.labelGap),
+        ],
         Flexible(
           child: TextButton.icon(
             onPressed: onToggle,

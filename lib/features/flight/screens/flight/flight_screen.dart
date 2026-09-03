@@ -224,6 +224,8 @@ class _FlightScreenState extends ConsumerState<FlightScreen> {
                   me: me,
                   isBooking: isBooking,
                   textScaler: textScaler,
+                  // 只有"最早优先"下，把已起飞的搬到段末才制造出时间断点。
+                  hasTimelineBreak: query.sort == LoadSort.departureAsc,
                 )
             else if (state case AsyncError(:final error))
               SliverFillRemaining(
@@ -263,6 +265,7 @@ class _FlightScreenState extends ConsumerState<FlightScreen> {
     required LoadParticipant? me,
     required bool isBooking,
     required TextScaler textScaler,
+    required bool hasTimelineBreak,
   }) {
     final slivers = <Widget>[];
 
@@ -336,6 +339,7 @@ class _FlightScreenState extends ConsumerState<FlightScreen> {
               count: departed.length,
               isExpanded: isExpanded,
               onToggle: () => _onToggleDeparted(group.day),
+              hasTimelineBreak: hasTimelineBreak,
             ),
           ),
         ),

@@ -136,7 +136,11 @@ class LoadCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: SkySemanticSpacing.itemGap),
-                LoadSeatSummary(load: load, isMuted: hasDeparted),
+                LoadSeatSummary(
+                  load: load,
+                  isAdmin: isAdmin,
+                  isMuted: hasDeparted,
+                ),
                 if (canBook) ...<Widget>[
                   const SizedBox(height: SkySemanticSpacing.itemGap),
                   Align(

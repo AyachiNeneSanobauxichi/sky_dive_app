@@ -12,7 +12,8 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 /// ## 为什么是点阵而不是进度条
 /// 名额是**可数的座位**，不是百分比。进度条要靠"条有多长"去反推还剩几个，
 /// 点阵一眼就能数出来——排班的人问的从来是"还能上几个"，不是"占了百分之几"。
-/// 满员时整组换成强调色，不靠"6/6 自己做减法"来表达。
+/// 满员、或只剩 [LoadRules.scarceSeats] 位以内时整组换成强调色，
+/// 不靠"6/6 自己做减法"来表达。
 ///
 /// 座位太多（[_dotLimit] 以上）时点阵会挤成一片糊，那时才退回进度条。
 class LoadCapacityMeter extends StatelessWidget {
@@ -37,18 +38,21 @@ class LoadCapacityMeter extends StatelessWidget {
 
     final filled = load.assignedCountOf(role);
     final capacity = load.capacityOf(role);
-    final isFull = load.isFullOf(role);
     final hasSeats = capacity > 0;
+    final seatsLeft = load.seatsLeftOf(role);
 
+    // 与列表卡片（LoadSeatSummary）取同一个阈值：同一条航线"还剩 1 位"，
+    // 在列表上是强调色、点进详情页却变回普通色，会读成两种不同的状态。
+    final isTight = hasSeats && seatsLeft <= LoadRules.scarceSeats;
     final accent = isDimmed
         ? scheme.onSurfaceVariant
-        : (isFull ? scheme.tertiary : scheme.primary);
+        : (isTight ? scheme.tertiary : scheme.primary);
 
     return Semantics(
       // 点阵对读屏软件没有意义，整块用一句话代替：「顾客 3/6，还剩 3 位」。
       label:
           "${role == ParticipantRole.customer ? l10n.loadRoleCustomers : l10n.loadRolePhotographers} "
-          "${l10n.loadSeats(filled, capacity)} ${l10n.loadSeatsLeft(load.seatsLeftOf(role))}",
+          "${l10n.loadSeats(filled, capacity)} ${l10n.loadSeatsLeft(seatsLeft)}",
       child: ExcludeSemantics(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,11 +102,12 @@ class LoadCapacityMeter extends StatelessWidget {
                 _SeatBar(filled: filled, capacity: capacity, accent: accent),
               const SizedBox(height: SkySpacing.s6),
               Text(
-                l10n.loadSeatsLeft(load.seatsLeftOf(role)),
+                l10n.loadSeatsLeft(seatsLeft),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: isFull ? accent : scheme.onSurfaceVariant,
+                  // 紧张时这句话本身也要跳出来，不能只有上面的数字变色。
+                  color: isTight ? accent : scheme.onSurfaceVariant,
                 ),
               ),
             ],
