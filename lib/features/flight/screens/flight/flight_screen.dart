@@ -16,7 +16,7 @@ import "package:lucide_icons_flutter/lucide_icons.dart";
 /// 航线 tab：航线（load）时刻表。
 ///
 /// 一屏承载四件事：**搜**（代号 / 地点 / 机型）、**排序**（最早 / 最晚优先）、
-/// **看**（按天分段、段头吸顶；每条给时刻、地点、机型高度、两组座位点阵）、
+/// **看**（按天分段、段头吸顶，已起飞的折到段末；每条给时刻、地点、机型高度、名额）、
 /// **管**（运营的增删改，入口由后端下发的角色决定，见 [isLoadAdminProvider]）。
 ///
 /// 客人视角和运营视角是同一张列表：客人少了新建 / 编辑 / 删除入口，其余一致。
@@ -31,6 +31,12 @@ class FlightScreen extends ConsumerStatefulWidget {
 class _FlightScreenState extends ConsumerState<FlightScreen> {
   /// 正在删除的航线 id。删除请求在途时把那条卡的删除键禁掉，防止连点两次。
   final Set<String> _deletingIds = <String>{};
+
+  /// 已展开「已起飞」分组的那些天（键是日历日零点）。
+  ///
+  /// 状态放页面本地而不是 provider：它是纯粹的**观看姿势**，切走 tab 再回来重新
+  /// 折起是对的——客人回到列表时该先看见还能约的班次。
+  final Set<DateTime> _expandedDays = <DateTime>{};
 
   /// 整页重试（首屏失败时）在途。
   bool _isRetrying = false;
@@ -123,6 +129,15 @@ class _FlightScreenState extends ConsumerState<FlightScreen> {
       if (!mounted) return;
       SkyToast.error(context, loadFailureMessage(error, l10n));
     }
+  }
+
+  /// 展开 / 收起某一天的已起飞班次。
+  void _onToggleDeparted(DateTime day) {
+    // 展开收起是"切换"类交互，给选择档触感，和主行动的轻击区分开。
+    HapticFeedback.selectionClick();
+    setState(() {
+      if (!_expandedDays.remove(day)) _expandedDays.add(day);
+    });
   }
 
   Future<void> _onRetry() async {
@@ -236,7 +251,11 @@ class _FlightScreenState extends ConsumerState<FlightScreen> {
     );
   }
 
-  /// 按天生成「吸顶段头 + 该天的卡片」两组 sliver。
+  /// 按天生成「吸顶段头 + 该天的卡片」若干 sliver。
+  ///
+  /// 每天内部再切一刀：**未起飞的在前，已起飞的折到段末**。客人扫列表要找的是
+  /// "还能约哪班"，让上午飞走的班次占着首屏前两条是信息优先级倒置；但飞走的还得
+  /// 能回看（运营要对今天的账、客人要确认自己那班走没走），所以是折叠不是隐藏。
   List<Widget> _buildDaySlivers({
     required List<LoadDayGroup> days,
     required DateTime now,
@@ -255,13 +274,19 @@ class _FlightScreenState extends ConsumerState<FlightScreen> {
     var globalOffset = 0;
 
     for (final group in days) {
-      final offset = globalOffset;
-      globalOffset += group.loads.length;
+      final upcoming = <Load>[];
+      final departed = <Load>[];
+      for (final load in group.loads) {
+        (load.hasDepartedBy(now) ? departed : upcoming).add(load);
+      }
+      final isExpanded = _expandedDays.contains(group.day);
 
       slivers.add(
         SliverPersistentHeader(
           pinned: true,
           delegate: LoadDayHeaderDelegate(
+            // 段头报的是这一天**总共**几班（含已起飞的），折叠只改看的方式，
+            // 不改"今天排了几班"这个事实。
             day: group.day,
             count: group.loads.length,
             now: now,
@@ -269,64 +294,138 @@ class _FlightScreenState extends ConsumerState<FlightScreen> {
           ),
         ),
       );
+
+      if (upcoming.isNotEmpty) {
+        final offset = globalOffset;
+        globalOffset += upcoming.length;
+        slivers.add(
+          _buildLoadsSliver(
+            key: ValueKey<DateTime>(group.day),
+            loads: upcoming,
+            padding: EdgeInsets.fromLTRB(
+              SkySemanticSpacing.screenPadding,
+              SkySemanticSpacing.itemGap,
+              SkySemanticSpacing.screenPadding,
+              // 后面紧跟折叠行时不再留下边距，否则两者之间会空出一大截。
+              departed.isEmpty ? SkySemanticSpacing.itemGap : SkySpacing.none,
+            ),
+            staggerOffset: offset,
+            now: now,
+            isAdmin: isAdmin,
+            me: me,
+            isBooking: isBooking,
+          ),
+        );
+      }
+
+      if (departed.isEmpty) continue;
+
       slivers.add(
         SliverPadding(
-          key: ValueKey<DateTime>(group.day),
+          padding: EdgeInsets.fromLTRB(
+            SkySemanticSpacing.screenPadding,
+            // 整天都飞走了（当天没有未起飞的班次）时，折叠行要自己跟段头拉开距离。
+            upcoming.isEmpty
+                ? SkySemanticSpacing.itemGap
+                : SkySemanticSpacing.labelGap,
+            SkySemanticSpacing.screenPadding,
+            isExpanded ? SkySpacing.none : SkySemanticSpacing.itemGap,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: LoadDepartedToggle(
+              count: departed.length,
+              isExpanded: isExpanded,
+              onToggle: () => _onToggleDeparted(group.day),
+            ),
+          ),
+        ),
+      );
+
+      if (!isExpanded) continue;
+
+      final offset = globalOffset;
+      globalOffset += departed.length;
+      slivers.add(
+        _buildLoadsSliver(
+          key: ValueKey<String>("departed-${group.day}"),
+          loads: departed,
           padding: const EdgeInsets.fromLTRB(
             SkySemanticSpacing.screenPadding,
             SkySemanticSpacing.itemGap,
             SkySemanticSpacing.screenPadding,
             SkySemanticSpacing.itemGap,
           ),
-          sliver: SliverList.separated(
-            itemCount: group.loads.length,
-            separatorBuilder: (_, _) =>
-                const SizedBox(height: SkySemanticSpacing.itemGap),
-            itemBuilder: (context, index) {
-              final load = group.loads[index];
-              final delayIndex = offset + index;
-              final isDeleting = _deletingIds.contains(load.id);
-
-              return LoadCard(
-                    load: load,
-                    now: now,
-                    isAdmin: isAdmin,
-                    onTap: () => _onOpenDetail(load),
-                    onEdit: () => _onEdit(load),
-                    // 删除在途时禁用入口，防止连点两次删两回。
-                    onDelete: isDeleting ? null : () => _onDelete(load),
-                    isBooked: me != null && load.hasParticipant(me.id),
-                    isBooking: _bookingId == load.id,
-                    // 已有预约在途时其余卡片一律禁用：防的是"连点两条"。
-                    onBook: me == null || (isBooking && _bookingId != load.id)
-                        ? null
-                        : () => _onBook(load),
-                  )
-                  // key 挂在 Animate 上：入场动效只在这条卡**第一次出现**时跑，
-                  // 之后的重建（搜索、刷新、删别的卡）不会重播。
-                  .animate(key: ValueKey<String>(load.id))
-                  .fadeIn(
-                    duration: SkyMotion.normal,
-                    curve: SkyMotion.entrance,
-                    // 只给首屏几条做逐项延迟；滚动进来的卡立刻显示，
-                    // 否则越往下越像"卡住了"。
-                    delay: delayIndex < _staggerLimit
-                        ? SkyMotion.stagger * delayIndex
-                        : Duration.zero,
-                  )
-                  .slideY(
-                    begin: SkyMotion.slideOffset,
-                    end: 0,
-                    duration: SkyMotion.normal,
-                    curve: SkyMotion.entrance,
-                  );
-            },
-          ),
+          staggerOffset: offset,
+          now: now,
+          isAdmin: isAdmin,
+          me: me,
+          isBooking: isBooking,
         ),
       );
     }
 
     return slivers;
+  }
+
+  /// 一组航线卡片（同一天的未起飞组、或展开后的已起飞组）。
+  Widget _buildLoadsSliver({
+    required Key key,
+    required List<Load> loads,
+    required EdgeInsets padding,
+    required int staggerOffset,
+    required DateTime now,
+    required bool isAdmin,
+    required LoadParticipant? me,
+    required bool isBooking,
+  }) {
+    return SliverPadding(
+      key: key,
+      padding: padding,
+      sliver: SliverList.separated(
+        itemCount: loads.length,
+        separatorBuilder: (_, _) =>
+            const SizedBox(height: SkySemanticSpacing.itemGap),
+        itemBuilder: (context, index) {
+          final load = loads[index];
+          final delayIndex = staggerOffset + index;
+          final isDeleting = _deletingIds.contains(load.id);
+
+          return LoadCard(
+                load: load,
+                now: now,
+                isAdmin: isAdmin,
+                onTap: () => _onOpenDetail(load),
+                onEdit: () => _onEdit(load),
+                // 删除在途时禁用入口，防止连点两次删两回。
+                onDelete: isDeleting ? null : () => _onDelete(load),
+                isBooked: me != null && load.hasParticipant(me.id),
+                isBooking: _bookingId == load.id,
+                // 已有预约在途时其余卡片一律禁用：防的是"连点两条"。
+                onBook: me == null || (isBooking && _bookingId != load.id)
+                    ? null
+                    : () => _onBook(load),
+              )
+              // key 挂在 Animate 上：入场动效只在这条卡**第一次出现**时跑，
+              // 之后的重建（搜索、刷新、删别的卡）不会重播。
+              .animate(key: ValueKey<String>(load.id))
+              .fadeIn(
+                duration: SkyMotion.normal,
+                curve: SkyMotion.entrance,
+                // 只给首屏几条做逐项延迟；滚动进来的卡立刻显示，
+                // 否则越往下越像"卡住了"。
+                delay: delayIndex < _staggerLimit
+                    ? SkyMotion.stagger * delayIndex
+                    : Duration.zero,
+              )
+              .slideY(
+                begin: SkyMotion.slideOffset,
+                end: 0,
+                duration: SkyMotion.normal,
+                curve: SkyMotion.entrance,
+              );
+        },
+      ),
+    );
   }
 }
 

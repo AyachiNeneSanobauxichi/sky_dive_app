@@ -4,12 +4,15 @@ import "package:sky_dive/features/flight/domain/index.dart";
 import "package:sky_dive/l10n/app_localizations.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
-/// 列表卡片上的**紧凑**名额行：顾客座位点阵 + 剩余位数 + 摄影位。
+/// 列表卡片上的**紧凑**名额行：一句结论 + 一枚图标。
 ///
-/// 详情页那两块 [LoadCapacityMeter] 是"看清楚"，这里是"扫一眼"——所以只留一句
-/// 结论（还剩几位）加一排点，不再重复"2/6"和标题文字。
-/// 原来卡片上三样东西说同一件事（`2/6` + 点阵 + `还剩 4 位`），信息密度看着高，
-/// 实际读起来更慢。
+/// ## 为什么不是座位点阵
+/// 点阵（●○○○）在卡片这个尺寸下要求用户先数点、再对照颜色，才能反推出"还能上
+/// 几个"。可卡片是**扫一眼**的场景，真正要的结论只有一句"还剩 7 位"；图标则把
+/// "这说的是顾客座位"一眼交代清楚，比一排小圆点直观得多（深色下那排点几乎看不见）。
+///
+/// 需要逐个数座位的是详情页——那里空间够、也有标题给上下文，点阵留在
+/// [LoadCapacityMeter]。
 class LoadSeatSummary extends StatelessWidget {
   const LoadSeatSummary({super.key, required this.load, this.isMuted = false});
 
@@ -22,55 +25,31 @@ class LoadSeatSummary extends StatelessWidget {
     final scheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
 
-    final filled = load.assignedCountOf(ParticipantRole.customer);
-    final capacity = load.customerCapacity;
-    final isFull = load.isFullOf(ParticipantRole.customer);
+    final seatsLeft = load.seatsLeftOf(ParticipantRole.customer);
+    // 满员和"就剩一两位"都走强调色：一个是"约不上了"、一个是"要抢"，两种都得从
+    // "还有很多"里跳出来。区分这两者靠文案本身（「已满」对「还剩 1 位」），
+    // 不再多占一个颜色——一屏最多一处重音。
+    final isTight = seatsLeft <= LoadRules.scarceSeats;
     final accent = isMuted
         ? scheme.onSurfaceVariant
-        : (isFull ? scheme.tertiary : scheme.primary);
+        : (isTight ? scheme.tertiary : scheme.primary);
 
     final photographerCapacity = load.photographerCapacity;
 
     return Row(
       children: <Widget>[
-        // 座位太多时点阵会挤成一条糊线，那时直接给"3/24"。
-        if (capacity <= _dotLimit)
-          Padding(
-            padding: const EdgeInsets.only(right: SkySemanticSpacing.labelGap),
-            child: Wrap(
-              spacing: SkySpacing.s4,
-              children: <Widget>[
-                for (int i = 0; i < capacity; i++)
-                  AnimatedContainer(
-                    duration: SkyMotion.normal,
-                    curve: SkyMotion.standard,
-                    width: _dotSize,
-                    height: _dotSize,
-                    decoration: BoxDecoration(
-                      color: i < filled ? accent : Colors.transparent,
-                      shape: BoxShape.circle,
-                      border: i < filled
-                          ? null
-                          : Border.all(
-                              color: scheme.outlineVariant,
-                              width: SkyBorderWidth.hairline,
-                            ),
-                    ),
-                  ),
-              ],
-            ),
-          )
-        else
-          Padding(
-            padding: const EdgeInsets.only(right: SkySemanticSpacing.labelGap),
-            child: Text(
-              l10n.loadSeats(filled, capacity),
-              style: theme.textTheme.labelMedium?.copyWith(color: accent),
-            ),
-          ),
+        // 图标跟着 accent 走：满员时和文字一起转成强调色，一眼就知道这班没位了。
+        Icon(
+          LucideIcons.users,
+          size: SkyIconSize.sm,
+          color: accent,
+          // 读屏软件靠它知道这个数说的是顾客位而不是摄影位。
+          semanticLabel: l10n.loadRoleCustomers,
+        ),
+        const SizedBox(width: SkySpacing.s6),
         Flexible(
           child: Text(
-            l10n.loadSeatsLeft(load.seatsLeftOf(ParticipantRole.customer)),
+            l10n.loadSeatsLeft(seatsLeft),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.labelMedium?.copyWith(color: accent),
@@ -80,16 +59,18 @@ class LoadSeatSummary extends StatelessWidget {
         // 这条航线不配摄影师时整个隐掉，不显示"0/0"。
         if (photographerCapacity > 0) ...<Widget>[
           const SizedBox(width: SkySemanticSpacing.itemGap),
+          // 文案自带"摄影"字样，图标就不必再报一次角色名，否则读屏会念两遍。
           Icon(
             LucideIcons.camera,
             size: SkyIconSize.xs,
             color: scheme.onSurfaceVariant,
           ),
           const SizedBox(width: SkySpacing.s4),
+          // 也说结论（"摄影 2 位"）而不是 `0/2`：顾客位已经改成"还剩 N 位"之后，
+          // 这里若还留着分数式，就成了这一行里唯一要做减法的地方。
           Text(
-            l10n.loadSeats(
-              load.assignedCountOf(ParticipantRole.photographer),
-              photographerCapacity,
+            l10n.loadPhotographerSeatsLeft(
+              load.seatsLeftOf(ParticipantRole.photographer),
             ),
             style: theme.textTheme.labelSmall?.copyWith(
               color: scheme.onSurfaceVariant,
@@ -100,9 +81,3 @@ class LoadSeatSummary extends StatelessWidget {
     );
   }
 }
-
-/// 超过这个座位数就不画点阵。
-const int _dotLimit = 10;
-
-/// 单个座位点的直径。
-const double _dotSize = SkySpacing.s8;

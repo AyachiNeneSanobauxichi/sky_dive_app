@@ -3,6 +3,7 @@ export "load_capacity_stepper.dart";
 export "load_card.dart";
 export "load_card_shell.dart";
 export "load_day_header.dart";
+export "load_departed_toggle.dart";
 export "load_failure_message.dart";
 export "load_formatters.dart";
 export "load_header.dart";

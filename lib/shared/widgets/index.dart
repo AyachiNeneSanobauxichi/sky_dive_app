@@ -2,6 +2,7 @@ export "brand/sky_brand_mark.dart";
 export "button/sky_button.dart";
 export "checkbox/sky_checkbox.dart";
 export "checkbox/sky_checkbox_form_field.dart";
+export "input/sky_dismiss_keyboard.dart";
 export "input/sky_otp_field.dart";
 export "state/sky_empty_state.dart";
 export "state/sky_retry_card.dart";

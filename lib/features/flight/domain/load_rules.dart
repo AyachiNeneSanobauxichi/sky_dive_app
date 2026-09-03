@@ -20,6 +20,12 @@ abstract final class LoadRules {
   static const int minPhotographerCapacity = 0;
   static const int maxPhotographerCapacity = 6;
 
+  /// 名额"紧张"的阈值：剩这么多（含）以下时，卡片上的剩余位数换成强调色。
+  ///
+  /// 取 2 而不是 1：C 端产品里"就剩一两位"是最强的下单驱动力，把它和"还有很多"
+  /// 画成同一个长相，等于把这条信息平铺掉了。
+  static const int scarceSeats = 2;
+
   /// 新建航线的默认名额（按塞斯纳 208 的常见排班取值）。
   static const int defaultCustomerCapacity = 8;
   static const int defaultPhotographerCapacity = 2;

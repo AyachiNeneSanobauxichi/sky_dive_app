@@ -4,6 +4,7 @@ import "package:form_builder_validators/form_builder_validators.dart";
 import "package:sky_dive/core/theme/index.dart";
 import "package:sky_dive/features/auth/domain/index.dart";
 import "package:sky_dive/l10n/app_localizations.dart";
+import "package:sky_dive/shared/widgets/index.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
 /// 手机号输入框（日本国内格式）。
@@ -67,6 +68,7 @@ class PhoneField extends StatelessWidget {
       autofocus: autofocus,
       keyboardType: TextInputType.phone,
       textInputAction: textInputAction,
+      onTapOutside: skyDismissKeyboardOnTapOutside,
       autofillHints: const <String>[AutofillHints.telephoneNumber],
       autovalidateMode: autovalidateMode,
       inputFormatters: const <TextInputFormatter>[_JapanPhoneInputFormatter()],

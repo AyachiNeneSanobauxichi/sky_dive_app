@@ -3,6 +3,7 @@ import "package:flutter/services.dart";
 import "package:form_builder_validators/form_builder_validators.dart";
 import "package:sky_dive/core/theme/index.dart";
 import "package:sky_dive/l10n/app_localizations.dart";
+import "package:sky_dive/shared/widgets/index.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
 /// 显示名输入框（注册页）。
@@ -49,6 +50,7 @@ class DisplayNameField extends StatelessWidget {
       autofocus: autofocus,
       keyboardType: TextInputType.name,
       textInputAction: textInputAction,
+      onTapOutside: skyDismissKeyboardOnTapOutside,
       textCapitalization: TextCapitalization.words,
       autofillHints: const <String>[AutofillHints.name],
       autovalidateMode: autovalidateMode,

@@ -7,6 +7,7 @@ import "package:sky_dive/app/router/index.dart";
 import "package:sky_dive/core/settings/index.dart";
 import "package:sky_dive/core/theme/index.dart";
 import "package:sky_dive/l10n/app_localizations.dart";
+import "package:sky_dive/shared/widgets/index.dart";
 
 class SkyApp extends ConsumerWidget {
   const SkyApp({super.key});
@@ -39,8 +40,12 @@ class SkyApp extends ConsumerWidget {
       // 全局挂载 toast overlay：轻提示（SkyToast）需要它承载。
       // 过渡层放在 overlay **里面**：切主题时连带把已经弹出的 toast 一起淡过去，
       // 不会出现"整屏换了皮、只有那条提示还是旧配色"。
+      // SkyDismissKeyboard 在这一层挂一次即覆盖所有路由（含 dialog / bottom
+      // sheet）：点页面空白处收键盘，新增页面不必各自接线。
       builder: (context, child) => ToastificationWrapper(
-        child: AppSettingsTransition(settings: settings, child: child!),
+        child: SkyDismissKeyboard(
+          child: AppSettingsTransition(settings: settings, child: child!),
+        ),
       ),
     );
   }

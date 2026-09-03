@@ -539,6 +539,33 @@
   "@loadDeparted": {
     "description": "Badge on a load whose departure time has passed"
   },
+  "loadPhotographerSeatsLeft": "{count, plural, =0{Camera full} =1{1 camera slot} other{{count} camera slots}}",
+  "@loadPhotographerSeatsLeft": {
+    "description": "Remaining photographer slots on a list card, stated as a conclusion rather than filled/capacity",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "loadDepartedShow": "{count, plural, =1{Show 1 departed load} other{Show {count} departed loads}}",
+  "@loadDepartedShow": {
+    "description": "Expands the collapsed departed loads at the end of a day section",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "loadDepartedHide": "{count, plural, =1{Hide 1 departed load} other{Hide {count} departed loads}}",
+  "@loadDepartedHide": {
+    "description": "Collapses the departed loads back to a single row",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "loadFullBadge": "Full",
   "@loadFullBadge": {
     "description": "Badge on a load with no customer seats left"

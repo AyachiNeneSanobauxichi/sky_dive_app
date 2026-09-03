@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_animate/flutter_animate.dart";
 import "package:sky_dive/core/theme/index.dart";
+import "package:sky_dive/shared/widgets/input/sky_dismiss_keyboard.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
 /// 分离式验证码输入框（OTP）：N 个格子 + 一层透明输入区。
@@ -303,6 +304,7 @@ class _SkyOtpFieldState extends State<SkyOtpField> {
       autofocus: widget.autofocus,
       keyboardType: TextInputType.number,
       textInputAction: TextInputAction.done,
+      onTapOutside: skyDismissKeyboardOnTapOutside,
       autofillHints: const <String>[AutofillHints.oneTimeCode],
       inputFormatters: <TextInputFormatter>[
         FilteringTextInputFormatter.digitsOnly,

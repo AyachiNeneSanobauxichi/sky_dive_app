@@ -77,72 +77,97 @@ class LoadListHeaderDelegate extends SliverPersistentHeaderDelegate {
     // 0 = 完全展开，1 = 完全收起。
     final progress = (shrinkOffset / (_expanded - _collapsed)).clamp(0.0, 1.0);
 
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: _blur, sigmaY: _blur),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerLowest.withValues(
-              alpha: isDark ? _fillAlphaDark : _fillAlphaLight,
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              SkySemanticSpacing.screenPadding,
-              SkySpacing.s8,
-              SkySemanticSpacing.screenPadding,
-              SkySemanticSpacing.itemGap,
-            ),
-            child: Column(
-              children: <Widget>[
-                const LoadSearchField(),
-                Expanded(
-                  child: ClipRect(
-                    // 收起时高度不够放排序行，用 OverflowBox 让它按原尺寸布局
-                    // 再被裁掉——直接压缩会把 chip 挤变形。
-                    child: OverflowBox(
-                      alignment: Alignment.bottomCenter,
-                      minHeight: 0,
-                      maxHeight: _sortExtent,
-                      child: Opacity(
-                        opacity: 1 - progress,
-                        child: Row(
-                          children: <Widget>[
-                            // 排序条横向可滚：窄屏（或大字体）下两个 chip 加一个
-                            // 按钮排不下时会溢出，让 chip 自己滚比截断更稳。
-                            const Expanded(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: LoadSortBar(),
-                              ),
-                            ),
-                            if (isAdmin) ...<Widget>[
-                              const SizedBox(
-                                width: SkySemanticSpacing.labelGap,
-                              ),
-                              SkyButton(
-                                label: l10n.loadCreateAction,
-                                icon: LucideIcons.plus,
-                                size: SkyButtonSize.small,
-                                isFullWidth: false,
-                                // 淡到看不见时也别再能点，否则会误触。
-                                onPressed: progress < _interactiveThreshold
-                                    ? onCreate
-                                    : null,
-                              ),
-                            ],
-                          ],
+    final fill = theme.colorScheme.surfaceContainerLowest;
+    // 雾的浓度跟着收起进度走：完全展开（首屏、没滚动）时为 0，工具条整块透明，
+    // 搜索框与排序片直接浮在天幕上。
+    final fillAlpha = (isDark ? _fillAlphaDark : _fillAlphaLight) * progress;
+
+    // 原先这里是一块 alpha 0.78 的**实色矩形**：直角、上下都是硬边界，压在天幕
+    // 渐变上就成了一条发白的横带，和背景割裂。改成顶浓底透的渐变，下沿融进天幕，
+    // 没有那条线可看。
+    Widget surface = DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[
+            fill.withValues(alpha: fillAlpha),
+            fill.withValues(alpha: fillAlpha),
+            fill.withValues(alpha: 0),
+          ],
+          stops: const <double>[0, _fillSolidStop, 1],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          SkySemanticSpacing.screenPadding,
+          SkySpacing.s8,
+          SkySemanticSpacing.screenPadding,
+          SkySemanticSpacing.itemGap,
+        ),
+        child: Column(
+          children: <Widget>[
+            const LoadSearchField(),
+            Expanded(
+              child: ClipRect(
+                // 收起时高度不够放排序行，用 OverflowBox 让它按原尺寸布局
+                // 再被裁掉——直接压缩会把 chip 挤变形。
+                child: OverflowBox(
+                  alignment: Alignment.bottomCenter,
+                  minHeight: 0,
+                  maxHeight: _sortExtent,
+                  child: Opacity(
+                    opacity: 1 - progress,
+                    child: Row(
+                      children: <Widget>[
+                        // 排序条横向可滚：窄屏（或大字体）下两个 chip 加一个
+                        // 按钮排不下时会溢出，让 chip 自己滚比截断更稳。
+                        const Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: LoadSortBar(),
+                          ),
                         ),
-                      ),
+                        if (isAdmin) ...<Widget>[
+                          const SizedBox(width: SkySemanticSpacing.labelGap),
+                          SkyButton(
+                            label: l10n.loadCreateAction,
+                            icon: LucideIcons.plus,
+                            size: SkyButtonSize.small,
+                            isFullWidth: false,
+                            // 淡到看不见时也别再能点，否则会误触。
+                            onPressed: progress < _interactiveThreshold
+                                ? onCreate
+                                : null,
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
+
+    // 展开态不套玻璃层：既没有白底可看，也省掉一次全屏 backdrop 重采样
+    // （首屏正是这个状态）。滚起来之后才逐渐糊，把从下面穿过的卡片压住，
+    // 保证搜索框和排序片始终读得清。
+    if (progress > 0) {
+      surface = ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: _blur * progress,
+            sigmaY: _blur * progress,
+          ),
+          child: surface,
+        ),
+      );
+    }
+
+    return surface;
   }
 
   @override
@@ -155,7 +180,11 @@ class LoadListHeaderDelegate extends SliverPersistentHeaderDelegate {
 /// 收起到这个程度以上，排序行就当作不可点了（视觉上已经几乎看不见）。
 const double _interactiveThreshold = 0.5;
 
-/// 毛玻璃参数。与日期段头、底部导航条取同一套，几条"雾带"才是同一种材质。
+/// 毛玻璃参数。模糊半径与底部导航条取同一套，两处才是同一种材质。
 const double _blur = 22;
 const double _fillAlphaDark = 0.72;
 const double _fillAlphaLight = 0.78;
+
+/// 雾带保持满浓度的那一段（占自身高度的比例），此后一路淡到全透明。
+/// 取 0.55：上半截够浓，能压住搜索框背后穿过的卡片；下半截交给渐变收尾。
+const double _fillSolidStop = 0.55;

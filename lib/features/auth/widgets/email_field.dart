@@ -4,6 +4,7 @@ import "package:form_builder_validators/form_builder_validators.dart";
 import "package:sky_dive/core/theme/index.dart";
 import "package:sky_dive/features/auth/domain/index.dart";
 import "package:sky_dive/l10n/app_localizations.dart";
+import "package:sky_dive/shared/widgets/index.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
 /// 邮箱输入框。
@@ -62,6 +63,7 @@ class EmailField extends StatelessWidget {
       autofocus: autofocus,
       keyboardType: TextInputType.emailAddress,
       textInputAction: textInputAction,
+      onTapOutside: skyDismissKeyboardOnTapOutside,
       textCapitalization: TextCapitalization.none,
       autocorrect: false,
       autofillHints: <String>[

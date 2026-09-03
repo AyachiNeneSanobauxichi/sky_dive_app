@@ -21,12 +21,17 @@ class LoadSortBar extends ConsumerWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final sort = ref.watch(loadQueryControllerProvider.select((q) => q.sort));
 
     return Container(
       padding: const EdgeInsets.all(SkySpacing.s4),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainer,
+        // 槽做半透明：它和搜索框一样直接浮在天幕上，实色 surfaceContainer 会变成
+        // 又一块近白色块，跟搜索框糊在一起。选中片保持实色 + 阴影，对比就靠它拉开。
+        color: scheme.surfaceContainer.withValues(
+          alpha: isDark ? _trackAlphaDark : _trackAlphaLight,
+        ),
         borderRadius: BorderRadius.circular(SkyRadius.pill),
       ),
       child: Row(
@@ -108,3 +113,7 @@ class _Segment extends StatelessWidget {
     );
   }
 }
+
+/// 分段槽底色的不透明度。留一点透光，天幕的颜色才能透过来。
+const double _trackAlphaLight = 0.62;
+const double _trackAlphaDark = 0.55;

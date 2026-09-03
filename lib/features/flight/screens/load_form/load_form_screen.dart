@@ -263,6 +263,9 @@ class _LoadFormScreenState extends ConsumerState<LoadFormScreen> {
           child: Form(
             key: _formKey,
             child: ListView(
+              // 往下拖也收键盘：和登录/注册页保持一致的肌肉记忆，
+              // 长表单里手指本来就在滑动，不必先去点一次空白。
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.fromLTRB(
                 SkySemanticSpacing.screenPadding,
                 SkySpacing.s8,
@@ -282,6 +285,7 @@ class _LoadFormScreenState extends ConsumerState<LoadFormScreen> {
                 TextFormField(
                   controller: _codeController,
                   textInputAction: TextInputAction.next,
+                  onTapOutside: skyDismissKeyboardOnTapOutside,
                   textCapitalization: TextCapitalization.characters,
                   autocorrect: false,
                   enabled: !_isSubmitting,
@@ -339,6 +343,7 @@ class _LoadFormScreenState extends ConsumerState<LoadFormScreen> {
                 TextFormField(
                   controller: _aircraftController,
                   textInputAction: TextInputAction.done,
+                  onTapOutside: skyDismissKeyboardOnTapOutside,
                   enabled: !_isSubmitting,
                   inputFormatters: <TextInputFormatter>[
                     LengthLimitingTextInputFormatter(

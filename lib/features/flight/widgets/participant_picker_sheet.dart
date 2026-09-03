@@ -99,6 +99,7 @@ class _ParticipantPickerSheetState
                   TextField(
                     controller: _searchController,
                     textInputAction: TextInputAction.search,
+                    onTapOutside: skyDismissKeyboardOnTapOutside,
                     autocorrect: false,
                     onChanged: (value) => setState(() => _keyword = value),
                     onSubmitted: (_) => FocusScope.of(context).unfocus(),

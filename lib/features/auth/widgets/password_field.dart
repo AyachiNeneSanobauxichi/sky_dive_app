@@ -3,6 +3,7 @@ import "package:flutter/services.dart";
 import "package:sky_dive/core/theme/index.dart";
 import "package:sky_dive/features/auth/domain/index.dart";
 import "package:sky_dive/l10n/app_localizations.dart";
+import "package:sky_dive/shared/widgets/index.dart";
 import "package:lucide_icons_flutter/lucide_icons.dart";
 
 /// 密码输入框（带明文切换）。
@@ -86,6 +87,7 @@ class _PasswordFieldState extends State<PasswordField> {
       obscureText: _obscured,
       keyboardType: TextInputType.visiblePassword,
       textInputAction: widget.textInputAction,
+      onTapOutside: skyDismissKeyboardOnTapOutside,
       autocorrect: false,
       enableSuggestions: false,
       autofillHints: <String>[
