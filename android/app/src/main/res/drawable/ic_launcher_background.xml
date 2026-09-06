@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 图标底色：与 SkyGradients.brand 同一组色值（SkyColors.azure → SkyColors.skyCyan），
+     左上→右下。iOS / Web 图标把这道渐变烘进了位图，Android 走自适应图标的背景层。 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="315"
+        android:endColor="#21B4E8"
+        android:startColor="#0A6FC2"
+        android:type="linear" />
+</shape>

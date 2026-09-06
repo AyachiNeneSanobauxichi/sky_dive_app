@@ -50,6 +50,7 @@ flutter:
   generate: true # 开启 gen-l10n：根据 lib/l10n/*.arb 生成 AppLocalizations
   assets:
     - .env # dotenv 运行时读取的环境配置（需注册为 asset 才能被 rootBundle 加载）
+    - assets/images/ # 品牌 logo 标记，见 lib/shared/widgets/brand/sky_brand_mark.dart
 
   # 只打包拉丁字体（约 700KB）；日文 / 中文交给系统字体回退，
   # 见 lib/core/theme/app_text_styles.dart 的 SkyFonts.textFallback。

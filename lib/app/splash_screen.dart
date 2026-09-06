@@ -7,7 +7,8 @@ import "package:sky_dive/shared/widgets/index.dart";
 /// 避免在 login / home 之间闪烁。无文案，故无 i18n 约束。
 ///
 /// 不用转圈：冷启动通常只有几百毫秒，一个转圈反而在暗示"卡住了"。
-/// 换成呼吸的品牌标记——既是等待反馈，也是品牌的第一印象。
+/// 换成呼吸的品牌标记——既是等待反馈，也是品牌的第一印象，
+/// 而且它和用户刚点的那个桌面图标是同一张脸。
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
